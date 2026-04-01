@@ -31,7 +31,7 @@
       <a href="#hero" class="logo" aria-label="Systemize חזרה לראש הדף">
         <span class="logo-text">Systemize</span><span class="logo-dot">●</span>
       </a>
-      <a href="#hero" class="btn btn-primary btn-sm" id="header-cta-btn">בוא נדבר</a>
+      <a href="#audit" class="btn btn-primary btn-sm magnetic-btn" id="header-cta-btn">בוא נדבר</a>
     </div>
   </header>
 
@@ -55,7 +55,7 @@
         <p class="hero-subtitle">אוטומציה עסקית, ייעול תהליכים וחיסכון בעשרות שעות של משימות חזרתיות. בואו נבדוק איפה
           העסק שלכם שורף זמן יקר.</p>
         <div class="cta-buttons hero-ctas" style="margin-top: 32px; justify-content: flex-start;">
-          <a href="#audit" class="btn btn-primary" style="padding: 16px 32px; font-size: 1.05rem;">קבלו אבחון חינם</a>
+          <a href="#audit" class="btn btn-primary magnetic-btn" id="hero-cta-btn" style="padding: 16px 32px; font-size: 1.05rem;">קבלו אבחון חינם</a>
           <a href="#power" class="btn btn-outline" style="padding: 16px 32px; font-size: 1.05rem;">גלו מה אפשר לעשות
             ↓</a>
         </div>
@@ -448,7 +448,13 @@
           </ul>
         </div>
 
-        <div class="vs-column vs-saas">
+        <div class="saas-toggle-wrapper">
+          <button id="saas-toggle-btn" class="saas-toggle-btn">
+            מתי כן כדאי לבחור ב-SaaS ענן? &rarr;
+          </button>
+        </div>
+
+        <div class="vs-column vs-saas" id="saas-column">
           <div class="vs-header">
             <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" width="32" height="32">
               <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
@@ -470,7 +476,7 @@
         <p>אנחנו כאן כדי לעזור לכם לקבל את ההחלטה הטכנולוגית הנכונה והשקופה ביותר לעסק שלכם. עדיין לא בטוחים?</p>
         <button class="btn btn-outline" onclick="document.getElementById('audit').scrollIntoView({behavior: 'smooth'})"
           style="font-size: 1.1rem; border-color: var(--accent-excel); color: var(--accent-terminal);">
-          בואו נבדוק את ההתאמה בטרמינל שלנו ⟵
+          בואו נבדוק את ההתאמה בגיליון שלנו &larr;
         </button>
       </div>
     </div>
@@ -492,7 +498,7 @@
             נשאר רק ללחוץ על כפתור אחד למקסימום תוצאות.
           </p>
           <p style="font-size: 1.25rem; font-weight: 500; color: var(--accent-terminal); margin-top: 32px;">
-            הכאב ראש שלכם הוא ההשראה שלי.
+            לפצח ולפתור את האתגרים שמעכבים אתכם – זו ההשראה שלי.
           </p>
         </div>
       </div>
@@ -500,53 +506,131 @@
   </section>
 
   <!-- ===================== TERMINAL / AUDIT ===================== -->
-  <section id="audit" class="section audit-section">
-    <div class="container">
+  <section id="audit" class="section audit-section" style="position: relative; overflow: hidden;">
+    <!-- Matrix Rain Canvas for entire section -->
+    <canvas id="matrix-rain-canvas" class="matrix-rain-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.12;pointer-events:none;"></canvas>
+    <div class="container" style="position: relative; z-index: 1;">
       <div class="audit-header" data-animate style="text-align: center; margin-bottom: 40px;">
-        <h2 class="section-title">מוכנים להעלות את העסק על אוטומט?</h2>
-        <p class="section-subtitle">ספרו לטרמינל ממש כאן (או בחרו בווטסאפ) איפה שורף לכם - ואחזור אליכם עם אבחון מדויק.
-        </p>
+        <h2 class="section-title">בואו נדבר על האוטומציה שלכם</h2>
+        <p class="section-subtitle">ספרו לי איפה הגזלני זמן אצלכם בעסק (בגיליון למטה), ונראה עד כמה נוכל לייעל ולשפר לכם צמיחה.</p>
       </div>
 
-      <div class="terminal-wrapper" id="terminal-wrapper" data-animate style="max-width: 650px; margin: 0 auto;">
-        <div class="terminal" id="terminal" role="application" aria-label="טרמינל אינטראקטיבי">
-          <div class="terminal-titlebar">
-            <span class="terminal-dot dot-red"></span>
-            <span class="terminal-dot dot-yellow"></span>
-            <span class="terminal-dot dot-green"></span>
-            <span class="terminal-title">systemize - bash</span>
+      <div class="inline-audit-wrapper" id="inline-audit-wrapper" data-animate>
+        <div class="success-message-overlay" id="success-message">
+          <div class="outlook-scene" id="outlook-scene">
+            <div class="outlook-attachment" id="outlook-attachment">
+              <svg viewBox="0 0 24 24" fill="#217346" width="40" height="40">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8" stroke="#fff" fill="none" stroke-width="2"></polyline>
+                <text x="7" y="16" fill="#fff" font-size="5" font-family="Segoe UI, sans-serif" font-weight="bold">XLSX</text>
+              </svg>
+            </div>
+            <div class="outlook-envelope" id="outlook-envelope">
+              <div class="envelope-back"></div>
+              <div class="envelope-paper"></div>
+              <div class="envelope-front">
+                <div class="envelope-icon">
+                   <svg viewBox="0 0 24 24" fill="#0078D4" width="24" height="24">
+                     <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 6h16v1l-8 4.25L4 7V6zm16 12H4V8l8 4.25L20 8v10z"></path>
+                   </svg>
+                </div>
+              </div>
+              <div class="envelope-flap" id="envelope-flap"></div>
+            </div>
           </div>
-          <div class="terminal-body" id="terminal-body">
-            <div id="terminal-output"></div>
-            <div class="terminal-input-line" id="terminal-input-line" style="display:none;">
-              <span class="terminal-prompt">❮&nbsp;</span>
-              <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" autocorrect="off"
-                autocapitalize="off" spellcheck="false" aria-label="הקלד כאן" />
-              <span class="terminal-cursor" id="terminal-cursor">_</span>
+          <div class="sending-text" id="sending-text">
+            <span id="sending-status">מכין את הגיליון לשליחה...</span>
+            <div id="reset-form-container" style="display: none; margin-top: 20px;">
+              <p style="color: #e2e8f0; font-size: 1.2rem; margin-bottom: 16px;">שמח שהחלטתם ליצור קשר, נדבר בקרוב :)</p>
+              <button class="btn btn-outline" id="reset-excel-btn" style="font-size: 0.9rem; padding: 8px 16px; border-color: var(--accent-excel); color: var(--accent-terminal); cursor: pointer;">
+                שלח פניה נוספת
+              </button>
             </div>
           </div>
         </div>
-        <div class="terminal-restart" id="terminal-restart" style="display:none;">
-          <button class="btn btn-outline btn-sm" id="restart-btn" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-              <path d="M21 2v6h-6"></path>
-              <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
-              <path d="M3 22v-6h6"></path>
-              <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
-            </svg>
-            התחל מחדש
-          </button>
+        <div class="inline-excel-container" id="excel-container">
+          <!-- Top Bar -->
+          <div class="excel-topbar">
+            <div class="excel-topbar-title">
+              <svg viewBox="0 0 24 24" fill="#fff" width="18" height="18">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <path d="M8.5 12h2l1.5 2.5L13.5 12h2l-2.5 3.5 2.5 3.5h-2l-1.5-2.5-1.5 2.5h-2l2.5-3.5Z" fill="#217346"></path>
+              </svg>
+              Systemize_Audit.xlsx
+            </div>
+          </div>
+
+          <!-- Formula Bar -->
+          <div class="excel-formula-bar">
+            <div class="excel-formula-address" id="fx-cell">B2</div>
+            <div class="excel-fx-icon">fx</div>
+            <div class="excel-formula-input-display" id="fx-text">=YOUR_NAME</div>
+          </div>
+
+          <!-- Grid -->
+          <div class="excel-grid">
+            <!-- VBA Overlay -->
+            <div class="vba-matrix-overlay" id="vba-overlay"></div>
+
+            <!-- Headers -->
+            <div class="eg-header row-num" style="background:#fff; border-top: 1px solid #d2d0ce;"></div>
+            <div class="eg-header" style="border-top: 1px solid #d2d0ce;">A</div>
+            <div class="eg-header" style="border-top: 1px solid #d2d0ce;">B</div>
+
+            <!-- Row 1: Name -->
+            <div class="eg-header row-num">1</div>
+            <div class="eg-cell label-cell">שם מלא / חברה</div>
+            <div class="eg-cell input-wrap-cell" data-cell="B1" data-formula="=YOUR_NAME">
+              <input type="text" class="eg-input" id="ex-name" placeholder="הזן טקסט..." required>
+            </div>
+
+            <!-- Row 2: Email -->
+            <div class="eg-header row-num">2</div>
+            <div class="eg-cell label-cell">כתובת אימייל</div>
+            <div class="eg-cell input-wrap-cell" data-cell="B2" data-formula="=VALIDATE_EMAIL(INPUT)">
+              <input type="email" class="eg-input" id="ex-email" placeholder="name@domain.com" required>
+            </div>
+
+            <!-- Row 3: Phone -->
+            <div class="eg-header row-num">3</div>
+            <div class="eg-cell label-cell">טלפון ליצירת קשר</div>
+            <div class="eg-cell input-wrap-cell" data-cell="B3" data-formula="=CONTACT_PHONE_NUM">
+              <input type="tel" class="eg-input" id="ex-phone" placeholder="הזן מספר..." required>
+            </div>
+
+            <!-- Row 4: Text Area -->
+            <div class="eg-header row-num">4</div>
+            <div class="eg-cell label-cell textarea-cell">איך אוכל לעזור?</div>
+            <div class="eg-cell input-wrap-cell textarea-cell" data-cell="B4" data-formula="=TEXTJOIN(\",\", TRUE, PAIN_POINTS)">
+              <textarea class="eg-textarea" id="ex-pain" placeholder="מה תרצה לייעל/לשפר?" required></textarea>
+            </div>
+
+            <!-- Row 5: Field -->
+            <div class="eg-header row-num">5</div>
+            <div class="eg-cell label-cell">איך הגעת אלינו?</div>
+            <div class="eg-cell input-wrap-cell" data-cell="B5" data-formula="=VLOOKUP(SOURCE, LIST, 1, FALSE)">
+              <select class="eg-select" id="ex-source" required>
+                <option value="" disabled selected>בחר מהרשימה ↓</option>
+                <option value="לינקדאין">לינקדאין</option>
+                <option value="המלצה">המלצה מבקש</option>
+                <option value="פייסבוק">פייסבוק</option>
+                <option value="חיפוש/אחר">אחר</option>
+              </select>
+            </div>
+            
+          </div>
+
+          <!-- Submit Footer -->
+          <div class="excel-footer">
+            <button class="excel-submit-btn" id="excel-submit-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <span id="excel-submit-text">Run Macro</span>
+            </button>
+          </div>
         </div>
-        <p class="terminal-hint">
-          לא אוהב טפסים? שלח לי ישירות בוואטסאפ
-          <a href="https://wa.me/972544246057" target="_blank" rel="noopener" id="whatsapp-hint-link"
-            class="wa-icon-link">
-            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-              <path
-                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
-          </a>
-        </p>
       </div>
     </div>
   </section>
@@ -738,6 +822,8 @@
     </svg>
     <span class="fab-tooltip">דברו איתי</span>
   </a>
+
+
 
   <script src="script.js"></script>
 </body>

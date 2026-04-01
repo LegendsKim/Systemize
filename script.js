@@ -1,5 +1,5 @@
 /* ============================================================
-   SYSTEMIZE — Interactive Terminal & Page Logic
+   SYSTEMIZE — Interactive Excel Form & Page Logic
    ============================================================ */
 
 (function () {
@@ -7,112 +7,19 @@
 
   // ─── CONFIG ────────────────────────────────────────────────
   const WEBHOOK_URL = ''; // TODO: Replace with Make.com webhook URL
-  const TYPING_SPEED = 28;       // ms per character (system text)
-  const BOOT_LINE_DELAY = 250;   // ms between boot lines
-  const POST_BOOT_DELAY = 600;   // ms after boot before dialog
-
-  // ─── ASCII ART ─────────────────────────────────────────────
-  const ASCII_ART = [
-    ' ____  _  _  ____  ____  ____  __  __  __  ____  ____ ',
-    '( ___)( \\/ )( ___)(_  _)(  __)(  \\/  )(_  )(_   )( ___)',
-    ' )__)  )  (  )__)   )(   ) _)  )    (  / (_  / /  )__) ',
-    '(____)(_/\\_)(____)  (__) (____)(__)(__)(____)(__)  (____)',
-  ];
-
-  const BOOT_LINES = [
-    { text: '', type: 'spacer' },
-    { text: 'Systemize v1.0.0 | Excel & Business Automation', type: 'system-boot' },
-    { text: 'Initializing diagnostic engine...  ✓', type: 'system-boot' },
-    { text: 'Ready to analyze your workflow.', type: 'system-boot' },
-    { text: '─────────────────────────────────────────────', type: 'separator' },
-  ];
-
-  // ─── DIALOG FLOW ──────────────────────────────────────────
-  const STEPS = [
-    {
-      id: 'welcome',
-      system: 'ברוך הבא. אני כאן כדי לאבחן איפה העסק שלך מבזבז זמן - ולהפוך את זה לאוטומציה.\nהקלד start כדי להתחיל.',
-      waitForInput: true,
-      validate: (v) => {
-        if (v.trim().toLowerCase() !== 'start') return 'Error: הקלד start כדי להתחיל.';
-        return null;
-      },
-      field: null,
-    },
-    {
-      id: 'name',
-      system: 'מה השם שלך?',
-      waitForInput: true,
-      validate: (v) => {
-        if (!v.trim()) return 'Error: שדה חובה, אני צריך את זה כדי ליצור קשר. נסה שוב.';
-        return null;
-      },
-      field: 'name',
-    },
-    {
-      id: 'phone',
-      system: null, // dynamic, uses name
-      waitForInput: true,
-      validate: (v) => {
-        const phone = v.trim().replace(/[-\s]/g, '');
-        if (!phone) return 'Error: שדה חובה, אני צריך את זה כדי ליצור קשר. נסה שוב.';
-        if (!/^0[0-9]{8,9}$/.test(phone) && !/^\+?972[0-9]{8,9}$/.test(phone))
-          return 'Error: פורמט לא תקין. דוגמה: 050-1234567';
-        return null;
-      },
-      field: 'phone',
-    },
-    {
-      id: 'email',
-      system: 'כתובת אימייל:',
-      waitForInput: true,
-      validate: (v) => {
-        if (!v.trim()) return 'Error: שדה חובה, אני צריך את זה כדי ליצור קשר. נסה שוב.';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()))
-          return 'Error: כתובת לא תקינה. דוגמה: name@gmail.com';
-        return null;
-      },
-      field: 'email',
-    },
-    {
-      id: 'pain',
-      system: 'ועכשיו השאלה החשובה, תאר בקצרה פעולה ידנית שחוזרת על עצמה ושורפת לך זמן.\n(למשל: "אני מעתיק נתונים ממיילים לטבלה כל בוקר")',
-      waitForInput: true,
-      validate: (v) => {
-        if (!v.trim()) return 'Error: שדה חובה, אני צריך את זה כדי ליצור קשר. נסה שוב.';
-        return null;
-      },
-      field: 'pain_point',
-    },
-  ];
-
-  // ─── STATE ─────────────────────────────────────────────────
-  const formData = {};
-  let currentStep = 0;
-  let isTyping = false;
-  let terminalDone = false;
 
   // ─── DOM REFS ──────────────────────────────────────────────
   const header = document.getElementById('site-header');
-  const terminalBody = document.getElementById('terminal-body');
-  const terminalOutput = document.getElementById('terminal-output');
-  const terminalInputLine = document.getElementById('terminal-input-line');
-  const terminalInput = document.getElementById('terminal-input');
-  const terminalWrapper = document.getElementById('terminal-wrapper');
-  const restartContainer = document.getElementById('terminal-restart');
-  const restartBtn = document.getElementById('restart-btn');
   const whatsappFab = document.getElementById('whatsapp-fab');
 
   // ─── HEADER SCROLL ────────────────────────────────────────
-  let lastScroll = 0;
   window.addEventListener('scroll', () => {
     const y = window.scrollY;
-    header.classList.toggle('scrolled', y > 80);
+    if (header) header.classList.toggle('scrolled', y > 80);
     // Show FAB after scrolling past hero
     if (whatsappFab) {
       whatsappFab.style.animationPlayState = y > 300 ? 'running' : 'paused';
     }
-    lastScroll = y;
   }, { passive: true });
 
   // ─── SCROLL-ANIMATE ───────────────────────────────────────
@@ -133,263 +40,362 @@
   // ─── SMOOTH SCROLL ANCHORS ────────────────────────────────
   document.querySelectorAll('a[href^="#"]').forEach((a) => {
     a.addEventListener('click', (e) => {
-      const target = document.querySelector(a.getAttribute('href'));
+      const targetId = a.getAttribute('href');
+      const target = document.querySelector(targetId);
       if (target) {
         e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        // Focus terminal input when scrolling to hero
-        if (a.getAttribute('href') === '#hero' && !terminalDone) {
-          setTimeout(() => terminalInput.focus(), 500);
-        }
-      }
-    });
-  });
-
-  // ─── TERMINAL HELPERS ─────────────────────────────────────
-  function scrollTerminal() {
-    terminalBody.scrollTop = terminalBody.scrollHeight;
-  }
-
-  function addLine(text, className) {
-    const div = document.createElement('div');
-    div.className = 'terminal-line ' + (className || '');
-    div.textContent = text;
-    terminalOutput.appendChild(div);
-    scrollTerminal();
-  }
-
-  function addLineHTML(html, className) {
-    const div = document.createElement('div');
-    div.className = 'terminal-line ' + (className || '');
-    div.innerHTML = html;
-    terminalOutput.appendChild(div);
-    scrollTerminal();
-  }
-
-  // Type system text with animation
-  function typeText(text, className) {
-    return new Promise((resolve) => {
-      isTyping = true;
-      const lines = text.split('\n');
-      let lineIdx = 0;
-
-      function typeLine() {
-        if (lineIdx >= lines.length) {
-          isTyping = false;
-          resolve();
-          return;
-        }
-        const line = lines[lineIdx];
-        const div = document.createElement('div');
-        div.className = 'terminal-line ' + (className || 'system');
-        terminalOutput.appendChild(div);
-
-        let charIdx = 0;
-        function typeChar() {
-          if (charIdx < line.length) {
-            div.textContent += line[charIdx];
-            charIdx++;
-            scrollTerminal();
-            setTimeout(typeChar, TYPING_SPEED);
-          } else {
-            lineIdx++;
-            if (lineIdx < lines.length) {
-              setTimeout(typeLine, 80);
-            } else {
-              isTyping = false;
-              resolve();
-            }
-          }
-        }
-        typeChar();
-      }
-      typeLine();
-    });
-  }
-
-  // Progress bar animation
-  function showProgress() {
-    return new Promise((resolve) => {
-      const div = document.createElement('div');
-      div.className = 'terminal-line progress';
-      terminalOutput.appendChild(div);
-
-      const total = 20;
-      let filled = 0;
-
-      function tick() {
-        filled++;
-        const bar = '█'.repeat(filled) + '░'.repeat(total - filled);
-        const pct = Math.round((filled / total) * 100);
-        div.textContent = `${pct}% ${bar} ...מעבד`;
-        scrollTerminal();
-        if (filled < total) {
-          setTimeout(tick, 50 + Math.random() * 40);
+        // If it's the logo pointing to #hero, scroll to top
+        if (a.classList.contains('logo')) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         } else {
-          resolve();
+          // Normal smooth scroll to section
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }
-      tick();
+    });
+  });
+
+  // ─── SaaS vs Excel CARD SWAP (mobile) ─────────────────────
+  const saasBtn = document.getElementById('saas-toggle-btn');
+  const saasCol = document.getElementById('saas-column');
+  const excelCol = document.querySelector('.vs-excel');
+  let showingSaas = false;
+
+  if (saasBtn && saasCol && excelCol) {
+    // Start with SaaS hidden on mobile
+    saasCol.classList.add('hidden-mobile');
+    saasBtn.addEventListener('click', () => {
+      showingSaas = !showingSaas;
+      if (showingSaas) {
+        // Hide Excel, show SaaS
+        excelCol.classList.add('hidden-mobile');
+        saasCol.classList.remove('hidden-mobile');
+        saasBtn.innerHTML = '← הצג את פתרונות Systemize';
+      } else {
+        // Show Excel, hide SaaS
+        saasCol.classList.add('hidden-mobile');
+        excelCol.classList.remove('hidden-mobile');
+        saasBtn.innerHTML = 'מתי כן כדאי לבחור ב-SaaS ענן? →';
+      }
     });
   }
 
-  // ─── SHOW INPUT ───────────────────────────────────────────
-  function showInput() {
-    terminalInputLine.style.display = 'flex';
-    terminalInput.value = '';
-    terminalInput.focus();
-    scrollTerminal();
-  }
+  // ─── INLINE EXCEL FORM LOGIC ───────────────────────────────
+  const excelContainer = document.getElementById('excel-container');
+  const fxCell = document.getElementById('fx-cell');
+  const fxText = document.getElementById('fx-text');
+  const excelInputs = document.querySelectorAll('.eg-input, .eg-select, .eg-textarea');
+  const submitBtn = document.getElementById('excel-submit-btn');
+  const submitTextSpan = document.getElementById('excel-submit-text');
+  const vbaOverlay = document.getElementById('vba-overlay');
+  const successMessage = document.getElementById('success-message');
+  const outlookScene = document.getElementById('outlook-scene');
+  const sendingText = document.getElementById('sending-text');
+  const bgTyping = document.getElementById('bg-typing');
 
-  function hideInput() {
-    terminalInputLine.style.display = 'none';
-  }
-
-  // ─── BOOT SEQUENCE ────────────────────────────────────────
-  async function bootSequence() {
-    // ASCII art
-    for (const line of ASCII_ART) {
-      addLine(line, 'ascii');
-    }
-
-    await sleep(300);
-
-    // Boot lines with staggered reveal
-    for (const boot of BOOT_LINES) {
-      if (boot.type === 'spacer') {
-        addLine('', '');
-      } else if (boot.type === 'separator') {
-        addLine(boot.text, 'separator');
-      } else {
-        await typeText(boot.text, boot.type);
+  // Background VBA Typing Loop
+  if (bgTyping) {
+    const codeSnippet = `Public Function AutomateBusiness(data As Range) As Boolean\n  On Error GoTo ErrorHandler\n  Dim cell As Range\n  For Each cell In data\n    If IsEmpty(cell) Then\n      Debug.Print "Missing data"\n    End If\n  Next cell\n  AutomateBusiness = True\n  Exit Function\nErrorHandler:\n  AutomateBusiness = False\nEnd Function\nSub SyncToCloud()\n  Dim http As Object\n  Set http = CreateObject("MSXML2.XMLHTTP")\n  http.Open "POST", endpoint, False\n  http.setRequestHeader "Content-Type", "application/json"\n  http.send jsonPayload\nEnd Sub\n`;
+    
+    let typeIndex = 0;
+    setInterval(() => {
+      if (typeIndex >= codeSnippet.length) typeIndex = 0;
+      bgTyping.textContent += codeSnippet[typeIndex];
+      // Keep only last 800 chars to avoid memory issues
+      if (bgTyping.textContent.length > 800) {
+        bgTyping.textContent = bgTyping.textContent.slice(bgTyping.textContent.length - 800);
       }
-      await sleep(BOOT_LINE_DELAY);
-    }
-
-    await sleep(POST_BOOT_DELAY);
-    runStep();
+      typeIndex++;
+    }, 40); // speed
   }
 
-  // ─── STEP RUNNER ───────────────────────────────────────────
-  async function runStep() {
-    if (currentStep >= STEPS.length) {
-      await finishSequence();
-      return;
+  // ─── MATRIX RAIN CANVAS (behind Excel form) ──────────────────
+  const matrixCanvas = document.getElementById('matrix-rain-canvas');
+  if (matrixCanvas) {
+    const ctx = matrixCanvas.getContext('2d');
+    const wrapper = matrixCanvas.parentElement;
+
+    function resizeCanvas() {
+      matrixCanvas.width = wrapper.offsetWidth;
+      matrixCanvas.height = wrapper.offsetHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // VBA-style characters for the rain
+    const chars = 'Sub End Function Dim Set If Then Else For Next Do Loop Call Range Cells Value ws lr xlUp Rows Count True False Integer Long String Variant Object Nothing Debug Print MsgBox Application Workbook Worksheet ActiveSheet = ( ) . , ; : & + - * / < > ! @ # $ % ^ 0 1 2 3 4 5 6 7 8 9 A B C D E F';
+    const charArr = chars.split(' ');
+    
+    const fontSize = 13;
+    let columns = Math.floor(matrixCanvas.width / fontSize);
+    let drops = new Array(columns).fill(1);
+    let speeds = new Array(columns).fill(0).map(() => 0.3 + Math.random() * 0.7);
+
+    window.addEventListener('resize', () => {
+      columns = Math.floor(matrixCanvas.width / fontSize);
+      drops = new Array(columns).fill(1);
+      speeds = new Array(columns).fill(0).map(() => 0.3 + Math.random() * 0.7);
+    });
+
+    function drawMatrix() {
+      // Semi-transparent black to create fade trail
+      ctx.fillStyle = 'rgba(13, 17, 23, 0.06)';
+      ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+      ctx.font = fontSize + 'px "Fira Code", monospace';
+
+      for (let i = 0; i < drops.length; i++) {
+        // Random green shades for variety
+        const brightness = 120 + Math.floor(Math.random() * 135);
+        ctx.fillStyle = 'rgba(46, ' + brightness + ', 80, 0.9)';
+
+        const char = charArr[Math.floor(Math.random() * charArr.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+        // Reset drop to top randomly after reaching bottom
+        if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i] += speeds[i];
+      }
     }
 
-    const step = STEPS[currentStep];
-
-    // Build system message
-    let sysMsg = step.system;
-    if (step.id === 'phone') {
-      sysMsg = `שמח להכיר, ${formData.name}. מספר טלפון? (עדיפות לוואטסאפ)`;
-    }
-
-    if (sysMsg) {
-      await typeText(sysMsg, 'system');
-    }
-
-    if (step.waitForInput) {
-      showInput();
-    }
+    setInterval(drawMatrix, 45);
   }
 
-  // ─── FINISH ────────────────────────────────────────────────
-  async function finishSequence() {
-    hideInput();
-    await showProgress();
-    await sleep(400);
-    await typeText(`✓ קיבלתי. אחזור אליך עם אבחון ראשוני תוך 24 שעות. נשמע טוב, ${formData.name}?`, 'success');
-    await sleep(800);
-    await typeText('Connection closed. נתראה בקרוב.', 'system');
-    terminalDone = true;
-    const terminal = document.getElementById('terminal');
-    terminal.classList.add('terminal-complete');
-    terminal.classList.add('terminal-success');
+  // Cell Focus & Input Logic
+  excelInputs.forEach(input => {
+    const parentCell = input.closest('.eg-cell');
+    
+    // On focus: update formula bar and cell styling
+    input.addEventListener('focus', () => {
+      // Remove focus from all
+      document.querySelectorAll('.focused-cell').forEach(c => c.classList.remove('focused-cell'));
+      if (parentCell) {
+        parentCell.classList.add('focused-cell');
+        // Update FX Bar
+        const cellRef = parentCell.getAttribute('data-cell') || '';
+        const formula = parentCell.getAttribute('data-formula') || '';
+        if (fxCell) fxCell.textContent = cellRef;
+        if (fxText) fxText.textContent = formula;
+      }
+    });
 
-    // Show restart button
-    if (restartContainer) {
-      restartContainer.style.display = 'block';
-    }
+    // On blur: remove focus style
+    input.addEventListener('blur', () => {
+      if (parentCell) parentCell.classList.remove('focused-cell');
+    });
 
-    // Send data
-    sendLead();
-  }
+    // On input/change: conditional formatting
+    const updateFilledState = () => {
+      if (!parentCell) return;
+      const val = input.value.trim();
+      parentCell.classList.remove('filled-cell');
+      parentCell.classList.remove('error-cell');
 
-  // ─── SEND LEAD ─────────────────────────────────────────────
-  async function sendLead() {
-    const payload = {
-      name: formData.name || '',
-      phone: formData.phone || '',
-      email: formData.email || '',
-      pain_point: formData.pain_point || '',
-      timestamp: new Date().toISOString(),
-      source: 'systemize.co.il',
+      if (val !== '') {
+        // Validation check
+        let isError = false;
+        if (input.type === 'email') {
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) isError = true;
+        } else if (input.type === 'tel') {
+          const phone = val.replace(/[-\s]/g, '');
+          if (!/^0[0-9]{8,9}$/.test(phone) && !/^\+?972[0-9]{8,9}$/.test(phone)) isError = true;
+        }
+
+        if (isError) {
+          parentCell.classList.add('error-cell');
+        } else {
+          parentCell.classList.add('filled-cell');
+        }
+      }
     };
+    // Trigger validation only after finishing typing (on blur/change)
+    input.addEventListener('blur', updateFilledState);
+    input.addEventListener('change', updateFilledState);
+  });
 
-    if (!WEBHOOK_URL) {
-      console.log('[Systemize] Lead collected (no webhook configured):', payload);
-      return;
-    }
+  // ─── VBA MACRO ANIMATION AND SUBMIT ────────────────────────
+  function generateVBA() {
+    return `Sub SystemizeAudit()
+    Dim ws As Worksheet
+    Set ws = ThisWorkbook.Sheets("Audit")
+    Dim lr As Long
+    lr = ws.Cells(Rows.Count, 1).End(xlUp).Row + 1
+    
+    ws.Cells(lr, 1).Value = Now
+    ws.Cells(lr, 2).Value = ClientData(1)
+    ws.Cells(lr, 3).Value = ClientData(2)
+    ws.Cells(lr, 4).Value = ClientData(3)
+    ws.Cells(lr, 5).Value = EvaluateProblems()
+    
+    Call SendWebhookData(ws.Range(Cells(lr,1), Cells(lr,5)))
+    Application.ScreenUpdating = True
+End Sub`.split('\n');
+  }
 
-    try {
-      await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+  async function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+
+  if (submitBtn) {
+    submitBtn.addEventListener('click', async () => {
+      const nameVal = document.getElementById('ex-name')?.value || '';
+      const emailVal = document.getElementById('ex-email')?.value || '';
+      const phoneVal = document.getElementById('ex-phone')?.value || '';
+      const painVal = document.getElementById('ex-pain')?.value || '';
+      const sourceVal = document.getElementById('ex-source')?.value || '';
+
+      if (!nameVal || !emailVal || !phoneVal || !painVal || !sourceVal) {
+        alert('יש למלא את כל השדות בגיליון.');
+        return;
+      }
+
+      const hasError = document.querySelector('.error-cell');
+      if (hasError) {
+        alert('ישנם שדות עם פרטים לא תקינים (סומנו באדום). אנא תקן אותם לפני השליחה.');
+        return;
+      }
+
+      // Payload
+      const payload = {
+        name: nameVal,
+        email: emailVal,
+        phone: phoneVal,
+        pain_point: painVal,
+        source: sourceVal,
+        origin: 'systemize.co.il (Excel Inline)',
+        timestamp: new Date().toISOString()
+      };
+
+      // 1. Loading Text Makeover
+      submitBtn.disabled = true;
+      submitTextSpan.textContent = 'מייצר פקודת מאקרו...';
+
+      // 2. Show VBA Overlay Matrix
+      if (vbaOverlay) {
+        vbaOverlay.innerHTML = '';
+        vbaOverlay.classList.add('active');
+        
+        const vbaLines = generateVBA();
+        for (let i = 0; i < vbaLines.length; i++) {
+          const lineDiv = document.createElement('div');
+          lineDiv.className = 'vba-line';
+          lineDiv.textContent = vbaLines[i];
+          // Stagger the animation timing to make it drop fast
+          lineDiv.style.animationDelay = `${i * 0.05}s`;
+          vbaOverlay.appendChild(lineDiv);
+        }
+      }
+
+      // Wait for Matrix to fall
+      await sleep(1000);
+
+      try {
+        if (WEBHOOK_URL) {
+          await fetch(WEBHOOK_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+        } else {
+          console.log('[Systemize] Lead submitted via Macro:', payload);
+          await sleep(500);
+        }
+      } catch (err) {
+        console.error('Submit error:', err);
+      }
+
+      // 3. Outlook Send Animation Sequence
+      if (excelContainer) {
+        excelContainer.classList.add('excel-dissolve');
+      }
+      
+      await sleep(300);
+
+      if (successMessage && outlookScene) {
+        successMessage.classList.add('active'); // shows overlay text wrapper
+        outlookScene.classList.add('active');
+        
+        const sendingStatus = document.getElementById('sending-status');
+        const resetContainer = document.getElementById('reset-form-container');
+
+        // Step 1: Outlook envelope pops in, file drops in
+        outlookScene.classList.add('step-1');
+        await sleep(1000);
+        
+        // Step 2: Flap closes
+        outlookScene.classList.add('step-2');
+        if (sendingStatus) sendingStatus.textContent = 'שולח...';
+        await sleep(500);
+
+        // Step 3: Envelope flies away
+        outlookScene.classList.add('step-3');
+        await sleep(800);
+        
+        // Final: warm success text + reset button
+        outlookScene.style.display = 'none';
+        if (sendingStatus) {
+          sendingStatus.textContent = '';
+        }
+        if (resetContainer) {
+          resetContainer.style.display = 'block';
+        }
+      }
+
+    });
+  }
+
+  // ─── RESET FORM ───────────────────────────────────────────
+  const resetBtn = document.getElementById('reset-excel-btn');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      // Clear all inputs
+      excelInputs.forEach(input => {
+        if (input.tagName === 'SELECT') {
+          input.selectedIndex = 0;
+        } else {
+          input.value = '';
+        }
+        const cell = input.closest('.eg-cell');
+        if (cell) {
+          cell.classList.remove('filled-cell', 'error-cell');
+        }
       });
-      console.log('[Systemize] Lead sent successfully');
-    } catch (err) {
-      console.error('[Systemize] Failed to send lead:', err);
-    }
-  }
 
-  // ─── INPUT HANDLER ─────────────────────────────────────────
-  terminalInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleInput();
-    }
-  });
+      // Reset formula bar
+      if (fxCell) fxCell.textContent = 'A1';
+      if (fxText) fxText.textContent = '';
 
-  function handleInput() {
-    if (isTyping || terminalDone) return;
-    if (currentStep >= STEPS.length) return;
+      // Reset container visibility
+      if (excelContainer) {
+        excelContainer.classList.remove('excel-dissolve');
+      }
+      if (successMessage) {
+        successMessage.classList.remove('active');
+      }
+      const outlookEl = document.getElementById('outlook-scene');
+      if (outlookEl) {
+        outlookEl.classList.remove('active', 'step-1', 'step-2', 'step-3');
+        outlookEl.style.display = '';
+      }
+      const resetCont = document.getElementById('reset-form-container');
+      if (resetCont) resetCont.style.display = 'none';
+      const statusEl = document.getElementById('sending-status');
+      if (statusEl) statusEl.textContent = '';
 
-    const value = terminalInput.value;
-    const step = STEPS[currentStep];
+      // Reset VBA overlay
+      if (vbaOverlay) {
+        vbaOverlay.classList.remove('active');
+        vbaOverlay.innerHTML = '';
+      }
 
-    // Show user input as line
-    addLine(`❮ ${value}`, 'user');
-    hideInput();
-
-    // Validate
-    const error = step.validate ? step.validate(value) : null;
-    if (error) {
-      addLine(error, 'error');
-      setTimeout(() => showInput(), 300);
-      return;
-    }
-
-    // Store value
-    if (step.field) {
-      formData[step.field] = value.trim();
-    }
-
-    currentStep++;
-    setTimeout(() => runStep(), 350);
-  }
-
-  // ─── KEEP TERMINAL FOCUSED ─────────────────────────────────
-  document.getElementById('terminal').addEventListener('click', () => {
-    if (!terminalDone) {
-      terminalInput.focus();
-    }
-  });
-
-  // ─── UTILITIES ─────────────────────────────────────────────
-  function sleep(ms) {
-    return new Promise((r) => setTimeout(r, ms));
+      // Re-enable submit
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        if (submitTextSpan) submitTextSpan.textContent = 'Run Macro';
+      }
+    });
   }
 
   // ─── FAQ ACCORDION ─────────────────────────────────────────
@@ -406,32 +412,5 @@
       item.classList.toggle('active');
     });
   });
-
-  // ─── RESTART TERMINAL ──────────────────────────────────────
-  if (restartBtn) {
-    restartBtn.addEventListener('click', () => {
-      // Reset state
-      currentStep = 0;
-      terminalDone = false;
-      Object.keys(formData).forEach((k) => delete formData[k]);
-
-      // Clear output
-      terminalOutput.innerHTML = '';
-
-      // Remove classes
-      const terminal = document.getElementById('terminal');
-      terminal.classList.remove('terminal-complete');
-      terminal.classList.remove('terminal-success');
-
-      // Hide restart button
-      restartContainer.style.display = 'none';
-
-      // Re-run boot
-      bootSequence();
-    });
-  }
-
-  // ─── INIT ──────────────────────────────────────────────────
-  bootSequence();
 
 })();

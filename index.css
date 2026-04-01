@@ -45,7 +45,6 @@
 }
 
 html {
-  scroll-behavior: smooth;
   scroll-padding-top: var(--header-height);
   font-size: 16px;
 }
@@ -1920,3 +1919,604 @@ body::after {
 .terminal-success {
   animation: success-glow 1.5s ease;
 }
+
+/* ============================================================
+   MAGNETIC BUTTON (SHIMMER & GLOW)
+   ============================================================ */
+.magnetic-btn {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s var(--ease-spring), box-shadow 0.3s var(--ease-out);
+  z-index: 1;
+}
+
+.magnetic-btn::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 40%,
+    rgba(255, 255, 255, 0.4) 50%,
+    rgba(255, 255, 255, 0.1) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg) translateY(-100%);
+  animation: shimmer 4s infinite linear;
+  pointer-events: none;
+  z-index: 2;
+}
+
+@keyframes shimmer {
+  0% { transform: rotate(30deg) translateY(-100%); }
+  25% { transform: rotate(30deg) translateY(100%); }
+  100% { transform: rotate(30deg) translateY(100%); }
+}
+
+.magnetic-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px var(--accent-glow-strong);
+}
+
+/* ============================================================
+   INLINE EXCEL
+   ============================================================ */
+.inline-excel-container {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  background: #ffffff;
+  color: #000000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: opacity 1.5s var(--ease-out), filter 1.5s var(--ease-out), transform 1.5s var(--ease-out);
+}
+
+.excel-dissolve {
+  opacity: 0;
+  filter: blur(10px) brightness(1.5);
+  transform: scale(0.9);
+  pointer-events: none;
+}
+
+.inline-audit-wrapper {
+  position: relative;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 40px;
+  background: linear-gradient(145deg, rgba(33, 115, 70, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+  border: 1px solid rgba(46, 204, 113, 0.2);
+  border-radius: 20px;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(33, 115, 70, 0.1);
+  overflow: hidden;
+}
+
+.matrix-rain-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.12;
+  pointer-events: none;
+  border-radius: 20px;
+}
+
+.inline-excel-container {
+  position: relative;
+  z-index: 2;
+}
+
+.success-message-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--accent-terminal);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease-in;
+  z-index: 50;
+  width: 80%;
+  max-width: 500px;
+}
+.success-message-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sending-text {
+  text-align: center;
+  color: var(--accent-terminal);
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+/* Excel Top Bar */
+.excel-topbar {
+  background: #217346;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: 0.95rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.excel-topbar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.excel-close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  padding: 0 8px;
+  display: none; /* Not needed for inline, but keep for structure */
+}
+
+/* Formula Bar */
+.excel-formula-bar {
+  background: #f3f2f1;
+  border-bottom: 1px solid #d2d0ce;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  direction: ltr; /* formula bar layout LTR typically even in RTL UI, but we'll do RTL for consistency */
+}
+
+.excel-fx-icon {
+  color: #605e5c;
+  font-style: italic;
+  font-weight: 700;
+  font-family: 'Times New Roman', serif;
+  font-size: 1.1rem;
+}
+
+.excel-formula-address {
+  background: #fff;
+  border: 1px solid #c8c6c4;
+  padding: 2px 8px;
+  font-size: 0.9rem;
+  color: #323130;
+  min-width: 50px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.excel-formula-input-display {
+  flex: 1;
+  background: #fff;
+  border: 1px solid #c8c6c4;
+  padding: 2px 8px;
+  font-size: 0.9rem;
+  color: #323130;
+  min-height: 26px;
+  display: flex;
+  align-items: center;
+  font-family: 'Fira Code', monospace;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grid Area (RTL style) */
+.excel-grid {
+  background: #fff;
+  display: grid;
+  grid-template-columns: 40px 1.2fr 1.8fr;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  border-bottom: 1px solid #d2d0ce;
+  direction: rtl; 
+  position: relative; /* For VBA Overlay */
+}
+
+/* Grid headers */
+.eg-header {
+  background: #f3f2f1;
+  border-left: 1px solid #d2d0ce;
+  border-bottom: 1px solid #d2d0ce;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  color: #605e5c;
+  font-weight: 500;
+  user-select: none;
+  min-height: 48px;
+}
+.eg-header.row-num {
+  border-left: 2px solid #d2d0ce; 
+}
+
+/* Cells */
+.eg-cell {
+  border-left: 1px solid #e1dfdd;
+  border-bottom: 1px solid #e1dfdd;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-size: 0.95rem;
+  color: #000;
+  background: #fff;
+  transition: background-color 0.2s;
+  min-height: 48px;
+  position: relative;
+}
+
+.eg-cell.label-cell {
+  background: #faf9f8;
+  color: #323130;
+  font-weight: 500;
+  align-items: flex-start;
+  padding-top: 13px;
+}
+
+.eg-cell.textarea-cell {
+  align-items: flex-start;
+  padding-top: 13px;
+}
+
+/* Inputs */
+.eg-input, .eg-select, .eg-textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: #000;
+  padding: 0 0 0 24px; /* padding-left to leave room for V / X */
+}
+
+.eg-select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.eg-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.4;
+}
+
+/* Cell Focus & Filled states */
+.eg-cell.focused-cell {
+  box-shadow: inset 0 0 0 2px #217346;
+  position: relative;
+  z-index: 10;
+}
+.eg-cell.filled-cell {
+  background-color: #eafbea; /* Conditional formatting */
+}
+.eg-cell.filled-cell::after {
+  content: '✓';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #217346;
+  font-size: 0.85rem;
+  font-weight: bold;
+}
+.eg-cell.textarea-cell.filled-cell::after {
+  top: 23px; /* Adjust for textarea height */
+}
+
+.eg-cell.filled-cell input, .eg-cell.filled-cell select, .eg-cell.filled-cell textarea {
+  background-color: transparent !important;
+}
+
+/* Error Formatting */
+.eg-cell.error-cell {
+  background-color: #fde8e8;
+}
+.eg-cell.error-cell::after {
+  content: '!';
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #c53030;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+.eg-cell.error-cell input, .eg-cell.error-cell select, .eg-cell.error-cell textarea {
+  background-color: transparent !important;
+  color: #c53030;
+}
+
+/* VBA Overlay Animation */
+.vba-matrix-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(13, 17, 23, 0.94);
+  color: #2ecc71;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  padding: 15px;
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  z-index: 20;
+  direction: ltr; /* Code is typically LTR */
+  text-align: left;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(46, 204, 113, 0.2);
+}
+.vba-matrix-overlay.active {
+  opacity: 1;
+}
+
+.vba-line {
+  white-space: pre;
+  opacity: 0;
+  transform: translateY(-5px);
+  animation: fall-in 0.15s forwards;
+  margin-bottom: 2px;
+}
+
+@keyframes fall-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Submit Area */
+.excel-footer {
+  background: #f3f2f1;
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+  direction: rtl;
+}
+
+.excel-submit-btn {
+  background: #217346;
+  color: #fff;
+  border: none;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.excel-submit-btn:hover {
+  background: #1e6b41;
+}
+
+.excel-submit-btn:active {
+  transform: scale(0.98);
+}
+
+.excel-submit-btn:disabled {
+  background: #a0a0a0;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .inline-audit-wrapper {
+    padding: 20px 10px;
+    border-radius: 12px;
+  }
+  .excel-grid {
+    grid-template-columns: 30px 110px 1fr;
+  }
+  .eg-cell {
+    font-size: 0.9rem;
+    padding: 0 6px;
+  }
+  .excel-formula-bar {
+    padding: 6px 8px;
+    gap: 8px;
+  }
+  .excel-formula-address, .excel-formula-input-display {
+    font-size: 0.8rem;
+  }
+}
+
+/* ============================================================
+   OUTLOOK SEND ANIMATION
+   ============================================================ */
+.outlook-scene {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto 20px;
+  perspective: 1000px;
+  display: none;
+}
+.outlook-scene.active {
+  display: block;
+}
+
+.outlook-attachment {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  opacity: 0;
+}
+
+.outlook-envelope {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 80px;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+  opacity: 0;
+}
+
+.envelope-back {
+  position: absolute;
+  inset: 0;
+  background: #005a9e; /* Darker Outlook blue */
+  border-radius: 4px;
+}
+
+.envelope-paper {
+  position: absolute;
+  top: 10px; left: 10px; right: 10px; bottom: 10px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+.envelope-front {
+  position: absolute;
+  inset: 0;
+  background: #0078d4; /* Outlook Blue */
+  clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
+  border-radius: 4px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  z-index: 4;
+}
+
+.envelope-icon {
+  background: #fff;
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 100%;
+  background: #2b88d8; /* Lighter blue */
+  clip-path: polygon(0 0, 100% 0, 50% 50%);
+  transform-origin: top;
+  z-index: 5;
+  transition: transform 0.4s ease-in;
+}
+
+/* Steps for animation */
+.outlook-scene.step-1 .outlook-envelope {
+  animation: popIn 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.outlook-scene.step-1 .outlook-attachment {
+  animation: fileDrop 0.6s 0.2s forwards ease-in-out;
+}
+.outlook-scene.step-2 .envelope-flap {
+  transform: rotateX(180deg);
+}
+.outlook-scene.step-3 .outlook-envelope {
+  animation: flyAway 0.8s forwards cubic-bezier(0.6, -0.28, 0.735, 0.045);
+}
+.outlook-scene.step-3 .outlook-attachment {
+  display: none; /* inside envelope */
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(50px) scale(0.5); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@keyframes fileDrop {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(2); }
+  50% { opacity: 1; transform: translateX(-50%) translateY(-20px) scale(1); z-index: 3; }
+  100% { opacity: 1; transform: translateX(-50%) translateY(20px) scale(0.5); z-index: 3; }
+}
+
+@keyframes flyAway {
+  0% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
+  20% { transform: translateX(-50%) translateY(10px) scale(0.9); opacity: 1; }
+  100% { transform: translateX(100vw) translateY(-100vh) rotate(15deg) scale(0.5); opacity: 0; }
+}
+
+/* ============================================================
+   BACKGROUND TYPING
+   ============================================================ */
+.vba-bg-animation {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  color: #2ecc71;
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  line-height: 1.4;
+  opacity: 0.04;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  padding: 10px;
+  pointer-events: none;
+  z-index: 0;
+  direction: ltr;
+  text-align: left;
+}
+
+/* ============================================================
+   SAAS TOGGLE MOBILE
+   ============================================================ */
+.saas-toggle-wrapper {
+  display: none;
+  text-align: center;
+  margin: 20px 0;
+  width: 100%;
+}
+.saas-toggle-btn {
+  background: var(--surface-light);
+  color: var(--text-base);
+  border: 1px solid var(--border);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.saas-toggle-btn:hover {
+  border-color: var(--accent-terminal);
+  color: var(--accent-terminal);
+}
+@media (max-width: 900px) {
+  .vs-saas, .vs-excel {
+     overflow: hidden;
+     max-height: 2000px;
+     transition: max-height 0.4s ease-in-out, opacity 0.4s ease;
+     opacity: 1;
+  }
+  .vs-saas.hidden-mobile, .vs-excel.hidden-mobile {
+     max-height: 0;
+     opacity: 0;
+     margin-top: 0;
+     padding-top: 0;
+     padding-bottom: 0;
+     border: none;
+  }
+  .saas-toggle-wrapper {
+     display: block;
+  }
+}
+
