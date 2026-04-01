@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Systemize | אוטומציה עסקית ופתרונות Excel מותאמים אישית</title>
+  <meta name="description"
+    content="Systemize | פתרונות אוטומציה עסקית, Excel ו-VBA מותאמים אישית. חסכו שעות עבודה ידנית והפכו תהליכים לאוטומטיים." />
+  <meta name="keywords" content="אוטומציה עסקית, Excel, VBA, פתרונות אוטומציה, ייעול תהליכים, מאקרו, Power Query" />
+  <meta property="og:title" content="Systemize | אוטומציה עסקית ופתרונות Excel" />
+  <meta property="og:description"
+    content="פתרונות אוטומציה, Excel ו-VBA מותאמים אישית. חסכו שעות ידניות. ייעוץ ראשוני חינם." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://systemize.co.il" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&family=Fira+Code:wght@400;500;600&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="index.css" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%23217346'/><text x='50' y='72' text-anchor='middle' font-family='monospace' font-size='60' font-weight='bold' fill='white'>S</text></svg>" />
+</head>
+
+<body>
+
+  <!-- ===================== STICKY HEADER ===================== -->
+  <header id="site-header" class="site-header">
+    <div class="header-inner">
+      <a href="#hero" class="logo" aria-label="Systemize חזרה לראש הדף">
+        <span class="logo-text">Systemize</span><span class="logo-dot">●</span>
+      </a>
+      <a href="#hero" class="btn btn-primary btn-sm" id="header-cta-btn">בוא נדבר</a>
+    </div>
+  </header>
+
+  <!-- ===================== HERO / TERMINAL ===================== -->
+  <section id="hero" class="section hero-section">
+    <!-- Excel Grid animated background -->
+    <div class="excel-grid-bg">
+      <div class="grid-line horizontal h1"></div>
+      <div class="grid-line horizontal h2"></div>
+      <div class="grid-line horizontal h3"></div>
+      <div class="grid-line vertical v1"></div>
+      <div class="grid-line vertical v2"></div>
+      <div class="grid-line vertical v3"></div>
+      <div class="grid-cell active-cell"></div>
+    </div>
+
+    <div class="container hero-container"
+      style="display: flex; gap: 40px; align-items: center; max-width: 1000px; margin: 0 auto; z-index: 1;">
+      <div class="hero-content" data-animate style="text-align: right; flex: 1;">
+        <h1>הופכים את ה-Excel למערכת חכמה שעובדת <strong>בשבילכם</strong></h1>
+        <p class="hero-subtitle">אוטומציה עסקית, ייעול תהליכים וחיסכון בעשרות שעות של משימות חזרתיות. בואו נבדוק איפה
+          העסק שלכם שורף זמן יקר.</p>
+        <div class="cta-buttons hero-ctas" style="margin-top: 32px; justify-content: flex-start;">
+          <a href="#audit" class="btn btn-primary" style="padding: 16px 32px; font-size: 1.05rem;">קבלו אבחון חינם</a>
+          <a href="#power" class="btn btn-outline" style="padding: 16px 32px; font-size: 1.05rem;">גלו מה אפשר לעשות
+            ↓</a>
+        </div>
+      </div>
+
+      <div class="hero-visual" data-animate style="flex: 1; display: flex; justify-content: center;">
+        <div class="excel-bot-animation" style="position: relative; width: 280px; height: 280px;">
+          <div class="bot-core">
+            <svg viewBox="0 0 24 24" fill="var(--accent-excel)" width="96" height="96">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <path d="M8.5 12h2l1.5 2.5L13.5 12h2l-2.5 3.5 2.5 3.5h-2l-1.5-2.5-1.5 2.5h-2l2.5-3.5Z" fill="#fff"></path>
+            </svg>
+          </div>
+          <div class="data-stream p1"></div>
+          <div class="data-stream p2"></div>
+          <div class="data-stream p3"></div>
+          <div class="gear-icon g1"><svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" width="32"
+              height="32">
+              <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+              </path>
+            </svg></div>
+          <div class="gear-icon g2"><svg viewBox="0 0 24 24" fill="none" stroke="#2ecc71" stroke-width="2" width="24"
+              height="24">
+              <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+              </path>
+            </svg></div>
+          <div class="rocket-trail"></div>
+        </div>
+      </div>
+    </div>
+    <a href="#value" class="scroll-indicator" aria-label="המשך למטה">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+        <polyline points="6 9 12 15 18 9"></polyline>
+      </svg>
+    </a>
+  </section>
+
+  <!-- ===================== VALUE PROPOSITION ===================== -->
+  <section id="value" class="section value-section">
+    <div class="container">
+      <div class="section-header" data-animate>
+        <h2 class="value-title">
+          תפסיקו לעבוד בשביל הנתונים.<br />
+          תנו להם לעבוד <strong>בשבילכם.</strong>
+        </h2>
+        <p class="value-subtitle">
+          אם אתם מוצאים את עצמכם מעתיקים נתונים ממקום למקום, בונים דוחות ידנית בכל חודש, או מנהלים מלאי בגיליון שאיש לא
+          מבין, בדיוק בשביל זה אני כאן.
+        </p>
+      </div>
+      <div class="value-cards">
+        <div class="value-card" data-animate>
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="36" height="36">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+          </div>
+          <h3>מהיר להטמעה</h3>
+          <p>לא צריך לחכות חצי שנה ל-IT. פתרונות שרצים תוך ימים.</p>
+        </div>
+        <div class="value-card" data-animate>
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="36" height="36">
+              <path d="M22 12A10 10 0 1 1 12 2a10 10 0 0 1 10 10z"></path>
+              <path d="M22 2 12 12"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+              <circle cx="16" cy="8" r="1.5"></circle>
+            </svg>
+          </div>
+          <h3>מותאם אישית</h3>
+          <p>אני בונה לתהליך הספציפי שלך, לא פתרון גנרי שמישהו אחר כבר בנה.</p>
+        </div>
+        <div class="value-card" data-animate>
+          <div class="value-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" width="36" height="36">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <path d="M2 10h20"></path>
+              <path d="M8 15h.01"></path>
+              <path d="M12 15h.01"></path>
+              <path d="M16 15h.01"></path>
+            </svg>
+          </div>
+          <h3>ללא עלויות רישוי</h3>
+          <p>עובד על Excel שכבר יש לכם. אין מנוי חודשי, אין תשתית חדשה.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== BEFORE & AFTER COMPARISON ===================== -->
+  <section id="comparison" class="section split-section">
+    <div class="container">
+      <h2 class="section-title" data-animate>מוכנים לעבוד חכם יותר?</h2>
+      <p class="section-subtitle" data-animate>הפער בין ניהול ידני לניהול אוטומטי הוא עצום. הנה מה שמשתנה ברגע שעושים את
+        הצעד.
+      </p>
+
+      <div class="split-comparison" data-animate>
+        <div class="split-card problem-card">
+          <div class="split-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f85149" stroke-width="2" width="48" height="48">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <h3>איך זה נראה היום</h3>
+          <p>30 גיליונות אקסל מפוזרים, הזנת נתונים ידנית אינסופית, חוסר סנכרון בין מחלקות ודאטה שנזרק לפח כי אין זמן
+            לנתח אותו.</p>
+        </div>
+
+        <div class="split-card solution-card">
+          <div class="split-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-terminal)" stroke-width="2" width="48"
+              height="48">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+          </div>
+          <h3>איך זה נראה אחרי Systemize</h3>
+          <p>לחיצת כפתור אחת שמרכזת הכל. דשבורדים חיים שמתעדכנים לבד, סנכרון מלא בין המחסן להנהלה, ואפס טעויות אנוש.
+            השקט שלך מתחיל כאן.</p>
+        </div>
+      </div>
+
+      <div class="split-cta" data-animate>
+        <button class="btn btn-primary btn-lg"
+          onclick="document.getElementById('audit').scrollIntoView({behavior: 'smooth'})"
+          style="font-size: 1.15rem; padding: 18px 40px; font-weight: 600;">
+          אני מוכן לשדרג – בואו נתחיל
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== THE TRUE POWER OF EXCEL ===================== -->
+  <section id="power" class="section power-section">
+    <div class="container">
+      <h2 class="section-title" data-animate>הכוח האמיתי של Excel ו-VBA</h2>
+      <p class="section-subtitle" data-animate>לא מדובר בעוד טבלה יפה. מדובר בפלטפורמת פיתוח שמסוגלת לנהל עסקים שלמים
+        מקצה לקצה.</p>
+
+      <div class="true-power-grid">
+        <div class="true-power-card" data-animate>
+          <div class="tp-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+          </div>
+          <h3>אוטומציה מקצה לקצה</h3>
+          <p>המערכות שאני בונה מחברות עשרות תהליכים נפרדים לשרשרת אחת שרצה באופן עצמאי. לחיצת כפתור אחת מחליפה ימים
+            שלמים של איסוף נתונים ועיבודים שחורים.</p>
+        </div>
+        <div class="true-power-card" data-animate>
+          <div class="tp-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <h3>שילוב מערכות (API)</h3>
+          <p>האקסל מתחבר ל-Outlook, למערכות ה-CRM, לאתרי אינטרנט ואפילו ל-ERP שלכם. הוא שואב נתונים באופן עצמאי ומדווח
+            חזרה בלי שום מגע יד אדם.</p>
+        </div>
+        <div class="true-power-card" data-animate>
+          <div class="tp-icon-wrapper">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="3" y1="9" x2="21" y2="9"></line>
+              <line x1="9" y1="21" x2="9" y2="9"></line>
+            </svg>
+          </div>
+          <h3>ניהול בשליטה מלאה (Dashboards)</h3>
+          <p>זורקים את הגיליונות המבולגנים. עוברים לתצוגות מנהלים ברורות, חכמות ומלוטשות שגוזרות תובנות חדות מהדאטה
+            ההיסטורי של העסק. מידע נגיש ומהיר.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PORTFOLIO ===================== -->
+  <section id="portfolio" class="section portfolio-section">
+    <div class="container">
+      <h2 class="section-title" data-animate>פרויקטים נבחרים</h2>
+      <p class="section-subtitle" data-animate>הנה כמה דוגמאות לאוטומציות שבניתי לעסקים כמו שלך.</p>
+      <div class="portfolio-grid">
+
+        <div class="portfolio-card" data-animate>
+          <div class="portfolio-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" width="30" height="30">
+              <path d="M10 2v7.31"></path>
+              <path d="M14 9.3V1.99"></path>
+              <path d="M8.5 2h7"></path>
+              <path d="M14 9.3a6.5 6.5 0 1 1-4 0"></path>
+              <path d="M5.52 16h12.96"></path>
+            </svg>
+          </div>
+          <h3>מערכת ניהול מעבדה חכמה</h3>
+          <p>תזמון מדויק של תהליכי מעבדה, הפקת דוחות סטטיסטיים אוטומטיים להנהלה, ושליחת התראות מייל בזמן אמת על חריגות.
+          </p>
+          <div class="portfolio-tags">
+            <span class="tag">Excel</span>
+            <span class="tag">VBA</span>
+            <span class="tag">Outlook Automation</span>
+          </div>
+          <div class="portfolio-metric">
+            <span class="metric-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </span>
+            חסך ~15 שעות עבודה ידנית בשבוע
+          </div>
+        </div>
+
+        <div class="portfolio-card" data-animate>
+          <div class="portfolio-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#f472b6" stroke-width="2" width="30" height="30">
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+              </path>
+              <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+              <line x1="12" y1="22.08" x2="12" y2="12"></line>
+            </svg>
+          </div>
+          <h3>סנכרון שרשרת אספקה</h3>
+          <p>חיבור אוטומטי בין מחסן, פלנר ומרכיב, ניהול ובקרת מלאי של מאות פריטים ללא טעויות העתקה ידנית.</p>
+          <div class="portfolio-tags">
+            <span class="tag">Excel</span>
+            <span class="tag">VBA</span>
+            <span class="tag">Multi-sheet Sync</span>
+          </div>
+          <div class="portfolio-metric">
+            <span class="metric-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </span>
+            אפס טעויות מלאי מאז ההטמעה
+          </div>
+        </div>
+
+        <div class="portfolio-card" data-animate>
+          <div class="portfolio-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fcd34d" stroke-width="2" width="30" height="30">
+              <path
+                d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z">
+              </path>
+              <path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"></path>
+            </svg>
+          </div>
+          <h3>Data-Scraping ממיילים</h3>
+          <p>מערכת שקוראת נתונים ישירות מ-Outlook ומעדכנת דשבורד Excel חי, ללא העתקה ידנית, בזמן אמת.</p>
+          <div class="portfolio-tags">
+            <span class="tag">Power Query</span>
+            <span class="tag">Outlook</span>
+            <span class="tag">Live Dashboard</span>
+          </div>
+          <div class="portfolio-metric">
+            <span class="metric-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+              </svg>
+            </span>
+            חיסכון של שעה ורבע ביום לעובד
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WHY EXCEL ===================== -->
+  <section id="why-excel" class="section why-excel-section">
+    <div class="container">
+      <h2 class="section-title" data-animate>למה דווקא אקסל?</h2>
+      <p class="section-subtitle" data-animate>היתרון הלא הוגן של העסק שלך מול מערכות ענן יקרות (SaaS).</p>
+
+      <div class="power-grid">
+        <div class="power-card" data-animate>
+          <div class="power-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" width="36" height="36">
+              <line x1="12" y1="1" x2="12" y2="23"></line>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+          </div>
+          <h3>ללא עלות חודשית</h3>
+          <p>במערכות ענן משלמים תשלום חודשי על כל משתמש ועל כל חריגה. פה אתם <strong>משלמים פעם אחת בלבד</strong> על
+            הפיתוח. המערכת מותקנת על רישיונות ה-Office וה-Teams שכבר יש לארגון, כך שאתם רושמים החזר השקעה (ROI) שחברות
+            ענן יכולות רק לקנא בו.</p>
+        </div>
+
+        <div class="power-card" data-animate>
+          <div class="power-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" width="36" height="36">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <h3>אבטחת מידע ופרטיות</h3>
+          <p>המידע הרגיש של העסק – בין אם לקוחות, ספקים או מסדי נתונים פיננסיים – לא מדלף או "מטייל" בשרתים חיצוניים
+            ברחבי הרשת. <strong>הכל נשאר 'In-house' ובשליטה מוחלטת</strong> שלכם, על גבי הרשת המאובטחת שאושרה על ידי
+            ה-IT.</p>
+        </div>
+
+        <div class="power-card" data-animate>
+          <div class="power-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" width="36" height="36">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <h3>אפס התנגדויות עובדים (Zero Friction)</h3>
+          <p>מה הפחד הגדול מאוטומציה? החרדה וההתנגדויות של הצוות. עם הפתרון הזה, לא צריך ללמד איש מערכת חדשה ומעיקה.
+            כולם מכירים כבר Excel, ההבדל היחיד הוא שאני מצייד להם את סביבת העבודה המוכרת ב<strong>'כוחות על' הנסתרים
+              מאחורי הקלעים</strong>.</p>
+        </div>
+
+        <div class="power-card" data-animate>
+          <div class="power-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" width="36" height="36">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+              <rect x="9" y="9" width="6" height="6"></rect>
+              <line x1="9" y1="1" x2="9" y2="4"></line>
+              <line x1="15" y1="1" x2="15" y2="4"></line>
+              <line x1="9" y1="20" x2="9" y2="23"></line>
+              <line x1="15" y1="20" x2="15" y2="23"></line>
+              <line x1="20" y1="9" x2="23" y2="9"></line>
+              <line x1="20" y1="14" x2="23" y2="14"></line>
+              <line x1="1" y1="9" x2="4" y2="9"></line>
+              <line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+          </div>
+          <h3>לוגיקה וגמישות ללא גבולות</h3>
+          <p>בזמן שתוכנות מדף סוגרות עליכם עם תבניות קבועות "של מה שמותר", המנוע שאני מרכיב יודע לענות על שאלות ותרחישי
+            עיבוד דאטה שמורכבים רק לעסק שלכם. הוא עובד לוקאלי ועוצמתי ומספק לוגיקה שהרבה פעמים עולה על פתרונות יקרים
+            בהרבה.</p>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 56px;" data-animate>
+        <button class="btn btn-outline" onclick="document.getElementById('audit').scrollIntoView({behavior: 'smooth'})"
+          style="font-size: 1.1rem; padding: 16px 32px; border-color: var(--accent-excel); color: var(--accent-terminal);">
+          בואו נבדוק איך תשתית האקסל שיש לכם יכולה לעבוד בשבילכם ⟵
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SAAS VS EXCEL ===================== -->
+  <section id="saas-vs-excel" class="section saas-vs-excel-section">
+    <div class="container">
+      <h2 class="section-title" data-animate>הכלי הנכון למשימה הנכונה:<br>אקסל או מערכת ענן (SaaS)?</h2>
+      <p class="section-subtitle" data-animate>מערכות ענן (SaaS - כמו מאנדיי או סיילספורס) הן פלטפורמות מצוינות במודל
+        "שכירות" חודשית. אבל מתי הן הכרחיות, ומתי אקסל-אוטומטי הוא בבירור הצעד החכם והמשתלם ביותר לעסק?</p>
+
+      <div class="vs-table" data-animate>
+        <div class="vs-column vs-excel">
+          <div class="vs-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent-terminal)" stroke-width="2" width="32"
+              height="32">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <h3>מתי הפתרונות של Systemize לוקחים בגדול?</h3>
+          </div>
+          <ul class="vs-list">
+            <li><strong>ניהול תהליכי תפעול פנימיים:</strong> מושלם למחסנים, מעבדות, כספים ולוגיסטיקה קפדנית בה אין מקום
+              לפשרות.</li>
+            <li><strong>לוגיקה ספציפית בטירוף:</strong> כשהעסק צריך חישובים שחורגים מהתבנית הגנרית ודורשים פתרון שתפור
+              במדויק ב-100% למידות שלך.</li>
+            <li><strong>רצון בחיסכון מקסימלי:</strong> השקעה חד-פעמית בפיתוח. עוברים לשקט תעשייתי בלי דמי מנוי חודשיים
+              שחונקים לנצח.</li>
+            <li><strong>אבטחת מידע קפדנית:</strong> כשהנתונים והכספים חייבים להישאר In-house בתוך הרשת המומנית של העסק,
+              ולא מטיילים בשרתי ענן זרים.</li>
+          </ul>
+        </div>
+
+        <div class="vs-column vs-saas">
+          <div class="vs-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" width="32" height="32">
+              <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+            </svg>
+            <h3 style="color: var(--text-muted);">מתי כן כדאי ללכת על SaaS ענן?</h3>
+          </div>
+          <ul class="vs-list">
+            <li><strong>פורטל לקוחות חיצוני:</strong> כשצריך פלטפורמה אליה כל לקוח שלכם יוכל להתחבר עצמאית עם שם משתמש
+              וסיסמה אישיים.</li>
+            <li><strong>עריכה המונית במקביל:</strong> כשעשרות עובדים מכל רחבי הארץ חייבים להזין ולערוך נתונים לאותה שורת
+              פירוט בדיוק באותה השנייה.</li>
+            <li><strong>התמודדות עם Big Data:</strong> ניהול ושמירה של עשרות מיליוני רשומות בו-זמנית (כמו בחנות אי-קומרס
+              בינלאומית שפועלת מסביב לשעון).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="vs-footer" data-animate>
+        <p>אנחנו כאן כדי לעזור לכם לקבל את ההחלטה הטכנולוגית הנכונה והשקופה ביותר לעסק שלכם. עדיין לא בטוחים?</p>
+        <button class="btn btn-outline" onclick="document.getElementById('audit').scrollIntoView({behavior: 'smooth'})"
+          style="font-size: 1.1rem; border-color: var(--accent-excel); color: var(--accent-terminal);">
+          בואו נבדוק את ההתאמה בטרמינל שלנו ⟵
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== ABOUT ME ===================== -->
+  <section id="about" class="section about-section">
+    <div class="container">
+      <div class="about-grid center-about" data-animate>
+        <div class="about-text" style="grid-column: 1 / -1; text-align: center; max-width: 800px; margin: 0 auto;">
+          <h2 style="font-size: 2.5rem; margin-bottom: 24px;">שלום, אני מרלן.</h2>
+          <p style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 16px;">
+            אני חי ונושם אוטומציה, פותר בעיות וחושב מחוץ לקופסה. אני סטודנט לתואר ראשון במדעי המחשב ועובד בחברת הייטק.
+            עד היום, הפכתי כל תהליך עסקי משעמם ומונוטוני – למערכת אוטומטית עצמאית.
+          </p>
+          <p style="font-size: 1.15rem; line-height: 1.8; margin-bottom: 16px;">
+            המומחיות שלי היא לקחת תהליכים נגררים, להרחיב את היכולות שלהם ולהפוך אותם להרבה יותר מהירים, אפקטיביים
+            וחכמים. עם שליטה מוחלטת ב-Excel ו-VBA, אני בונה מערכות רציפות שעובדות מאחורי הקלעים כמו שעון שוויצרי – כשלכם
+            נשאר רק ללחוץ על כפתור אחד למקסימום תוצאות.
+          </p>
+          <p style="font-size: 1.25rem; font-weight: 500; color: var(--accent-terminal); margin-top: 32px;">
+            הכאב ראש שלכם הוא ההשראה שלי.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TERMINAL / AUDIT ===================== -->
+  <section id="audit" class="section audit-section">
+    <div class="container">
+      <div class="audit-header" data-animate style="text-align: center; margin-bottom: 40px;">
+        <h2 class="section-title">מוכנים להעלות את העסק על אוטומט?</h2>
+        <p class="section-subtitle">ספרו לטרמינל ממש כאן (או בחרו בווטסאפ) איפה שורף לכם - ואחזור אליכם עם אבחון מדויק.
+        </p>
+      </div>
+
+      <div class="terminal-wrapper" id="terminal-wrapper" data-animate style="max-width: 650px; margin: 0 auto;">
+        <div class="terminal" id="terminal" role="application" aria-label="טרמינל אינטראקטיבי">
+          <div class="terminal-titlebar">
+            <span class="terminal-dot dot-red"></span>
+            <span class="terminal-dot dot-yellow"></span>
+            <span class="terminal-dot dot-green"></span>
+            <span class="terminal-title">systemize - bash</span>
+          </div>
+          <div class="terminal-body" id="terminal-body">
+            <div id="terminal-output"></div>
+            <div class="terminal-input-line" id="terminal-input-line" style="display:none;">
+              <span class="terminal-prompt">❮&nbsp;</span>
+              <input type="text" id="terminal-input" class="terminal-input" autocomplete="off" autocorrect="off"
+                autocapitalize="off" spellcheck="false" aria-label="הקלד כאן" />
+              <span class="terminal-cursor" id="terminal-cursor">_</span>
+            </div>
+          </div>
+        </div>
+        <div class="terminal-restart" id="terminal-restart" style="display:none;">
+          <button class="btn btn-outline btn-sm" id="restart-btn" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <path d="M21 2v6h-6"></path>
+              <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+              <path d="M3 22v-6h6"></path>
+              <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+            </svg>
+            התחל מחדש
+          </button>
+        </div>
+        <p class="terminal-hint">
+          לא אוהב טפסים? שלח לי ישירות בוואטסאפ
+          <a href="https://wa.me/972544246057" target="_blank" rel="noopener" id="whatsapp-hint-link"
+            class="wa-icon-link">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PROCESS ===================== -->
+  <section id="process" class="section process-section">
+    <div class="container">
+      <h2 class="section-title" data-animate>תהליך העבודה</h2>
+      <p class="section-subtitle" data-animate>ארבעה שלבים פשוטים. בלי הפתעות.</p>
+      <div class="timeline">
+        <div class="timeline-step" data-animate>
+          <div class="step-number">①</div>
+          <h3>אבחון ראשוני (חינם)</h3>
+          <p>שיחת זום או טלפון קצרה. אני מבין את התהליך, שואל שאלות, ומזהה איפה הזמן הולך לאיבוד.</p>
+        </div>
+        <div class="timeline-connector"></div>
+        <div class="timeline-step" data-animate>
+          <div class="step-number">②</div>
+          <h3>הצעת פתרון</h3>
+          <p>תוך 24‑48 שעות אני שולח תכנית עבודה עם לוח זמנים ומחיר ברורים. בלי הפתעות.</p>
+        </div>
+        <div class="timeline-connector"></div>
+        <div class="timeline-step" data-animate>
+          <div class="step-number">③</div>
+          <h3>פיתוח ובדיקות</h3>
+          <p>בונה את המערכת ובודק אותה על נתונים אמיתיים שלך. אתה מעורב בתהליך ורואה הכל.</p>
+        </div>
+        <div class="timeline-connector"></div>
+        <div class="timeline-step" data-animate>
+          <div class="step-number">④</div>
+          <h3>מסירה והדרכה</h3>
+          <p>מוסר עם תיעוד והדרכה קצרה. תמיכה אחרי המסירה, לא נעלמים.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FAQ ===================== -->
+  <section id="faq" class="section faq-section">
+    <div class="container">
+      <h2 class="section-title" data-animate>שאלות ותשובות</h2>
+      <p class="section-subtitle" data-animate>הנה התשובות לשאלות שרוב הלקוחות שואלים.</p>
+      <div class="faq-list">
+        <div class="faq-item" data-animate>
+          <button class="faq-question">
+            <span>צריך לדעת Excel כדי להפעיל את המערכת?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer-wrapper">
+            <div class="faq-answer">
+              ממש לא. המערכות בנויות להיות חסינות ופשוטות. לרוב, העבודה שלך תסתכם בלחיצה על כפתור התנעה, ואני כבר דאגתי
+              לכל הלוגיקה וה-"מאחורי הקלעים".
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-animate>
+          <button class="faq-question">
+            <span>תוך כמה זמן נראה את התוצאות בעיניים?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer-wrapper">
+            <div class="faq-answer">
+              תלוי בגודל הפרויקט. פרויקטים ממוצעים לוקחים בין שבוע לשלושה שבועות. עם זאת, איפיון ואבחון מדויק יתבצעו
+              כמעט באותו היום שנדבר, כך שתדעו מיד איפה אנחנו עומדים וכמה זמן תחסכו.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-animate>
+          <button class="faq-question">
+            <span>מה קורה אם צצה תקלה בהמשך?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer-wrapper">
+            <div class="faq-answer">
+              אני לא נעלם עם קבלת התשלום אלא מלווה את ההטמעה. רוב המערכות שאני בונה יציבות לחלוטין. במידה ויהיה שינוי
+              כלשהו בפלטפורמות שלכם, אני תמיד כאן כדי לתקן או להתאים.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-animate>
+          <button class="faq-question">
+            <span>אתם יכולים להתממשק לתוכנות הקיימות (ERP / מערכות מלאי)?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer-wrapper">
+            <div class="faq-answer">
+              כן. רוב המערכות הקיימות היום, מ-Priority / פריוריטי, CRM, דרך Outlook ועד SharePoint - יודעות לדבר עם כלי
+              האוטומציה שאני בונה. הפיתוח מותאם לדרישות שלכם במדויק.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-animate>
+          <button class="faq-question">
+            <span>באיזה אופן מתבצע התמחור?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer-wrapper">
+            <div class="faq-answer">
+              כל אוטומציה מתומחרת לפי מורכבות וזמן עבודה - כל פרויקט והמידה שלו, במחיר Fixed וללא הפתעות. קחו בחשבון
+              ש<strong>שיחת הייעוץ הראשונית לפענוח הבעיה היא חינמית וללא שום התחייבות</strong> מצדכם.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-animate>
+          <button class="faq-question">
+            <span>זה עובד רק סביב Excel?</span>
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer-wrapper">
+            <div class="faq-answer">
+              Excel הוא נהדר לבסיס כיוון שלרוב הארגונים כבר יש אותו. עם זאת, במידת הצורך אני משלב Power Query, Power
+              Automate, סקריפטים ב-Python או מפתח Google Sheets Automation במיוחד כדי לספק לכם את הפתרון המושלם.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FINAL CTA ===================== -->
+  <section id="cta" class="section cta-section">
+    <div class="container">
+      <div class="cta-content" data-animate>
+        <h2>מוכן לראות כמה זמן אפשר לחסוך?</h2>
+        <p>הייעוץ הראשוני חינם ולא מחייב. הכי גרוע, תקבל תמונה ברורה של מה שניתן לשפר בעסק שלך.</p>
+        <div class="cta-buttons">
+          <a href="#hero" class="btn btn-primary" id="cta-terminal-btn">חזרה לטרמינל ↑</a>
+          <a href="https://wa.me/972544246057" target="_blank" rel="noopener" class="btn btn-outline"
+            id="cta-whatsapp-btn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+            WhatsApp
+          </a>
+          <a href="mailto:marlenk94@gmail.com" class="btn btn-outline" id="cta-email-btn">
+            <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18"
+              height="18">
+              <rect x="2" y="4" width="20" height="16" rx="2" />
+              <path d="M22 4L12 13 2 4" />
+            </svg>
+            אימייל ישיר
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer id="footer" class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-right">
+        <span>Systemize © 2025 | כל הזכויות שמורות</span>
+      </div>
+      <div class="footer-left">
+        <a href="https://linkedin.com/in/marlen-k" target="_blank" rel="noopener" aria-label="LinkedIn"
+          class="footer-social">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path
+              d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+          </svg>
+        </a>
+        <a href="https://wa.me/972544246057" target="_blank" rel="noopener" aria-label="WhatsApp" class="footer-social">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path
+              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+          </svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>נבנה עם ❤️ ו-Excel</span>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp FAB -->
+  <a href="https://wa.me/972544246057" target="_blank" rel="noopener" class="whatsapp-fab" id="whatsapp-fab"
+    aria-label="שלח הודעה בוואטסאפ">
+    <div class="fab-pulse"></div>
+    <svg viewBox="0 0 24 24" fill="white" width="28" height="28">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+    <span class="fab-tooltip">דברו איתי</span>
+  </a>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
