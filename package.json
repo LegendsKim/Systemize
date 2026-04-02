@@ -1,0 +1,28 @@
+{
+  "name": "systemize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LegendsKim/Systemize.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/LegendsKim/Systemize/issues"
+  },
+  "homepage": "https://github.com/LegendsKim/Systemize#readme",
+  "dependencies": {
+    "clean-css": "^5.3.3",
+    "fs-extra": "^11.3.4",
+    "html-minifier-terser": "^7.2.0",
+    "terser": "^5.46.1"
+  }
+}

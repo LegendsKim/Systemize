@@ -38,7 +38,7 @@
   animateElements.forEach((el) => observer.observe(el));
 
   // ─── SMOOTH SCROLL ANCHORS ────────────────────────────────
-  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+  document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach((a) => {
     a.addEventListener('click', (e) => {
       const targetId = a.getAttribute('href');
       const target = document.querySelector(targetId);
@@ -355,16 +355,167 @@
 
   // ─── FAQ ACCORDION ─────────────────────────────────────────
   document.querySelectorAll('.faq-question').forEach((question) => {
-    question.addEventListener('click', () => {
+    question.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent native instant open/close
       const item = question.closest('.faq-item');
+      const isClosing = item.classList.contains('active');
       
-      // Close all other items
+      // Close all other items cleanly
       document.querySelectorAll('.faq-item').forEach((other) => {
-        if (other !== item) other.classList.remove('active');
+        if (other !== item && other.classList.contains('active')) {
+          other.classList.remove('active');
+          setTimeout(() => other.removeAttribute('open'), 400); // 400ms CSS var(--ease-spring)
+        }
       });
       
       // Toggle current item
-      item.classList.toggle('active');
+      if (isClosing) {
+        item.classList.remove('active');
+        setTimeout(() => item.removeAttribute('open'), 400);
+      } else {
+        item.setAttribute('open', '');
+        // Force reflow and add active to trigger CSS animation
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          item.classList.add('active');
+        }));
+      }
+    });
+  });
+
+  // ─── LEGAL MODALS ──────────────────────────────────────────
+  const modalLinks = document.querySelectorAll('.legal-link');
+  const modals = document.querySelectorAll('.legal-modal');
+  const modalOverlay = document.getElementById('modal-overlay');
+  const closeBtns = document.querySelectorAll('.modal-close');
+
+  function openModal(id) {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+    modalOverlay.classList.add('active');
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAllModals() {
+    modalOverlay.classList.remove('active');
+    modals.forEach(m => m.classList.remove('active'));
+    document.body.style.overflow = '';
+  }
+
+  modalLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = link.getAttribute('data-modal');
+      openModal(targetId);
+    });
+  });
+
+  closeBtns.forEach(btn => {
+    btn.addEventListener('click', closeAllModals);
+  });
+
+  if (modalOverlay) {
+    modalOverlay.addEventListener('click', closeAllModals);
+  }
+
+  // ─── CUSTOM ACCESSIBILITY PANEL ──────────────────────────
+  const a11yBtn = document.getElementById('customA11yBtn');
+  const a11yPanel = document.getElementById('customA11yPanel');
+  const closeA11yBtn = document.getElementById('closeA11yBtn');
+
+  // Accessibility action → body class mapping
+  const a11yMap = {
+    'contrast':        'a11y-high-contrast',
+    'text-size':       'a11y-large-text',
+    'font':            'a11y-readable-font',
+    'animations':      'a11y-no-animations',
+    'highlight-links': 'a11y-highlight-links',
+    'big-cursor':      'a11y-big-cursor'
+  };
+
+  // Load persisted state from localStorage
+  const savedA11y = JSON.parse(localStorage.getItem('systemize_a11y') || '{}');
+  Object.entries(savedA11y).forEach(([action, active]) => {
+    if (active && a11yMap[action]) {
+      document.body.classList.add(a11yMap[action]);
+    }
+  });
+
+  // Sync toggle button active states on load
+  function syncToggleStates() {
+    document.querySelectorAll('.a11y-toggle[data-action]').forEach(btn => {
+      const action = btn.dataset.action;
+      if (action === 'reset') return;
+      const current = JSON.parse(localStorage.getItem('systemize_a11y') || '{}');
+      btn.classList.toggle('active', !!current[action]);
+    });
+  }
+  syncToggleStates();
+
+  // Open / Close panel
+  if (a11yBtn && a11yPanel) {
+    a11yBtn.addEventListener('click', () => {
+      a11yPanel.classList.toggle('hidden');
+    });
+  }
+  if (closeA11yBtn && a11yPanel) {
+    closeA11yBtn.addEventListener('click', () => {
+      a11yPanel.classList.add('hidden');
+    });
+  }
+
+  // Close panel when clicking outside
+  document.addEventListener('click', (e) => {
+    if (a11yPanel && !a11yPanel.classList.contains('hidden')) {
+      if (!a11yPanel.contains(e.target) && e.target !== a11yBtn && !a11yBtn.contains(e.target)) {
+        a11yPanel.classList.add('hidden');
+      }
+    }
+  });
+
+  // Accessibility Statement link — opens the legal modal
+  const a11yStatementLink = document.querySelector('.a11y-statement-link[data-modal]');
+  if (a11yStatementLink) {
+    a11yStatementLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetId = a11yStatementLink.getAttribute('data-modal');
+      if (typeof openModal === 'function') {
+        openModal(targetId);
+      } else {
+        // Fallback: directly manipulate modal
+        const modal = document.getElementById(targetId);
+        const overlay = document.getElementById('modal-overlay');
+        if (modal) modal.classList.add('active');
+        if (overlay) overlay.classList.add('active');
+      }
+      a11yPanel.classList.add('hidden');
+    });
+  }
+
+  // Toggle actions
+  document.querySelectorAll('.a11y-toggle[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+
+      // Reset handler
+      if (action === 'reset') {
+        Object.values(a11yMap).forEach(cls => document.body.classList.remove(cls));
+        localStorage.removeItem('systemize_a11y');
+        syncToggleStates();
+        return;
+      }
+
+      // Toggle individual setting
+      const bodyClass = a11yMap[action];
+      if (!bodyClass) return;
+
+      const isActive = document.body.classList.toggle(bodyClass);
+      btn.classList.toggle('active', isActive);
+
+      // Persist
+      const current = JSON.parse(localStorage.getItem('systemize_a11y') || '{}');
+      current[action] = isActive;
+      localStorage.setItem('systemize_a11y', JSON.stringify(current));
     });
   });
 
