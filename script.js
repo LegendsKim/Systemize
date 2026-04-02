@@ -1,5 +1,5 @@
 /* ============================================================
-   SYSTEMIZE — Interactive Excel Form & Page Logic
+   SYSTEMIZE — Blueprint Interface & Page Logic
    ============================================================ */
 
 (function () {
@@ -100,257 +100,160 @@
     });
   }
 
-  // ─── INLINE EXCEL FORM LOGIC ───────────────────────────────
-  const excelContainer = document.getElementById('excel-container');
-  const fxCell = document.getElementById('fx-cell');
-  const fxText = document.getElementById('fx-text');
-  const excelInputs = document.querySelectorAll('.eg-input, .eg-select, .eg-textarea');
-  const submitBtn = document.getElementById('excel-submit-btn');
-  const submitTextSpan = document.getElementById('excel-submit-text');
-  const vbaOverlay = document.getElementById('vba-overlay');
-  const successMessage = document.getElementById('success-message');
-  const outlookScene = document.getElementById('outlook-scene');
-  const sendingText = document.getElementById('sending-text');
-  const bgTyping = document.getElementById('bg-typing');
-
-  // Background VBA Typing Loop
-  if (bgTyping) {
-    const codeSnippet = `Public Function AutomateBusiness(data As Range) As Boolean\n  On Error GoTo ErrorHandler\n  Dim cell As Range\n  For Each cell In data\n    If IsEmpty(cell) Then\n      Debug.Print "Missing data"\n    End If\n  Next cell\n  AutomateBusiness = True\n  Exit Function\nErrorHandler:\n  AutomateBusiness = False\nEnd Function\nSub SyncToCloud()\n  Dim http As Object\n  Set http = CreateObject("MSXML2.XMLHTTP")\n  http.Open "POST", endpoint, False\n  http.setRequestHeader "Content-Type", "application/json"\n  http.send jsonPayload\nEnd Sub\n`;
-    
-    let typeIndex = 0;
-    setInterval(() => {
-      if (typeIndex >= codeSnippet.length) typeIndex = 0;
-      bgTyping.textContent += codeSnippet[typeIndex];
-      // Keep only last 800 chars to avoid memory issues
-      if (bgTyping.textContent.length > 800) {
-        bgTyping.textContent = bgTyping.textContent.slice(bgTyping.textContent.length - 800);
-      }
-      typeIndex++;
-    }, 40); // speed
-  }
-
-  // ─── GEOMETRIC NETWORK CANVAS (section background) ────────────
-  const matrixCanvas = document.getElementById('matrix-rain-canvas');
-  if (matrixCanvas) {
-    const ctx = matrixCanvas.getContext('2d');
-    const section = matrixCanvas.parentElement;
-
-    function resizeCanvas() {
-      matrixCanvas.width = section.offsetWidth;
-      matrixCanvas.height = section.offsetHeight;
-    }
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-
-    // Particles (nodes)
-    const particleCount = 60;
-    const connectionDist = 150;
-    const particles = [];
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push({
-        x: Math.random() * matrixCanvas.width,
-        y: Math.random() * matrixCanvas.height,
-        vx: (Math.random() - 0.5) * 0.6,
-        vy: (Math.random() - 0.5) * 0.6,
-        r: 1.5 + Math.random() * 1.5,
-      });
-    }
-
-    function drawNetwork() {
-      ctx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-
-      // Update & draw particles
-      for (let i = 0; i < particles.length; i++) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-
-        // Bounce off walls
-        if (p.x < 0 || p.x > matrixCanvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > matrixCanvas.height) p.vy *= -1;
-
-        // Draw dot
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(46, 204, 113, 0.6)';
-        ctx.fill();
-
-        // Draw connections
-        for (let j = i + 1; j < particles.length; j++) {
-          const p2 = particles[j];
-          const dx = p.x - p2.x;
-          const dy = p.y - p2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < connectionDist) {
-            const opacity = (1 - dist / connectionDist) * 0.25;
-            ctx.beginPath();
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.strokeStyle = 'rgba(46, 204, 113, ' + opacity + ')';
-            ctx.lineWidth = 0.8;
-            ctx.stroke();
-          }
-        }
-      }
-
-      requestAnimationFrame(drawNetwork);
-    }
-
-    drawNetwork();
-  }
-
-  // Cell Focus & Input Logic
-  excelInputs.forEach(input => {
-    const parentCell = input.closest('.eg-cell');
-    
-    // On focus: update formula bar and cell styling
-    input.addEventListener('focus', () => {
-      // Remove focus from all
-      document.querySelectorAll('.focused-cell').forEach(c => c.classList.remove('focused-cell'));
-      if (parentCell) {
-        parentCell.classList.add('focused-cell');
-        // Update FX Bar
-        const cellRef = parentCell.getAttribute('data-cell') || '';
-        const formula = parentCell.getAttribute('data-formula') || '';
-        if (fxCell) fxCell.textContent = cellRef;
-        if (fxText) fxText.textContent = formula;
-      }
-    });
-
-    // On blur: remove focus style
-    input.addEventListener('blur', () => {
-      if (parentCell) parentCell.classList.remove('focused-cell');
-    });
-
-    // On input/change: conditional formatting
-    const updateFilledState = () => {
-      if (!parentCell) return;
-      const val = input.value.trim();
-      parentCell.classList.remove('filled-cell');
-      parentCell.classList.remove('error-cell');
-
-      if (val !== '') {
-        // Validation check
-        let isError = false;
-        if (input.type === 'email') {
-          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) isError = true;
-        } else if (input.type === 'tel') {
-          const phone = val.replace(/[-\s]/g, '');
-          if (!/^0[0-9]{8,9}$/.test(phone) && !/^\+?972[0-9]{8,9}$/.test(phone)) isError = true;
-        }
-
-        if (isError) {
-          parentCell.classList.add('error-cell');
-        } else {
-          parentCell.classList.add('filled-cell');
-        }
-      }
-    };
-    // Trigger validation only after finishing typing (on blur/change)
-    input.addEventListener('blur', updateFilledState);
-    input.addEventListener('change', updateFilledState);
-  });
-
-  // ─── VBA MACRO ANIMATION AND SUBMIT ────────────────────────
-  function generateVBA() {
-    return `Sub SystemizeAudit()
-    Dim ws As Worksheet
-    Set ws = ThisWorkbook.Sheets("Audit")
-    Dim lr As Long
-    lr = ws.Cells(Rows.Count, 1).End(xlUp).Row + 1
-    
-    ws.Cells(lr, 1).Value = Now
-    ws.Cells(lr, 2).Value = ClientData(1)
-    ws.Cells(lr, 3).Value = ClientData(2)
-    ws.Cells(lr, 4).Value = ClientData(3)
-    ws.Cells(lr, 5).Value = EvaluateProblems()
-    
-    Call SendWebhookData(ws.Range(Cells(lr,1), Cells(lr,5)))
-    Application.ScreenUpdating = True
-End Sub`.split('\n');
-  }
-
-  async function sleep(ms) {
-    return new Promise(r => setTimeout(r, ms));
-  }
+  // ─── BLUEPRINT FORM LOGIC ───────────────────────────────
+  const blueprintContainer = document.getElementById('blueprint-container');
+  const blueprintFlow = document.getElementById('blueprint-flow');
+  const blueprintSuccess = document.getElementById('blueprint-success');
+  const executeBtn = document.getElementById('execute-btn');
+  const executeText = document.getElementById('execute-text');
+  const nodeInputs = document.querySelectorAll('.node-input');
 
   // Record page load time for anti-spam timing check
   const formLoadTime = Date.now();
 
-  if (submitBtn) {
-    submitBtn.addEventListener('click', async () => {
-      // ─── ANTI-SPAM CHECKS ───────────────────────────────────
-      // 1. Honeypot: if the hidden field is filled, it's a bot
+  // ─── Node Focus & Validation ──────────────────────────────
+  nodeInputs.forEach(input => {
+    const node = input.closest('.blueprint-node');
+
+    input.addEventListener('focus', () => {
+      // Remove active from all nodes
+      document.querySelectorAll('.blueprint-node.node-active').forEach(n => n.classList.remove('node-active'));
+      if (node) node.classList.add('node-active');
+    });
+
+    input.addEventListener('blur', () => {
+      if (node) {
+        node.classList.remove('node-active');
+        validateNode(input, node);
+      }
+    });
+
+    // Connector pulse on input
+    input.addEventListener('input', () => {
+      triggerConnectorPulse(node);
+    });
+
+    input.addEventListener('change', () => {
+      if (node) validateNode(input, node);
+    });
+  });
+
+  function validateNode(input, node) {
+    const val = input.value.trim();
+    node.classList.remove('node-valid', 'node-error');
+
+    if (val === '') return;
+
+    let isError = false;
+    if (input.type === 'email') {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) isError = true;
+    } else if (input.type === 'tel') {
+      const phone = val.replace(/[-\s]/g, '');
+      if (!/^0[0-9]{8,9}$/.test(phone) && !/^\+?972[0-9]{8,9}$/.test(phone)) isError = true;
+    }
+
+    node.classList.add(isError ? 'node-error' : 'node-valid');
+  }
+
+  // ─── Connector Pulse Logic ────────────────────────────────
+  function triggerConnectorPulse(node) {
+    if (!node) return;
+    const row = node.closest('.blueprint-row');
+    if (!row) return;
+
+    // Pulse horizontal connector in the same row
+    const hTrack = row.querySelector('.connector-track');
+    if (hTrack && !hTrack.classList.contains('pulsing')) {
+      hTrack.classList.add('pulsing');
+      setTimeout(() => hTrack.classList.remove('pulsing'), 800);
+    }
+
+    // Pulse vertical connector after this row
+    const nextEl = row.nextElementSibling;
+    if (nextEl && nextEl.classList.contains('node-connector-v')) {
+      const vTrack = nextEl.querySelector('.connector-track-v');
+      if (vTrack && !vTrack.classList.contains('pulsing')) {
+        vTrack.classList.add('pulsing');
+        setTimeout(() => vTrack.classList.remove('pulsing'), 700);
+      }
+    }
+  }
+
+  // ─── Helpers ──────────────────────────────────────────────
+  async function sleep(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
+
+  // ─── Submit Flow ──────────────────────────────────────────
+  if (executeBtn) {
+    executeBtn.addEventListener('click', async () => {
+      // ── Anti-spam checks ──
       const honeypot = document.getElementById('hp-field');
       if (honeypot && honeypot.value !== '') {
-        console.log('[Systemize] Bot detected (honeypot)');
-        // Fake success to not alert bots
-        submitBtn.disabled = true;
-        if (submitTextSpan) submitTextSpan.textContent = 'Done';
+        executeBtn.disabled = true;
+        if (executeText) executeText.textContent = 'DONE';
         return;
       }
-      // 2. Timing: if submitted in under 3 seconds, likely bot
       if (Date.now() - formLoadTime < 3000) {
-        console.log('[Systemize] Bot detected (too fast)');
-        submitBtn.disabled = true;
-        if (submitTextSpan) submitTextSpan.textContent = 'Done';
+        executeBtn.disabled = true;
+        if (executeText) executeText.textContent = 'DONE';
         return;
       }
-      // ────────────────────────────────────────────────────────
 
+      // ── Gather values ──
       const nameVal = document.getElementById('ex-name')?.value || '';
       const emailVal = document.getElementById('ex-email')?.value || '';
       const phoneVal = document.getElementById('ex-phone')?.value || '';
       const painVal = document.getElementById('ex-pain')?.value || '';
       const sourceVal = document.getElementById('ex-source')?.value || '';
 
+      // ── Validate all fields filled ──
       if (!nameVal || !emailVal || !phoneVal || !painVal || !sourceVal) {
-        alert('יש למלא את כל השדות בגיליון.');
+        nodeInputs.forEach(input => {
+          const n = input.closest('.blueprint-node');
+          if (n && !input.value.trim()) {
+            n.classList.add('node-error');
+            setTimeout(() => n.classList.remove('node-error'), 2000);
+          }
+        });
         return;
       }
 
-      const hasError = document.querySelector('.error-cell');
-      if (hasError) {
-        alert('ישנם שדות עם פרטים לא תקינים (סומנו באדום). אנא תקן אותם לפני השליחה.');
-        return;
-      }
+      // ── Check for validation errors ──
+      const hasError = document.querySelector('.blueprint-node.node-error');
+      if (hasError) return;
 
-      // Payload
+      // ── Payload (same as before) ──
       const payload = {
         name: nameVal,
         email: emailVal,
         phone: phoneVal,
         pain_point: painVal,
         source: sourceVal,
-        origin: 'systemize.co.il (Excel Inline)',
+        origin: 'systemize.co.il (Blueprint)',
         timestamp: new Date().toISOString()
       };
 
-      // 1. Loading Text Makeover
-      submitBtn.disabled = true;
-      submitTextSpan.textContent = 'מייצר פקודת מאקרו...';
+      // ── STEP 1: Compiling animation ──
+      executeBtn.disabled = true;
+      executeText.textContent = 'COMPILING...';
 
-      // 2. Show VBA Overlay Matrix
-      if (vbaOverlay) {
-        vbaOverlay.innerHTML = '';
-        vbaOverlay.classList.add('active');
-        
-        const vbaLines = generateVBA();
-        for (let i = 0; i < vbaLines.length; i++) {
-          const lineDiv = document.createElement('div');
-          lineDiv.className = 'vba-line';
-          lineDiv.textContent = vbaLines[i];
-          // Stagger the animation timing to make it drop fast
-          lineDiv.style.animationDelay = `${i * 0.05}s`;
-          vbaOverlay.appendChild(lineDiv);
-        }
+      // Lock nodes sequentially
+      const allNodes = document.querySelectorAll('.blueprint-node');
+      for (let i = 0; i < allNodes.length; i++) {
+        allNodes[i].classList.add('node-locked');
+        await sleep(120);
       }
 
-      // Wait for Matrix to fall
-      await sleep(1000);
+      // Pulse ALL connectors simultaneously
+      document.querySelectorAll('.connector-track, .connector-track-v').forEach(t => {
+        t.classList.add('pulsing');
+      });
 
-      // ─── SEND TO API ──────────────────────────────────────────
+      await sleep(400);
+      executeText.textContent = 'TRANSMITTING...';
+
+      // ── STEP 2: Send to API ──
       let sendSuccess = false;
       try {
         const response = await fetch(API_ENDPOINT, {
@@ -358,127 +261,97 @@ End Sub`.split('\n');
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-
         const result = await response.json().catch(() => ({}));
-
-        if (response.ok && result.ok) {
-          sendSuccess = true;
-        } else {
-          console.error('[Systemize] API error:', result);
-        }
+        if (response.ok && result.ok) sendSuccess = true;
+        else console.error('[Systemize] API error:', result);
       } catch (err) {
         console.error('[Systemize] Network error:', err);
       }
 
-      // ─── HANDLE FAILURE ───────────────────────────────────────
+      // Clear connector pulses
+      document.querySelectorAll('.connector-track, .connector-track-v').forEach(t => {
+        t.classList.remove('pulsing');
+      });
+
+      // ── STEP 3: Handle result ──
       if (!sendSuccess) {
-        // Show error in the Excel UI (formula bar turns into an error cell)
-        if (fxText) fxText.textContent = '#ERROR! שגיאת תקשורת במאקרו — נסו שוב';
-        if (fxCell) fxCell.textContent = 'ERR';
-
-        // Hide VBA overlay
-        if (vbaOverlay) {
-          vbaOverlay.classList.remove('active');
-          vbaOverlay.innerHTML = '';
-        }
-
-        // Re-enable submit so user can retry
-        submitBtn.disabled = false;
-        if (submitTextSpan) submitTextSpan.textContent = 'Run Macro';
-        return; // stop – do NOT show success animation
+        executeText.textContent = 'ERROR // RETRY';
+        executeBtn.disabled = false;
+        allNodes.forEach(n => n.classList.remove('node-locked'));
+        return;
       }
 
-      // 3. Outlook Send Animation Sequence (only on success)
-      if (excelContainer) {
-        excelContainer.classList.add('excel-dissolve');
-      }
-      
-      await sleep(300);
+      // ── STEP 4: Success — "System Initialized" terminal animation ──
+      executeText.textContent = 'SUCCESS';
+      await sleep(400);
 
-      if (successMessage && outlookScene) {
-        successMessage.classList.add('active'); // shows overlay text wrapper
-        outlookScene.classList.add('active');
-        
-        const sendingStatus = document.getElementById('sending-status');
-        const resetContainer = document.getElementById('reset-form-container');
+      if (blueprintSuccess) {
+        blueprintSuccess.classList.add('active');
+        const terminal = document.getElementById('success-terminal');
+        const lines = [
+          { text: '> Initializing Systemize engine...', cls: '' },
+          { text: '> Validating input parameters... OK', cls: 'line-ok' },
+          { text: '> Compiling automation blueprint...', cls: '' },
+          { text: '> User: ' + nameVal, cls: 'line-data' },
+          { text: '> Contact: ' + emailVal, cls: 'line-data' },
+          { text: '> Establishing secure channel...', cls: '' },
+          { text: '> Transmitting data payload... OK', cls: 'line-ok' },
+          { text: '> Lead registered successfully', cls: 'line-ok' },
+          { text: '> Notification dispatched', cls: 'line-ok' },
+          { text: '', cls: '' },
+          { text: '> SYSTEM_STATUS: ONLINE', cls: 'line-ok' },
+        ];
 
-        // Step 1: Outlook envelope pops in, file drops in
-        outlookScene.classList.add('step-1');
-        await sleep(1000);
-        
-        // Step 2: Flap closes
-        outlookScene.classList.add('step-2');
-        if (sendingStatus) sendingStatus.textContent = 'שולח...';
-        await sleep(500);
-
-        // Step 3: Envelope flies away
-        outlookScene.classList.add('step-3');
-        await sleep(800);
-        
-        // Final: warm success text + reset button
-        outlookScene.style.display = 'none';
-        if (sendingStatus) {
-          sendingStatus.textContent = '';
+        if (terminal) {
+          for (let i = 0; i < lines.length; i++) {
+            const div = document.createElement('div');
+            div.className = 'term-line' + (lines[i].cls ? ' ' + lines[i].cls : '');
+            div.textContent = lines[i].text;
+            div.style.animationDelay = (i * 0.12) + 's';
+            terminal.appendChild(div);
+            await sleep(130);
+          }
         }
-        if (resetContainer) {
-          resetContainer.style.display = 'block';
-        }
-      }
 
+        await sleep(600);
+        const successMsg = document.getElementById('success-msg');
+        if (successMsg) successMsg.style.display = 'block';
+      }
     });
   }
 
-  // ─── RESET FORM ───────────────────────────────────────────
-  const resetBtn = document.getElementById('reset-excel-btn');
-  if (resetBtn) {
-    resetBtn.addEventListener('click', () => {
+  // ─── Reset Blueprint Form ─────────────────────────────────
+  const resetBlueprintBtn = document.getElementById('reset-blueprint-btn');
+  if (resetBlueprintBtn) {
+    resetBlueprintBtn.addEventListener('click', () => {
       // Clear all inputs
-      excelInputs.forEach(input => {
+      nodeInputs.forEach(input => {
         if (input.tagName === 'SELECT') {
           input.selectedIndex = 0;
         } else {
           input.value = '';
         }
-        const cell = input.closest('.eg-cell');
-        if (cell) {
-          cell.classList.remove('filled-cell', 'error-cell');
-        }
+        const n = input.closest('.blueprint-node');
+        if (n) n.classList.remove('node-valid', 'node-error', 'node-locked', 'node-active');
       });
 
-      // Reset formula bar
-      if (fxCell) fxCell.textContent = 'A1';
-      if (fxText) fxText.textContent = '';
-
-      // Reset container visibility
-      if (excelContainer) {
-        excelContainer.classList.remove('excel-dissolve');
-      }
-      if (successMessage) {
-        successMessage.classList.remove('active');
-      }
-      const outlookEl = document.getElementById('outlook-scene');
-      if (outlookEl) {
-        outlookEl.classList.remove('active', 'step-1', 'step-2', 'step-3');
-        outlookEl.style.display = '';
-      }
-      const resetCont = document.getElementById('reset-form-container');
-      if (resetCont) resetCont.style.display = 'none';
-      const statusEl = document.getElementById('sending-status');
-      if (statusEl) statusEl.textContent = '';
-
-      // Reset VBA overlay
-      if (vbaOverlay) {
-        vbaOverlay.classList.remove('active');
-        vbaOverlay.innerHTML = '';
+      // Hide success overlay
+      if (blueprintSuccess) {
+        blueprintSuccess.classList.remove('active');
+        const terminal = document.getElementById('success-terminal');
+        if (terminal) terminal.innerHTML = '';
+        const successMsg = document.getElementById('success-msg');
+        if (successMsg) successMsg.style.display = 'none';
       }
 
-      // Re-enable submit
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        if (submitTextSpan) submitTextSpan.textContent = 'Run Macro';
+      // Re-enable execute button
+      if (executeBtn) {
+        executeBtn.disabled = false;
+        if (executeText) executeText.textContent = 'RUN_MACRO()';
       }
     });
   }
+
 
   // ─── FAQ ACCORDION ─────────────────────────────────────────
   document.querySelectorAll('.faq-question').forEach((question) => {

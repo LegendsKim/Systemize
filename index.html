@@ -48,20 +48,19 @@
       <div class="grid-cell active-cell"></div>
     </div>
 
-    <div class="container hero-container"
-      style="display: flex; gap: 40px; align-items: center; max-width: 1000px; margin: 0 auto; z-index: 1;">
-      <div class="hero-content" data-animate style="text-align: right; flex: 1;">
+    <div class="container hero-container">
+      <div class="hero-content" data-animate>
         <h1>הופכים את ה-Excel למערכת חכמה שעובדת <strong>בשבילכם</strong></h1>
         <p class="hero-subtitle">אוטומציה עסקית, ייעול תהליכים וחיסכון בעשרות שעות של משימות חזרתיות. בואו נבדוק איפה
           העסק שלכם שורף זמן יקר.</p>
-        <div class="cta-buttons hero-ctas" style="margin-top: 32px; justify-content: flex-start;">
-          <a href="#audit" class="btn btn-primary magnetic-btn" id="hero-cta-btn" style="padding: 16px 32px; font-size: 1.05rem;">קבלו אבחון חינם</a>
-          <a href="#power" class="btn btn-outline" style="padding: 16px 32px; font-size: 1.05rem;">גלו מה אפשר לעשות
+        <div class="cta-buttons hero-ctas">
+          <a href="#audit" class="btn btn-primary magnetic-btn" id="hero-cta-btn">קבלו אבחון חינם</a>
+          <a href="#power" class="btn btn-outline">גלו מה אפשר לעשות
             ↓</a>
         </div>
       </div>
 
-      <div class="hero-visual" data-animate style="flex: 1; display: flex; justify-content: center;">
+      <div class="hero-visual" data-animate>
         <div class="excel-bot-animation" style="position: relative; width: 280px; height: 280px;">
           <div class="bot-core">
             <svg viewBox="0 0 24 24" fill="var(--accent-excel)" width="96" height="96">
@@ -505,145 +504,140 @@
     </div>
   </section>
 
-  <!-- ===================== TERMINAL / AUDIT ===================== -->
-  <section id="audit" class="section audit-section" style="position: relative; overflow: hidden;">
-    <!-- Matrix Rain Canvas for entire section -->
-    <canvas id="matrix-rain-canvas" class="matrix-rain-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.12;pointer-events:none;"></canvas>
-    <div class="container" style="position: relative; z-index: 1;">
+  <!-- ===================== BLUEPRINT / AUDIT ===================== -->
+  <section id="audit" class="section audit-section">
+    <div class="container">
       <div class="audit-header" data-animate style="text-align: center; margin-bottom: 40px;">
         <h2 class="section-title">בואו נדבר על האוטומציה שלכם</h2>
-        <p class="section-subtitle">מלאו את הפרטים בגיליון למטה – ואחזור אליכם לשיחה קצרה בתוך 24 שעות.</p>
+        <p class="section-subtitle">הגדירו את הפרמטרים במערכת למטה – ואחזור אליכם לשיחה קצרה בתוך 24 שעות.</p>
       </div>
 
-      <div class="inline-audit-wrapper" id="inline-audit-wrapper" data-animate>
-        <div class="success-message-overlay" id="success-message">
-          <div class="outlook-scene" id="outlook-scene">
-            <div class="outlook-attachment" id="outlook-attachment">
-              <svg viewBox="0 0 24 24" fill="#217346" width="40" height="40">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8" stroke="#fff" fill="none" stroke-width="2"></polyline>
-                <text x="7" y="16" fill="#fff" font-size="5" font-family="Segoe UI, sans-serif" font-weight="bold">XLSX</text>
-              </svg>
-            </div>
-            <div class="outlook-envelope" id="outlook-envelope">
-              <div class="envelope-back"></div>
-              <div class="envelope-paper"></div>
-              <div class="envelope-front">
-                <div class="envelope-icon">
-                   <svg viewBox="0 0 24 24" fill="#0078D4" width="24" height="24">
-                     <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 6h16v1l-8 4.25L4 7V6zm16 12H4V8l8 4.25L20 8v10z"></path>
-                   </svg>
-                </div>
-              </div>
-              <div class="envelope-flap" id="envelope-flap"></div>
-            </div>
-          </div>
-          <div class="sending-text" id="sending-text">
-            <span id="sending-status">מכין את הגיליון לשליחה...</span>
-            <div id="reset-form-container" style="display: none; margin-top: 20px;">
-              <p style="color: #e2e8f0; font-size: 1.2rem; margin-bottom: 16px;">שמח שהחלטתם ליצור קשר, נדבר בקרוב :)</p>
-              <button class="btn btn-outline" id="reset-excel-btn" style="font-size: 0.9rem; padding: 8px 16px; border-color: var(--accent-excel); color: var(--accent-terminal); cursor: pointer;">
-                שלח פניה נוספת
-              </button>
-            </div>
+      <div class="blueprint-container" id="blueprint-container" data-animate>
+        <!-- Scanning line ambient effect -->
+        <div class="blueprint-scanline"></div>
+
+        <!-- Success Overlay -->
+        <div class="blueprint-success" id="blueprint-success">
+          <div class="success-terminal" id="success-terminal"></div>
+          <div class="success-message" id="success-msg" style="display:none;">
+            <p class="success-title">SYSTEM_INITIALIZED</p>
+            <p class="success-sub">שמח שהחלטתם ליצור קשר, נדבר בקרוב :)</p>
+            <button class="btn btn-outline" id="reset-blueprint-btn"
+              style="border-color: var(--accent-excel); color: var(--accent-terminal); cursor: pointer;">
+              הגדר מערכת חדשה
+            </button>
           </div>
         </div>
-        <div class="inline-excel-container" id="excel-container">
-          <!-- Top Bar -->
-          <div class="excel-topbar">
-            <div class="excel-topbar-title">
-              <svg viewBox="0 0 24 24" fill="#fff" width="18" height="18">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <path d="M8.5 12h2l1.5 2.5L13.5 12h2l-2.5 3.5 2.5 3.5h-2l-1.5-2.5-1.5 2.5h-2l2.5-3.5Z" fill="#217346"></path>
-              </svg>
-              Systemize_Audit.xlsx
+
+        <!-- Blueprint Flow -->
+        <div class="blueprint-flow" id="blueprint-flow">
+
+          <!-- Row 1: Name + Email -->
+          <div class="blueprint-row">
+            <div class="blueprint-node" data-node="1" id="node-name">
+              <div class="node-header">
+                <span class="node-index">01</span>
+                <span class="node-label">SET_USER_NAME()</span>
+              </div>
+              <input type="text" class="node-input" id="ex-name" placeholder="שם מלא / חברה" required>
+              <div class="node-status-bar"></div>
+            </div>
+
+            <div class="node-connector-h">
+              <div class="connector-track"><div class="connector-pulse"></div></div>
+            </div>
+
+            <div class="blueprint-node" data-node="2" id="node-email">
+              <div class="node-header">
+                <span class="node-index">02</span>
+                <span class="node-label">FETCH_CONTACT_EMAIL()</span>
+              </div>
+              <input type="email" class="node-input" id="ex-email" placeholder="name@domain.com" required>
+              <div class="node-status-bar"></div>
             </div>
           </div>
 
-          <!-- Formula Bar -->
-          <div class="excel-formula-bar">
-            <div class="excel-formula-address" id="fx-cell">B2</div>
-            <div class="excel-fx-icon">fx</div>
-            <div class="excel-formula-input-display" id="fx-text">=YOUR_NAME</div>
+          <!-- Vertical Connector -->
+          <div class="node-connector-v">
+            <div class="connector-track-v"><div class="connector-pulse-v"></div></div>
           </div>
 
-          <!-- Grid -->
-          <div class="excel-grid">
-            <!-- VBA Overlay -->
-            <div class="vba-matrix-overlay" id="vba-overlay"></div>
-
-            <!-- Headers -->
-            <div class="eg-header row-num" style="background:#fff; border-top: 1px solid #d2d0ce;"></div>
-            <div class="eg-header" style="border-top: 1px solid #d2d0ce;">A</div>
-            <div class="eg-header" style="border-top: 1px solid #d2d0ce;">B</div>
-
-            <!-- Row 1: Name -->
-            <div class="eg-header row-num">1</div>
-            <div class="eg-cell label-cell">שם מלא / חברה</div>
-            <div class="eg-cell input-wrap-cell" data-cell="B1" data-formula="=YOUR_NAME">
-              <input type="text" class="eg-input" id="ex-name" placeholder="הזן טקסט..." required>
+          <!-- Row 2: Phone + Source -->
+          <div class="blueprint-row">
+            <div class="blueprint-node" data-node="3" id="node-phone">
+              <div class="node-header">
+                <span class="node-index">03</span>
+                <span class="node-label">SET_PHONE_NUM()</span>
+              </div>
+              <input type="tel" class="node-input" id="ex-phone" placeholder="050-000-0000" required>
+              <div class="node-status-bar"></div>
             </div>
 
-            <!-- Row 2: Email -->
-            <div class="eg-header row-num">2</div>
-            <div class="eg-cell label-cell">כתובת אימייל</div>
-            <div class="eg-cell input-wrap-cell" data-cell="B2" data-formula="=VALIDATE_EMAIL(INPUT)">
-              <input type="email" class="eg-input" id="ex-email" placeholder="name@domain.com" required>
+            <div class="node-connector-h">
+              <div class="connector-track"><div class="connector-pulse"></div></div>
             </div>
 
-            <!-- Row 3: Phone -->
-            <div class="eg-header row-num">3</div>
-            <div class="eg-cell label-cell">טלפון ליצירת קשר</div>
-            <div class="eg-cell input-wrap-cell" data-cell="B3" data-formula="=CONTACT_PHONE_NUM">
-              <input type="tel" class="eg-input" id="ex-phone" placeholder="הזן מספר..." required>
-            </div>
-
-            <!-- Row 4: Text Area -->
-            <div class="eg-header row-num">4</div>
-            <div class="eg-cell label-cell textarea-cell">איך אוכל לעזור?</div>
-            <div class="eg-cell input-wrap-cell textarea-cell" data-cell="B4" data-formula="=TEXTJOIN(\",\", TRUE, PAIN_POINTS)">
-              <textarea class="eg-textarea" id="ex-pain" placeholder="מה תרצה לייעל/לשפר?" required></textarea>
-            </div>
-
-            <!-- Row 5: Field -->
-            <div class="eg-header row-num">5</div>
-            <div class="eg-cell label-cell">איך הגעת אלינו?</div>
-            <div class="eg-cell input-wrap-cell" data-cell="B5" data-formula="=VLOOKUP(SOURCE, LIST, 1, FALSE)">
-              <select class="eg-select" id="ex-source" required>
-                <option value="" disabled selected>בחר מהרשימה ↓</option>
-                <option value="לינקדאין">לינקדאין</option>
-                <option value="המלצה">המלצה מבקש</option>
-                <option value="פייסבוק">פייסבוק</option>
-                <option value="חיפוש/אחר">אחר</option>
+            <div class="blueprint-node" data-node="4" id="node-source">
+              <div class="node-header">
+                <span class="node-index">04</span>
+                <span class="node-label">GET_REFERRAL_SRC()</span>
+              </div>
+              <select class="node-input node-select" id="ex-source" name="source" required>
+                <option value="" disabled selected>איך הגעתם אליי? ▾</option>
+                <option value="google">חיפוש בגוגל</option>
+                <option value="ai">המלצת AI (ChatGPT/Gemini/Claude)</option>
+                <option value="linkedin">לינקדאין (LinkedIn)</option>
+                <option value="friend">חבר / המלצה אישית</option>
+                <option value="social">פייסבוק / אינסטגרם</option>
+                <option value="whatsapp">קבוצת וואטסאפ</option>
+                <option value="other">אחר...</option>
               </select>
-            </div>
-
-            <!-- Honeypot (anti-spam, hidden from real users) -->
-            <div style="position:absolute;left:-9999px;" aria-hidden="true">
-              <input type="text" name="company_website" id="hp-field" tabindex="-1" autocomplete="off">
-            </div>
-            
-          </div>
-
-          <!-- Submit Footer -->
-          <div class="excel-footer">
-            <div style="display:flex; align-items:center; gap:16px; width:100%; justify-content:space-between; flex-wrap: wrap;">
-              <button class="excel-submit-btn" id="excel-submit-btn">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                </svg>
-                <span id="excel-submit-text">Run Macro</span>
-              </button>
-              <span class="form-trust-line">🔒 הפרטים שלכם מאובטחים ולא נשלחים לאף צד שלישי.</span>
+              <div class="node-status-bar"></div>
             </div>
           </div>
+
+          <!-- Vertical Connector -->
+          <div class="node-connector-v">
+            <div class="connector-track-v"><div class="connector-pulse-v"></div></div>
+          </div>
+
+          <!-- Row 3: Pain Point (full width) -->
+          <div class="blueprint-row single">
+            <div class="blueprint-node wide" data-node="5" id="node-pain">
+              <div class="node-header">
+                <span class="node-index">05</span>
+                <span class="node-label">DESCRIBE_PAIN_POINTS()</span>
+              </div>
+              <textarea class="node-input node-textarea" id="ex-pain" placeholder="מה תרצה לייעל / לשפר?" required></textarea>
+              <div class="node-status-bar"></div>
+            </div>
+          </div>
+
+          <!-- Vertical Connector to Execute -->
+          <div class="node-connector-v execute-connector">
+            <div class="connector-track-v"><div class="connector-pulse-v"></div></div>
+          </div>
+
+          <!-- Master Execute Node -->
+          <div class="master-node-wrapper">
+            <button class="master-node" id="execute-btn">
+              <span class="master-icon">&#9654;</span>
+              <span class="master-label" id="execute-text">RUN_MACRO()</span>
+            </button>
+            <span class="blueprint-trust">&#128274; הפרטים שלכם מאובטחים ולא נשלחים לאף צד שלישי.</span>
+          </div>
+
+        </div>
+
+        <!-- Honeypot (anti-spam, hidden from real users) -->
+        <div style="position:absolute;left:-9999px;" aria-hidden="true">
+          <input type="text" name="company_website" id="hp-field" tabindex="-1" autocomplete="off">
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ===================== PROCESS ===================== -->
+<!-- ===================== PROCESS ===================== -->
   <section id="process" class="section process-section">
     <div class="container">
       <h2 class="section-title" data-animate>תהליך העבודה</h2>
@@ -770,7 +764,7 @@
         <h2>מוכן לראות כמה זמן אפשר לחסוך?</h2>
         <p>הייעוץ הראשוני חינם ולא מחייב. הכי גרוע, תקבל תמונה ברורה של מה שניתן לשפר בעסק שלך.</p>
         <div class="cta-buttons">
-          <a href="#audit" class="btn btn-primary" id="cta-terminal-btn">חזרה לגיליון ↑</a>
+          <a href="#audit" class="btn btn-primary" id="cta-terminal-btn">הגדירו את המערכת ↑</a>
           <a href="https://wa.me/972544246057" target="_blank" rel="noopener" class="btn btn-outline"
             id="cta-whatsapp-btn">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">

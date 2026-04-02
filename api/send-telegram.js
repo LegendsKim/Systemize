@@ -82,5 +82,7 @@ export default async function handler(req, res) {
 // ── Helpers ──────────────────────────────────────────────────
 function escapeMarkdown(text) {
   if (!text) return '';
-  return String(text).replace(/([_*\[\]()~`>#+\-=|{}.!\\])/g, '\\$1');
+  // In Telegram's legacy 'Markdown' mode, only _, *, `, and [ need escaping.
+  // Escaping other characters like dots (.) or hyphens (-) will cause the backslash to be visible.
+  return String(text).replace(/([_*`\[])/g, '\\$1');
 }

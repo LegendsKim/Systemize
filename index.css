@@ -201,14 +201,79 @@ img {
   overflow: hidden;
 }
 
-/* Hero Content */
+/* Hero Container & Flex Layout */
+.hero-container {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  max-width: 1000px;
+  margin: 0 auto;
+  z-index: 1;
+  position: relative;
+}
+
 .hero-content {
-  text-align: center;
+  text-align: right;
+  flex: 1;
   position: relative;
   z-index: 1;
-  max-width: 800px;
-  padding: 0 20px;
-  margin-bottom: 48px;
+}
+
+.hero-ctas {
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.hero-ctas a {
+  padding: 16px 32px;
+  font-size: 1.05rem;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-visual {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive adjustments for the hero */
+@media (max-width: 768px) {
+  .hero-container {
+    flex-direction: column;
+    text-align: center;
+    gap: 30px;
+    padding-top: 10px;
+  }
+  
+  .hero-content {
+    text-align: center;
+    padding: 0;
+  }
+  
+  .hero-ctas {
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-ctas a {
+    width: 100%;
+  }
+  
+  .hero-visual {
+    transform: scale(0.85);
+    margin-top: -20px;
+  }
+  
+  .hero-section {
+    padding-bottom: 60px;
+  }
 }
 
 .hero-content h1 {
@@ -1963,525 +2028,625 @@ body::after {
 }
 
 /* ============================================================
-   INLINE EXCEL
+   BLUEPRINT NODE INTERFACE
    ============================================================ */
-.inline-excel-container {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  background: #ffffff;
-  color: #000000;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  transition: opacity 1.5s var(--ease-out), filter 1.5s var(--ease-out), transform 1.5s var(--ease-out);
-}
 
-.excel-dissolve {
-  opacity: 0;
-  filter: blur(10px) brightness(1.5);
-  transform: scale(0.9);
-  pointer-events: none;
-}
-
-.inline-audit-wrapper {
+/* Blueprint Container */
+.blueprint-container {
   position: relative;
-  max-width: 720px;
+  max-width: 800px;
   margin: 0 auto;
-  padding: 40px;
-  background: linear-gradient(145deg, rgba(33, 115, 70, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
-  border: 1px solid rgba(46, 204, 113, 0.2);
-  border-radius: 20px;
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(33, 115, 70, 0.1);
+  padding: 48px 40px;
+  background:
+    radial-gradient(circle at 1px 1px, rgba(46, 204, 113, 0.06) 1px, transparent 0),
+    linear-gradient(135deg, rgba(8, 12, 16, 0.98) 0%, rgba(12, 18, 24, 0.98) 100%);
+  background-size: 28px 28px, 100% 100%;
+  border: 1px solid rgba(46, 204, 113, 0.15);
+  border-radius: 12px;
+  box-shadow:
+    0 0 80px rgba(46, 204, 113, 0.04),
+    0 30px 60px rgba(0, 0, 0, 0.5),
+    inset 0 0 80px rgba(0, 0, 0, 0.3);
   overflow: hidden;
 }
 
-.matrix-rain-canvas {
+/* Scanning line ambient effect */
+.blueprint-scanline {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  opacity: 0.12;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(46, 204, 113, 0.03) 20%,
+    rgba(46, 204, 113, 0.08) 50%,
+    rgba(46, 204, 113, 0.03) 80%,
+    transparent 100%);
+  animation: scanline 6s ease-in-out infinite;
   pointer-events: none;
-  border-radius: 20px;
+  z-index: 10;
 }
 
-.inline-excel-container {
+@keyframes scanline {
+  0%, 100% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ─── Blueprint Flow ─── */
+.blueprint-flow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
   position: relative;
   z-index: 2;
 }
 
-.success-message-overlay {
+/* ─── Node Row ─── */
+.blueprint-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+}
+
+.blueprint-row.single {
+  justify-content: center;
+}
+
+/* ─── Blueprint Node ─── */
+.blueprint-node {
+  flex: 1;
+  position: relative;
+  background: rgba(8, 14, 20, 0.9);
+  border: 1px solid rgba(46, 204, 113, 0.18);
+  border-radius: 3px;
+  padding: 20px 20px 10px;
+  transition: all 0.35s ease;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Corner bracket accents */
+.blueprint-node::before,
+.blueprint-node::after {
+  content: '';
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  width: 14px;
+  height: 14px;
+  transition: all 0.35s ease;
+  pointer-events: none;
+}
+
+.blueprint-node::before {
+  top: -1px;
+  right: -1px;
+  border-top: 2px solid rgba(46, 204, 113, 0.35);
+  border-right: 2px solid rgba(46, 204, 113, 0.35);
+}
+
+.blueprint-node::after {
+  bottom: -1px;
+  left: -1px;
+  border-bottom: 2px solid rgba(46, 204, 113, 0.35);
+  border-left: 2px solid rgba(46, 204, 113, 0.35);
+}
+
+.blueprint-node.wide {
+  max-width: 100%;
+  width: 100%;
+}
+
+/* ─── Node States ─── */
+.blueprint-node.node-active {
+  border-color: rgba(46, 204, 113, 0.5);
+  box-shadow:
+    0 0 25px rgba(46, 204, 113, 0.08),
+    inset 0 0 25px rgba(46, 204, 113, 0.02);
+}
+.blueprint-node.node-active::before,
+.blueprint-node.node-active::after {
+  border-color: rgba(46, 204, 113, 0.8);
+  width: 18px;
+  height: 18px;
+}
+
+.blueprint-node.node-valid {
+  border-color: rgba(46, 204, 113, 0.35);
+}
+.blueprint-node.node-valid .node-status-bar {
+  background: var(--accent-terminal);
+  box-shadow: 0 0 10px rgba(46, 204, 113, 0.4);
+}
+.blueprint-node.node-valid::before,
+.blueprint-node.node-valid::after {
+  border-color: rgba(46, 204, 113, 0.5);
+}
+
+.blueprint-node.node-error {
+  border-color: rgba(248, 81, 73, 0.45);
+  animation: node-shake 0.4s ease;
+}
+.blueprint-node.node-error::before,
+.blueprint-node.node-error::after {
+  border-color: rgba(248, 81, 73, 0.6);
+}
+.blueprint-node.node-error .node-status-bar {
+  background: #f85149;
+  box-shadow: 0 0 10px rgba(248, 81, 73, 0.4);
+}
+
+@keyframes node-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+.blueprint-node.node-locked {
+  border-color: rgba(46, 204, 113, 0.5);
+  box-shadow: 0 0 20px rgba(46, 204, 113, 0.1);
+}
+.blueprint-node.node-locked .node-status-bar {
+  background: var(--accent-terminal);
+  animation: status-fill 0.4s ease-out forwards;
+}
+.blueprint-node.node-locked .node-input {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+@keyframes status-fill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* ─── Node Header ─── */
+.node-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  direction: ltr;
+  text-align: left;
+}
+
+.node-index {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.68rem;
+  color: rgba(46, 204, 113, 0.4);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.node-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.72rem;
   color: var(--accent-terminal);
-  font-size: 1.5rem;
-  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+/* ─── Node Inputs ─── */
+.node-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  padding: 11px 14px;
+  font-family: 'Rubik', sans-serif;
+  font-size: 0.92rem;
+  color: #e2e8f0;
+  outline: none;
+  transition: all 0.25s ease;
+  direction: rtl;
+}
+
+.node-input::placeholder {
+  color: rgba(255, 255, 255, 0.45);
+  font-family: 'Rubik', sans-serif;
+}
+
+.node-input:focus {
+  border-color: rgba(46, 204, 113, 0.3);
+  background: rgba(46, 204, 113, 0.025);
+  box-shadow: inset 0 0 15px rgba(46, 204, 113, 0.03);
+}
+
+.node-select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232ecc71' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 14px center;
+  padding-left: 32px;
+}
+
+.node-select option {
+  background: #0d1117;
+  color: #e2e8f0;
+}
+
+.node-textarea {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.6;
+}
+
+/* ─── Node Status Bar ─── */
+.node-status-bar {
+  height: 2px;
+  margin-top: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 1px;
+  transition: all 0.4s ease;
+}
+
+/* ─── Connectors — Horizontal ─── */
+.node-connector-h {
+  display: flex;
+  align-items: center;
+  width: 40px;
+  min-width: 40px;
+  position: relative;
+}
+
+.connector-track {
+  width: 100%;
+  height: 2px;
+  background: rgba(46, 204, 113, 0.12);
+  position: relative;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+/* Idle ambient pulse */
+.connector-track::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(46, 204, 113, 0.12), transparent);
+  animation: idle-pulse-h 5s ease-in-out infinite;
+}
+
+@keyframes idle-pulse-h {
+  0% { left: -40%; }
+  50% { left: 100%; }
+  50.01%, 100% { left: -40%; opacity: 0; }
+}
+
+.connector-pulse {
+  position: absolute;
+  top: 0;
+  left: -30%;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #3b82f6, #60a5fa, transparent);
+  opacity: 0;
+}
+
+.connector-track.pulsing .connector-pulse {
+  opacity: 1;
+  animation: data-pulse-h 0.7s ease-in-out;
+}
+
+@keyframes data-pulse-h {
+  0% { left: -30%; }
+  100% { left: 100%; }
+}
+
+/* ─── Connectors — Vertical ─── */
+.node-connector-v {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: 28px;
+  position: relative;
+}
+
+.connector-track-v {
+  width: 2px;
+  height: 100%;
+  background: rgba(46, 204, 113, 0.12);
+  position: relative;
+  overflow: hidden;
+  border-radius: 1px;
+}
+
+/* Idle ambient pulse vertical */
+.connector-track-v::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -40%;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(180deg, transparent, rgba(46, 204, 113, 0.12), transparent);
+  animation: idle-pulse-v 4s ease-in-out infinite;
+}
+
+@keyframes idle-pulse-v {
+  0% { top: -40%; }
+  50% { top: 100%; }
+  50.01%, 100% { top: -40%; opacity: 0; }
+}
+
+.connector-pulse-v {
+  position: absolute;
+  left: 0;
+  top: -30%;
+  width: 100%;
+  height: 30%;
+  background: linear-gradient(180deg, transparent, #3b82f6, #60a5fa, transparent);
+  opacity: 0;
+}
+
+.connector-track-v.pulsing .connector-pulse-v {
+  opacity: 1;
+  animation: data-pulse-v 0.6s ease-in-out;
+}
+
+@keyframes data-pulse-v {
+  0% { top: -30%; }
+  100% { top: 100%; }
+}
+
+/* ─── Master Execute Node ─── */
+.master-node-wrapper {
   text-align: center;
+  width: 100%;
+}
+
+.master-node {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(46, 204, 113, 0.06);
+  border: 2px solid rgba(46, 204, 113, 0.35);
+  border-radius: 4px;
+  padding: 16px 44px;
+  font-family: 'Fira Code', monospace;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent-terminal);
+  cursor: pointer;
+  transition: all 0.35s ease;
+  position: relative;
+  direction: ltr;
+  animation: master-glow 3s ease-in-out infinite;
+  letter-spacing: 0.03em;
+}
+
+.master-node::before,
+.master-node::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  transition: all 0.3s ease;
+}
+.master-node::before {
+  top: -2px;
+  right: -2px;
+  border-top: 2px solid rgba(46, 204, 113, 0.5);
+  border-right: 2px solid rgba(46, 204, 113, 0.5);
+}
+.master-node::after {
+  bottom: -2px;
+  left: -2px;
+  border-bottom: 2px solid rgba(46, 204, 113, 0.5);
+  border-left: 2px solid rgba(46, 204, 113, 0.5);
+}
+
+.master-node:hover {
+  background: rgba(46, 204, 113, 0.12);
+  border-color: rgba(46, 204, 113, 0.7);
+  box-shadow: 0 0 40px rgba(46, 204, 113, 0.12);
+  transform: translateY(-2px);
+}
+.master-node:hover::before,
+.master-node:hover::after {
+  width: 22px;
+  height: 22px;
+  border-color: rgba(46, 204, 113, 0.8);
+}
+
+.master-node:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  animation: none;
+  transform: none;
+}
+
+@keyframes master-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+  50% { box-shadow: 0 0 25px 4px rgba(46, 204, 113, 0.06); }
+}
+
+.master-icon {
+  font-size: 0.85rem;
+  filter: drop-shadow(0 0 4px rgba(46, 204, 113, 0.4));
+}
+
+.master-label {
+  pointer-events: none;
+}
+
+.blueprint-trust {
+  display: block;
+  margin-top: 16px;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.25);
+  direction: rtl;
+}
+
+/* ─── Success Overlay ─── */
+.blueprint-success {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 12, 16, 0.96);
+  z-index: 50;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 1s ease-in;
-  z-index: 50;
-  width: 80%;
-  max-width: 500px;
+  transition: opacity 0.6s ease;
+  border-radius: 12px;
 }
-.success-message-overlay.active {
+
+.blueprint-success.active {
   opacity: 1;
   pointer-events: auto;
 }
 
-.sending-text {
-  text-align: center;
+.success-terminal {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82rem;
   color: var(--accent-terminal);
-  font-size: 1.3rem;
-  font-weight: 500;
-}
-
-/* Excel Top Bar */
-.excel-topbar {
-  background: #217346;
-  color: #fff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 16px;
-  font-size: 0.95rem;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-}
-
-.excel-topbar-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.excel-close-btn {
-  background: none;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  font-size: 1.5rem;
-  line-height: 1;
-  opacity: 0.8;
-  transition: opacity 0.2s;
-  padding: 0 8px;
-  display: none; /* Not needed for inline, but keep for structure */
-}
-
-/* Formula Bar */
-.excel-formula-bar {
-  background: #f3f2f1;
-  border-bottom: 1px solid #d2d0ce;
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  direction: ltr; /* formula bar layout LTR typically even in RTL UI, but we'll do RTL for consistency */
-}
-
-.excel-fx-icon {
-  color: #605e5c;
-  font-style: italic;
-  font-weight: 700;
-  font-family: 'Times New Roman', serif;
-  font-size: 1.1rem;
-}
-
-.excel-formula-address {
-  background: #fff;
-  border: 1px solid #c8c6c4;
-  padding: 2px 8px;
-  font-size: 0.9rem;
-  color: #323130;
-  min-width: 50px;
-  text-align: center;
-  font-weight: 500;
-}
-
-.excel-formula-input-display {
-  flex: 1;
-  background: #fff;
-  border: 1px solid #c8c6c4;
-  padding: 2px 8px;
-  font-size: 0.9rem;
-  color: #323130;
-  min-height: 26px;
-  display: flex;
-  align-items: center;
-  font-family: 'Fira Code', monospace;
-  position: relative;
-  overflow: hidden;
-}
-
-/* Grid Area (RTL style) */
-.excel-grid {
-  background: #fff;
-  display: grid;
-  grid-template-columns: 40px 1.2fr 1.8fr;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  border-bottom: 1px solid #d2d0ce;
-  direction: rtl; 
-  position: relative; /* For VBA Overlay */
-}
-
-/* Grid headers */
-.eg-header {
-  background: #f3f2f1;
-  border-left: 1px solid #d2d0ce;
-  border-bottom: 1px solid #d2d0ce;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.85rem;
-  color: #605e5c;
-  font-weight: 500;
-  user-select: none;
-  min-height: 48px;
-}
-.eg-header.row-num {
-  border-left: 2px solid #d2d0ce; 
-}
-
-/* Cells */
-.eg-cell {
-  border-left: 1px solid #e1dfdd;
-  border-bottom: 1px solid #e1dfdd;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  font-size: 0.95rem;
-  color: #000;
-  background: #fff;
-  transition: background-color 0.2s;
-  min-height: 48px;
-  position: relative;
-}
-
-.eg-cell.label-cell {
-  background: #faf9f8;
-  color: #323130;
-  font-weight: 500;
-  align-items: flex-start;
-  padding-top: 13px;
-}
-
-.eg-cell.textarea-cell {
-  align-items: flex-start;
-  padding-top: 13px;
-}
-
-/* Inputs */
-.eg-input, .eg-select, .eg-textarea {
-  width: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-family: inherit;
-  font-size: 0.95rem;
-  color: #000;
-  padding: 0 0 0 24px; /* padding-left to leave room for V / X */
-}
-
-.eg-select {
-  appearance: none;
-  cursor: pointer;
-}
-
-.eg-textarea {
-  resize: vertical;
-  min-height: 90px;
-  line-height: 1.4;
-}
-
-/* Cell Focus & Filled states */
-.eg-cell.focused-cell {
-  box-shadow: inset 0 0 0 2px #217346;
-  position: relative;
-  z-index: 10;
-}
-.eg-cell.filled-cell {
-  background-color: #eafbea; /* Conditional formatting */
-}
-.eg-cell.filled-cell::after {
-  content: '✓';
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #217346;
-  font-size: 0.85rem;
-  font-weight: bold;
-}
-.eg-cell.textarea-cell.filled-cell::after {
-  top: 23px; /* Adjust for textarea height */
-}
-
-.eg-cell.filled-cell input, .eg-cell.filled-cell select, .eg-cell.filled-cell textarea {
-  background-color: transparent !important;
-}
-
-/* Error Formatting */
-.eg-cell.error-cell {
-  background-color: #fde8e8;
-}
-.eg-cell.error-cell::after {
-  content: '!';
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #c53030;
-  font-size: 0.9rem;
-  font-weight: bold;
-}
-.eg-cell.error-cell input, .eg-cell.error-cell select, .eg-cell.error-cell textarea {
-  background-color: transparent !important;
-  color: #c53030;
-}
-
-/* VBA Overlay Animation */
-.vba-matrix-overlay {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(13, 17, 23, 0.94);
-  color: #2ecc71;
-  font-family: 'Fira Code', monospace;
-  font-size: 0.85rem;
-  padding: 15px;
-  box-sizing: border-box;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-  z-index: 20;
-  direction: ltr; /* Code is typically LTR */
   text-align: left;
-  overflow: hidden;
-  box-shadow: inset 0 0 20px rgba(46, 204, 113, 0.2);
-}
-.vba-matrix-overlay.active {
-  opacity: 1;
+  direction: ltr;
+  max-width: 440px;
+  width: 100%;
+  padding: 0 24px;
+  line-height: 1.7;
 }
 
-.vba-line {
-  white-space: pre;
+.success-terminal .term-line {
+  margin-bottom: 3px;
   opacity: 0;
-  transform: translateY(-5px);
-  animation: fall-in 0.15s forwards;
-  margin-bottom: 2px;
+  transform: translateY(5px);
+  animation: term-appear 0.3s forwards;
+}
+.success-terminal .term-line.line-ok {
+  color: rgba(46, 204, 113, 0.8);
+}
+.success-terminal .term-line.line-data {
+  color: rgba(59, 130, 246, 0.7);
 }
 
-@keyframes fall-in {
+@keyframes term-appear {
   to { opacity: 1; transform: translateY(0); }
 }
 
-/* Submit Area */
-.excel-footer {
-  background: #f3f2f1;
-  padding: 16px;
-  display: flex;
-  justify-content: flex-end;
+.success-message {
+  text-align: center;
+  margin-top: 24px;
+  animation: term-appear 0.5s ease forwards;
+}
+
+.success-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 1.4rem;
+  color: var(--accent-terminal);
+  font-weight: 600;
+  margin-bottom: 12px;
+  text-shadow: 0 0 20px rgba(46, 204, 113, 0.3);
+}
+
+.success-sub {
+  font-size: 1.1rem;
+  color: #e2e8f0;
+  margin-bottom: 20px;
   direction: rtl;
 }
 
-.excel-submit-btn {
-  background: #217346;
-  color: #fff;
-  border: none;
-  padding: 10px 24px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 4px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: background 0.2s, transform 0.1s;
-}
-
-.excel-submit-btn:hover {
-  background: #1e6b41;
-}
-
-.excel-submit-btn:active {
-  transform: scale(0.98);
-}
-
-.excel-submit-btn:disabled {
-  background: #a0a0a0;
-  cursor: not-allowed;
-}
-
-.form-trust-line {
-  font-size: 0.78rem;
-  color: #8b8b8b;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  .inline-audit-wrapper {
-    padding: 20px 10px;
-    border-radius: 12px;
+/* ─── Blueprint Mobile ─── */
+@media (max-width: 700px) {
+  .blueprint-container {
+    padding: 24px 16px;
+    border-radius: 8px;
   }
-  .excel-grid {
-    grid-template-columns: 30px 110px 1fr;
+
+  .blueprint-row {
+    flex-direction: column;
+    gap: 0;
   }
-  .eg-cell {
-    font-size: 0.9rem;
-    padding: 0 6px;
+
+  /* Horizontal connectors become vertical on mobile */
+  .node-connector-h {
+    width: 100%;
+    min-width: unset;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
   }
-  .excel-formula-bar {
-    padding: 6px 8px;
-    gap: 8px;
+
+  .node-connector-h .connector-track {
+    width: 2px;
+    height: 100%;
   }
-  .excel-formula-address, .excel-formula-input-display {
-    font-size: 0.8rem;
+
+  .node-connector-h .connector-track::after {
+    width: 100%;
+    height: 40%;
+    top: -40%;
+    left: 0;
+    background: linear-gradient(180deg, transparent, rgba(46, 204, 113, 0.12), transparent);
+    animation: idle-pulse-v 4s ease-in-out infinite;
+  }
+
+  .node-connector-h .connector-pulse {
+    width: 100%;
+    height: 30%;
+    left: 0;
+    top: -30%;
+    background: linear-gradient(180deg, transparent, #3b82f6, #60a5fa, transparent);
+  }
+
+  .node-connector-h .connector-track.pulsing .connector-pulse {
+    animation: data-pulse-v 0.6s ease-in-out;
+  }
+
+  .master-node {
+    width: 100%;
+    padding: 16px 24px;
+    font-size: 0.88rem;
+  }
+
+  .node-label {
+    font-size: 0.65rem;
+  }
+
+  .success-terminal {
+    font-size: 0.72rem;
+    padding: 0 16px;
+  }
+
+  .success-title {
+    font-size: 1.15rem;
   }
 }
 
-/* ============================================================
-   OUTLOOK SEND ANIMATION
-   ============================================================ */
-.outlook-scene {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 20px;
-  perspective: 1000px;
-  display: none;
-}
-.outlook-scene.active {
-  display: block;
+@media (max-width: 380px) {
+  .blueprint-container {
+    padding: 16px 10px;
+  }
+
+  .blueprint-node {
+    padding: 16px 14px 8px;
+  }
+
+  .node-label {
+    font-size: 0.6rem;
+  }
+
+  .node-input {
+    font-size: 0.85rem;
+    padding: 9px 10px;
+  }
 }
 
-.outlook-attachment {
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 3;
-  opacity: 0;
-}
-
-.outlook-envelope {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 80px;
-  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
-  opacity: 0;
-}
-
-.envelope-back {
-  position: absolute;
-  inset: 0;
-  background: #005a9e; /* Darker Outlook blue */
-  border-radius: 4px;
-}
-
-.envelope-paper {
-  position: absolute;
-  top: 10px; left: 10px; right: 10px; bottom: 10px;
-  background: #fff;
-  border-radius: 2px;
-}
-
-.envelope-front {
-  position: absolute;
-  inset: 0;
-  background: #0078d4; /* Outlook Blue */
-  clip-path: polygon(0 0, 50% 50%, 100% 0, 100% 100%, 0 100%);
-  border-radius: 4px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding-bottom: 10px;
-  z-index: 4;
-}
-
-.envelope-icon {
-  background: #fff;
-  border-radius: 50%;
-  padding: 4px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.envelope-flap {
-  position: absolute;
-  top: 0; left: 0; right: 0; height: 100%;
-  background: #2b88d8; /* Lighter blue */
-  clip-path: polygon(0 0, 100% 0, 50% 50%);
-  transform-origin: top;
-  z-index: 5;
-  transition: transform 0.4s ease-in;
-}
-
-/* Steps for animation */
-.outlook-scene.step-1 .outlook-envelope {
-  animation: popIn 0.5s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.outlook-scene.step-1 .outlook-attachment {
-  animation: fileDrop 0.6s 0.2s forwards ease-in-out;
-}
-.outlook-scene.step-2 .envelope-flap {
-  transform: rotateX(180deg);
-}
-.outlook-scene.step-3 .outlook-envelope {
-  animation: flyAway 0.8s forwards cubic-bezier(0.6, -0.28, 0.735, 0.045);
-}
-.outlook-scene.step-3 .outlook-attachment {
-  display: none; /* inside envelope */
-}
-
-@keyframes popIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(50px) scale(0.5); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
-}
-
-@keyframes fileDrop {
-  0% { opacity: 0; transform: translateX(-50%) translateY(-60px) scale(2); }
-  50% { opacity: 1; transform: translateX(-50%) translateY(-20px) scale(1); z-index: 3; }
-  100% { opacity: 1; transform: translateX(-50%) translateY(20px) scale(0.5); z-index: 3; }
-}
-
-@keyframes flyAway {
-  0% { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
-  20% { transform: translateX(-50%) translateY(10px) scale(0.9); opacity: 1; }
-  100% { transform: translateX(100vw) translateY(-100vh) rotate(15deg) scale(0.5); opacity: 0; }
-}
-
-/* ============================================================
-   BACKGROUND TYPING
-   ============================================================ */
-.vba-bg-animation {
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  overflow: hidden;
-  color: #2ecc71;
-  font-family: 'Fira Code', monospace;
-  font-size: 11px;
-  line-height: 1.4;
-  opacity: 0.04;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  padding: 10px;
-  pointer-events: none;
-  z-index: 0;
-  direction: ltr;
-  text-align: left;
-}
 
 /* ============================================================
    SAAS TOGGLE MOBILE
