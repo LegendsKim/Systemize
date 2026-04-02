@@ -2320,6 +2320,13 @@ body::after {
   cursor: not-allowed;
 }
 
+.form-trust-line {
+  font-size: 0.78rem;
+  color: #8b8b8b;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .inline-audit-wrapper {

@@ -6,7 +6,7 @@
   'use strict';
 
   // ─── CONFIG ────────────────────────────────────────────────
-  const WEBHOOK_URL = ''; // TODO: Replace with Make.com webhook URL
+  const API_ENDPOINT = '/api/send-telegram';
 
   // ─── DOM REFS ──────────────────────────────────────────────
   const header = document.getElementById('site-header');
@@ -54,6 +54,26 @@
       }
     });
   });
+
+  // ─── WHATSAPP FAB RATE-LIMIT ──────────────────────────────
+  const waFab = document.getElementById('whatsapp-fab');
+  if (waFab) {
+    let lastWaClick = 0;
+    waFab.addEventListener('click', (e) => {
+      const now = Date.now();
+      if (now - lastWaClick < 30000) { // 30 sec cooldown
+        e.preventDefault();
+        waFab.style.opacity = '0.5';
+        waFab.querySelector('.fab-tooltip').textContent = 'נסו שוב בעוד רגע';
+        setTimeout(() => {
+          waFab.style.opacity = '1';
+          waFab.querySelector('.fab-tooltip').textContent = 'דברו איתי';
+        }, 3000);
+        return;
+      }
+      lastWaClick = now;
+    });
+  }
 
   // ─── SaaS vs Excel CARD SWAP (mobile) ─────────────────────
   const saasBtn = document.getElementById('saas-toggle-btn');
@@ -109,58 +129,75 @@
     }, 40); // speed
   }
 
-  // ─── MATRIX RAIN CANVAS (behind Excel form) ──────────────────
+  // ─── GEOMETRIC NETWORK CANVAS (section background) ────────────
   const matrixCanvas = document.getElementById('matrix-rain-canvas');
   if (matrixCanvas) {
     const ctx = matrixCanvas.getContext('2d');
-    const wrapper = matrixCanvas.parentElement;
+    const section = matrixCanvas.parentElement;
 
     function resizeCanvas() {
-      matrixCanvas.width = wrapper.offsetWidth;
-      matrixCanvas.height = wrapper.offsetHeight;
+      matrixCanvas.width = section.offsetWidth;
+      matrixCanvas.height = section.offsetHeight;
     }
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
 
-    // VBA-style characters for the rain
-    const chars = 'Sub End Function Dim Set If Then Else For Next Do Loop Call Range Cells Value ws lr xlUp Rows Count True False Integer Long String Variant Object Nothing Debug Print MsgBox Application Workbook Worksheet ActiveSheet = ( ) . , ; : & + - * / < > ! @ # $ % ^ 0 1 2 3 4 5 6 7 8 9 A B C D E F';
-    const charArr = chars.split(' ');
-    
-    const fontSize = 13;
-    let columns = Math.floor(matrixCanvas.width / fontSize);
-    let drops = new Array(columns).fill(1);
-    let speeds = new Array(columns).fill(0).map(() => 0.3 + Math.random() * 0.7);
+    // Particles (nodes)
+    const particleCount = 60;
+    const connectionDist = 150;
+    const particles = [];
 
-    window.addEventListener('resize', () => {
-      columns = Math.floor(matrixCanvas.width / fontSize);
-      drops = new Array(columns).fill(1);
-      speeds = new Array(columns).fill(0).map(() => 0.3 + Math.random() * 0.7);
-    });
-
-    function drawMatrix() {
-      // Semi-transparent black to create fade trail
-      ctx.fillStyle = 'rgba(13, 17, 23, 0.06)';
-      ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
-
-      ctx.font = fontSize + 'px "Fira Code", monospace';
-
-      for (let i = 0; i < drops.length; i++) {
-        // Random green shades for variety
-        const brightness = 120 + Math.floor(Math.random() * 135);
-        ctx.fillStyle = 'rgba(46, ' + brightness + ', 80, 0.9)';
-
-        const char = charArr[Math.floor(Math.random() * charArr.length)];
-        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-
-        // Reset drop to top randomly after reaching bottom
-        if (drops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i] += speeds[i];
-      }
+    for (let i = 0; i < particleCount; i++) {
+      particles.push({
+        x: Math.random() * matrixCanvas.width,
+        y: Math.random() * matrixCanvas.height,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: (Math.random() - 0.5) * 0.6,
+        r: 1.5 + Math.random() * 1.5,
+      });
     }
 
-    setInterval(drawMatrix, 45);
+    function drawNetwork() {
+      ctx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+      // Update & draw particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Bounce off walls
+        if (p.x < 0 || p.x > matrixCanvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > matrixCanvas.height) p.vy *= -1;
+
+        // Draw dot
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(46, 204, 113, 0.6)';
+        ctx.fill();
+
+        // Draw connections
+        for (let j = i + 1; j < particles.length; j++) {
+          const p2 = particles[j];
+          const dx = p.x - p2.x;
+          const dy = p.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < connectionDist) {
+            const opacity = (1 - dist / connectionDist) * 0.25;
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = 'rgba(46, 204, 113, ' + opacity + ')';
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+
+      requestAnimationFrame(drawNetwork);
+    }
+
+    drawNetwork();
   }
 
   // Cell Focus & Input Logic
@@ -238,8 +275,30 @@ End Sub`.split('\n');
     return new Promise(r => setTimeout(r, ms));
   }
 
+  // Record page load time for anti-spam timing check
+  const formLoadTime = Date.now();
+
   if (submitBtn) {
     submitBtn.addEventListener('click', async () => {
+      // ─── ANTI-SPAM CHECKS ───────────────────────────────────
+      // 1. Honeypot: if the hidden field is filled, it's a bot
+      const honeypot = document.getElementById('hp-field');
+      if (honeypot && honeypot.value !== '') {
+        console.log('[Systemize] Bot detected (honeypot)');
+        // Fake success to not alert bots
+        submitBtn.disabled = true;
+        if (submitTextSpan) submitTextSpan.textContent = 'Done';
+        return;
+      }
+      // 2. Timing: if submitted in under 3 seconds, likely bot
+      if (Date.now() - formLoadTime < 3000) {
+        console.log('[Systemize] Bot detected (too fast)');
+        submitBtn.disabled = true;
+        if (submitTextSpan) submitTextSpan.textContent = 'Done';
+        return;
+      }
+      // ────────────────────────────────────────────────────────
+
       const nameVal = document.getElementById('ex-name')?.value || '';
       const emailVal = document.getElementById('ex-email')?.value || '';
       const phoneVal = document.getElementById('ex-phone')?.value || '';
@@ -291,22 +350,45 @@ End Sub`.split('\n');
       // Wait for Matrix to fall
       await sleep(1000);
 
+      // ─── SEND TO API ──────────────────────────────────────────
+      let sendSuccess = false;
       try {
-        if (WEBHOOK_URL) {
-          await fetch(WEBHOOK_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
+        const response = await fetch(API_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+
+        const result = await response.json().catch(() => ({}));
+
+        if (response.ok && result.ok) {
+          sendSuccess = true;
         } else {
-          console.log('[Systemize] Lead submitted via Macro:', payload);
-          await sleep(500);
+          console.error('[Systemize] API error:', result);
         }
       } catch (err) {
-        console.error('Submit error:', err);
+        console.error('[Systemize] Network error:', err);
       }
 
-      // 3. Outlook Send Animation Sequence
+      // ─── HANDLE FAILURE ───────────────────────────────────────
+      if (!sendSuccess) {
+        // Show error in the Excel UI (formula bar turns into an error cell)
+        if (fxText) fxText.textContent = '#ERROR! שגיאת תקשורת במאקרו — נסו שוב';
+        if (fxCell) fxCell.textContent = 'ERR';
+
+        // Hide VBA overlay
+        if (vbaOverlay) {
+          vbaOverlay.classList.remove('active');
+          vbaOverlay.innerHTML = '';
+        }
+
+        // Re-enable submit so user can retry
+        submitBtn.disabled = false;
+        if (submitTextSpan) submitTextSpan.textContent = 'Run Macro';
+        return; // stop – do NOT show success animation
+      }
+
+      // 3. Outlook Send Animation Sequence (only on success)
       if (excelContainer) {
         excelContainer.classList.add('excel-dissolve');
       }

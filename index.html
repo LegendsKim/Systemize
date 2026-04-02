@@ -512,7 +512,7 @@
     <div class="container" style="position: relative; z-index: 1;">
       <div class="audit-header" data-animate style="text-align: center; margin-bottom: 40px;">
         <h2 class="section-title">בואו נדבר על האוטומציה שלכם</h2>
-        <p class="section-subtitle">ספרו לי איפה הגזלני זמן אצלכם בעסק (בגיליון למטה), ונראה עד כמה נוכל לייעל ולשפר לכם צמיחה.</p>
+        <p class="section-subtitle">מלאו את הפרטים בגיליון למטה – ואחזור אליכם לשיחה קצרה בתוך 24 שעות.</p>
       </div>
 
       <div class="inline-audit-wrapper" id="inline-audit-wrapper" data-animate>
@@ -618,17 +618,25 @@
                 <option value="חיפוש/אחר">אחר</option>
               </select>
             </div>
+
+            <!-- Honeypot (anti-spam, hidden from real users) -->
+            <div style="position:absolute;left:-9999px;" aria-hidden="true">
+              <input type="text" name="company_website" id="hp-field" tabindex="-1" autocomplete="off">
+            </div>
             
           </div>
 
           <!-- Submit Footer -->
           <div class="excel-footer">
-            <button class="excel-submit-btn" id="excel-submit-btn">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              <span id="excel-submit-text">Run Macro</span>
-            </button>
+            <div style="display:flex; align-items:center; gap:16px; width:100%; justify-content:space-between; flex-wrap: wrap;">
+              <button class="excel-submit-btn" id="excel-submit-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span id="excel-submit-text">Run Macro</span>
+              </button>
+              <span class="form-trust-line">🔒 הפרטים שלכם מאובטחים ולא נשלחים לאף צד שלישי.</span>
+            </div>
           </div>
         </div>
       </div>
@@ -762,7 +770,7 @@
         <h2>מוכן לראות כמה זמן אפשר לחסוך?</h2>
         <p>הייעוץ הראשוני חינם ולא מחייב. הכי גרוע, תקבל תמונה ברורה של מה שניתן לשפר בעסק שלך.</p>
         <div class="cta-buttons">
-          <a href="#hero" class="btn btn-primary" id="cta-terminal-btn">חזרה לטרמינל ↑</a>
+          <a href="#audit" class="btn btn-primary" id="cta-terminal-btn">חזרה לגיליון ↑</a>
           <a href="https://wa.me/972544246057" target="_blank" rel="noopener" class="btn btn-outline"
             id="cta-whatsapp-btn">
             <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
