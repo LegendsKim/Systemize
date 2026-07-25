@@ -98,7 +98,7 @@ export const milestones: readonly Milestone[] = [
     label: "אפיון",
     description: "אפיון — שלב ראשון בתהליך",
     summary: "ממפים את זרימת העבודה כפי שהיא באמת",
-    href: "#process",
+    href: "#process-discovery",
     point: { x: 240, y: 735 },
   },
   {
@@ -107,7 +107,7 @@ export const milestones: readonly Milestone[] = [
     label: "תכנון",
     description: "תכנון — שלב שני בתהליך",
     summary: "מסמנים צווארי בקבוק ומתכננים את הפתרון",
-    href: "#process",
+    href: "#process-planning",
     point: { x: 1035, y: 925 },
   },
   {
@@ -116,7 +116,7 @@ export const milestones: readonly Milestone[] = [
     label: "פיתוח",
     description: "פיתוח — שלב שלישי בתהליך",
     summary: "בונים בדיוק את מה שנדרש, בלי עודף",
-    href: "#process",
+    href: "#process-build",
     point: { x: 1080, y: 512 },
   },
   {
@@ -125,7 +125,7 @@ export const milestones: readonly Milestone[] = [
     label: "הטמעה",
     description: "הטמעה — שלב רביעי בתהליך",
     summary: "מעלים לאוויר ומלווים עד שזה עובד",
-    href: "#process",
+    href: "#process-rollout",
     point: { x: 1245, y: 222 },
   },
 ];

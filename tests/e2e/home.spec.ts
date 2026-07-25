@@ -3,7 +3,12 @@ import { test, expect } from '@playwright/test';
 test.describe('Home page', () => {
   test('renders the page title', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Systemize');
+    await expect(
+      page.getByRole('heading', {
+        level: 1,
+        name: 'לא מתאימים את העסק למערכת. בונים את המערכת סביב העסק.',
+      })
+    ).toBeVisible();
   });
 
   test('has correct page title in head', async ({ page }) => {
@@ -13,9 +18,21 @@ test.describe('Home page', () => {
 
   test('has skip link that becomes visible on focus', async ({ page }) => {
     await page.goto('/');
-    const skipLink = page.getByText('Skip to main content');
+    const skipLink = page.getByText('דילוג לתוכן הראשי');
     await skipLink.focus();
     await expect(skipLink).toBeVisible();
+  });
+
+  test('presents the four delivery stages in order', async ({ page }) => {
+    await page.goto('/');
+
+    const process = page.getByRole('region', { name: 'מתהליך עמום למערכת שעובדת' });
+    await expect(process.getByRole('heading', { level: 3 })).toHaveText([
+      'אפיון',
+      'תכנון',
+      'פיתוח',
+      'הטמעה',
+    ]);
   });
 
   test('has no console errors', async ({ page }) => {

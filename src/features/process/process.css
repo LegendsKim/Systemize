@@ -1,0 +1,438 @@
+.process-story {
+  position: relative;
+  overflow: clip;
+  background:
+    linear-gradient(oklch(0.985 0.001 240 / 0.92), oklch(0.985 0.001 240 / 0.98)),
+    url("/hero/contour-field.svg") center / cover fixed;
+}
+
+.process-intro {
+  display: grid;
+  place-items: center;
+  min-block-size: min(70svh, 46rem);
+  max-inline-size: 52rem;
+  margin-inline: auto;
+  padding: var(--spacing-section-y) var(--spacing-page-x);
+  text-align: center;
+}
+
+.process-kicker,
+.process-stage-eyebrow {
+  color: var(--color-primary-focus);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.process-intro h2 {
+  max-inline-size: 16ch;
+  margin-block-start: 1rem;
+  font-size: clamp(2.25rem, 7vw, 5.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.process-intro > p:last-child {
+  max-inline-size: 44rem;
+  margin-block-start: 1.5rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+.process-stages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: process-stage;
+}
+
+.process-stage {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-block-size: 92svh;
+  padding: clamp(5rem, 10vw, 9rem) var(--spacing-page-x);
+  scroll-margin-block-start: 5rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.process-stage:nth-child(even) {
+  background-color: oklch(0.97 0.002 240 / 0.82);
+}
+
+.process-stage-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(5rem, 0.55fr) minmax(0, 1.4fr) minmax(16rem, 1fr);
+  grid-template-areas:
+    "marker copy details"
+    "marker outcome details";
+  gap: clamp(1.5rem, 4vw, 4rem);
+  inline-size: 100%;
+  max-inline-size: var(--container-content);
+  margin-inline: auto;
+}
+
+/*
+ * The marker column is the hero's trail, continued.
+ *
+ * `::before` is the unwalked line and `::after` is the turquoise fill that follows the
+ * reader down. Because each stage owns one segment and the stages are stacked, the
+ * segments read as a single line running the height of the section — so a reader can see
+ * how far along the process they are without a progress widget.
+ */
+.process-stage-marker {
+  position: relative;
+  grid-area: marker;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  block-size: 100%;
+}
+
+.process-stage-marker::before,
+.process-stage-marker::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-end: 0;
+  inline-size: 1px;
+}
+
+.process-stage-marker::before {
+  background-color: var(--color-border);
+}
+
+.process-stage-marker::after {
+  background: linear-gradient(to bottom, var(--color-trail), var(--color-primary));
+  /* Scaled from the top rather than animating height, so it runs on the compositor and
+     never triggers layout. */
+  transform-origin: top;
+  scale: 1 1;
+}
+
+.process-stage-marker span {
+  position: sticky;
+  inset-block-start: 7rem;
+  color: var(--color-primary);
+  transition: color 0.4s ease;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 300;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+}
+
+.process-stage-copy {
+  grid-area: copy;
+  align-self: end;
+}
+
+.process-stage-copy h3 {
+  margin-block-start: 0.75rem;
+  font-size: clamp(3rem, 9vw, 7.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+}
+
+.process-stage-description {
+  max-inline-size: 39rem;
+  margin-block-start: 2rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(1.0625rem, 1.8vw, 1.3rem);
+  line-height: 1.9;
+  text-wrap: pretty;
+}
+
+.process-stage-details {
+  grid-area: details;
+  align-self: center;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: oklch(1 0 0 / 0.66);
+  box-shadow: 0 1.5rem 4rem oklch(0.24 0.008 240 / 0.06);
+  backdrop-filter: blur(12px);
+  transition: box-shadow 0.35s ease, border-color 0.35s ease, transform 0.35s ease;
+}
+
+/* The card lifts when the pointer is anywhere over the stage, so the panel reads as part
+   of the stage rather than as a static aside. */
+.process-stage:hover .process-stage-details {
+  border-color: var(--color-primary-soft);
+  box-shadow: 0 2rem 5rem oklch(0.24 0.008 240 / 0.1);
+  transform: translateY(-2px);
+}
+
+.process-stage-details-title,
+.process-stage-outcome > span {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.process-stage-details ul {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.process-stage-details li {
+  position: relative;
+  padding-inline-start: 1.5rem;
+  color: var(--color-text-primary);
+  line-height: 1.6;
+}
+
+.process-stage-details li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.65em;
+  inset-inline-start: 0;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
+  transition: box-shadow 0.3s ease;
+}
+
+.process-stage-details li:hover::before {
+  box-shadow: 0 0 0 6px var(--color-primary-soft);
+}
+
+/* ---------------------------------------------------------------------------
+ * Next-stage link
+ *
+ * The section can be stepped through deliberately, not only scrolled past — and the last
+ * stage hands off to the lead form rather than dead-ending.
+ * ------------------------------------------------------------------------ */
+
+.process-stage-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  margin-block-start: 1.5rem;
+  padding-inline: 1.125rem;
+  padding-block: 0.625rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background-color: oklch(1 0 0 / 0.7);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+
+.process-stage-next:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.process-stage-next svg {
+  transition: translate 0.25s ease;
+}
+
+.process-stage-next:hover svg {
+  translate: 0 2px;
+}
+
+.process-stage-outcome {
+  grid-area: outcome;
+  align-self: start;
+  max-inline-size: 39rem;
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.process-stage-outcome p {
+  margin-block-start: 0.625rem;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+/*
+ * Progressive enhancement.
+ *
+ * Every hidden or partial starting state lives inside this block, never outside it. A
+ * browser without scroll-driven animation support gets the finished layout — content
+ * visible, trail drawn — rather than content stuck at `opacity: 0` waiting for a timeline
+ * that will never run.
+ */
+@supports (animation-timeline: view()) {
+  .process-stage-inner {
+    animation-name: process-reveal;
+    animation-duration: 1ms;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: view();
+    animation-range: entry 8% cover 34%;
+  }
+
+  /* The trail follows the reader down its stage's segment. */
+  .process-stage-marker::after {
+    scale: 1 0;
+    animation-name: process-trail-fill;
+    animation-duration: 1ms;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: view();
+    /*
+     * `cover`-relative, not `entry`/`exit`. Each stage is about as tall as the viewport,
+     * and for an element that large the entry and exit phases collapse to almost nothing
+     * — the fill would snap rather than follow the reader. `cover` measures the whole
+     * traversal, from the stage first appearing to it leaving, which is exactly the span
+     * being walked.
+     */
+    animation-range: cover 22% cover 88%;
+  }
+
+  /* The number is quiet until its stage arrives, then takes the brand colour. */
+  .process-stage-marker span {
+    color: var(--color-text-muted);
+    animation-name: process-number-arrive;
+    animation-duration: 1ms;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: view();
+    animation-range: cover 18% cover 34%;
+  }
+
+  /*
+   * The activities check in one after another. The stagger comes from each item's index
+   * shifting the *start of its range* rather than from an animation delay — a
+   * scroll-driven animation has no time axis for a delay to act on.
+   */
+  .process-stage-details li {
+    opacity: 0;
+    animation-name: process-item-in;
+    animation-duration: 1ms;
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: view();
+    animation-range: cover calc(20% + var(--process-item, 0) * 4%) cover
+      calc(38% + var(--process-item, 0) * 4%);
+  }
+}
+
+@keyframes process-trail-fill {
+  to {
+    scale: 1 1;
+  }
+}
+
+@keyframes process-number-arrive {
+  to {
+    color: var(--color-primary);
+  }
+}
+
+@keyframes process-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes process-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(3rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 52rem) {
+  .process-intro {
+    min-block-size: 65svh;
+  }
+
+  .process-stage {
+    min-block-size: 100svh;
+  }
+
+  .process-stage-inner {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    grid-template-areas:
+      "marker copy"
+      "marker details"
+      "marker outcome";
+    column-gap: 1.25rem;
+    row-gap: 2rem;
+  }
+
+  .process-stage-marker {
+    justify-content: flex-start;
+  }
+
+  .process-stage-marker span {
+    font-size: clamp(2.5rem, 13vw, 4rem);
+  }
+
+  .process-stage-copy h3 {
+    font-size: clamp(3.5rem, 20vw, 6rem);
+  }
+}
+
+@media (max-width: 30rem) {
+  .process-stage {
+    min-block-size: auto;
+    padding-block: 6rem;
+  }
+
+  .process-stage-inner {
+    grid-template-columns: 2.75rem minmax(0, 1fr);
+    column-gap: 1rem;
+  }
+
+  .process-stage-marker span {
+    font-size: 2.5rem;
+  }
+
+  .process-stage-details {
+    padding: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .process-stage-inner,
+  .process-stage-details li {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .process-stage-marker::after {
+    animation: none;
+    scale: 1 1;
+  }
+
+  .process-stage-marker span {
+    animation: none;
+    color: var(--color-primary);
+  }
+
+  .process-stage-details,
+  .process-stage-next,
+  .process-stage-next svg,
+  .process-stage-details li::before {
+    transition: none;
+  }
+}

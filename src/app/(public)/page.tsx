@@ -1,4 +1,5 @@
 import { Hero } from "@/features/hero/components/Hero";
+import { ProcessStory } from "@/features/process/components/ProcessStory";
 
 /**
  * The marketing site is a single page. Sections are appended here as they are built;
@@ -8,6 +9,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <ProcessStory />
     </>
   );
 }
