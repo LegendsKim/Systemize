@@ -1,5 +1,5 @@
 ---
-configuration_status: UNCONFIGURED
+configuration_status: APPROVED
 boilerplate_version: "v1.0.1"
 client_name: "Systemize"
 decision_owner: "Marlen Kimiagrov"
@@ -53,9 +53,9 @@ with `Intl.NumberFormat` and the explicit `ILS` currency code.
 - **Public/indexable routes:** `/`, `/privacy`, `/terms`, `/accessibility`
 - **Authenticated/non-indexable routes:** none. `/api/chat` is a Route Handler, not an
   indexable document.
-- **Canonical host:** `OPEN — owner and decision date required`. Until it is decided,
-  `metadataBase` reads from `NEXT_PUBLIC_SITE_URL` and defaults to the local
-  development origin. No production release may occur while this is open.
+- **Canonical host:** not yet decided — see the production-release blockers in §9.
+  Until it is decided, `metadataBase` reads from `NEXT_PUBLIC_SITE_URL` and defaults to
+  the local development origin. No production release may occur while this is open.
 - **Required structured-data types:** `ProfessionalService`, `FAQPage`. Both derive from
   the same content source as the visible text.
 - **Sitemap policy:** all four indexable routes listed; no route is excluded.
@@ -124,8 +124,8 @@ Business rules that must never be inferred or altered by an agent.
     when its API key is configured; otherwise the local Hebrew intent adapter serves.
 - **PII fields and retention:** collected on the lead form — full name, business name,
   phone number, email address, and a free-text description of the need. Purpose:
-  responding to a business enquiry. Retention: `OPEN — owner and decision date
-  required`; must be resolved before production. Access: owner only, via Supabase.
+  responding to a business enquiry. Retention: not yet decided — see the
+  production-release blockers in §9. Access: owner only, via Supabase.
   Deletion/export: manual operator action on request.
   Lead PII must never appear in logs, error reports, analytics, or the chat transcript.
 - **Idempotency requirements:** mandatory on lead submission. Key is generated on the
@@ -156,9 +156,18 @@ a **LOCKED** rule.
 
 ## 9. Approval
 
-- **Configuration status:** pending explicit owner approval
-- **Approved by:** pending
-- **Approval date:** pending
-- **Notes:** Three items remain `OPEN` and block a production release, not development:
-  canonical host, lead PII retention policy, and final content. Approval of this file
-  authorizes implementation against the local Supabase stack and placeholder content.
+- **Configuration status:** `APPROVED`
+- **Approved by:** Marlen Kimiagrov
+- **Approval date:** 2026-07-25
+- **Notes:** This approval authorizes implementation against the local Supabase CLI
+  stack with clearly marked placeholder content. Three tracked items below block a
+  **production release**, not development. They are owned by Marlen Kimiagrov and due
+  before the production release.
+
+### Production-release blockers
+
+| Item | Why it blocks | Owner | Due |
+|---|---|---|---|
+| Canonical domain | `metadataBase`, canonical URLs, sitemap, and absolute Open Graph URLs cannot be correct without it | Marlen Kimiagrov | Before production release |
+| Lead PII retention and deletion policy | Personal data is collected without a defined lifetime or deletion path | Marlen Kimiagrov | Before production release |
+| Real portfolio, founder, and legal copy | Placeholder text must not be published | Marlen Kimiagrov | Before public launch |
