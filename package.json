@@ -1,8 +1,8 @@
 {
-  "name": "systemize-boilerplate",
-  "version": "1.0.1",
+  "name": "systemize-site",
+  "version": "0.1.0",
   "private": true,
-  "description": "Production-grade Next.js boilerplate with Supabase, strict TypeScript, Tailwind CSS v4, and comprehensive quality gates.",
+  "description": "Systemize marketing and lead-generation site. Hebrew, RTL, Next.js App Router with Supabase.",
   "license": "UNLICENSED",
   "engines": {
     "node": ">=22.0.0"
