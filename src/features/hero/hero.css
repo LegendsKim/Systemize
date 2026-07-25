@@ -1,0 +1,433 @@
+/*
+ * Hero — background plate, trail overlay, and milestone markers.
+ *
+ * The whole section is built on one idea: recreate a CSS `cover` box that has exactly
+ * the background plate's aspect ratio, then put the image, the SVG trail, and the
+ * milestone markers inside it. Because that box is the same for all three, a coordinate
+ * expressed as a percentage lands on the same point of the artwork at every viewport
+ * size — no breakpoint-specific pixel offsets anywhere.
+ */
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  block-size: 100svh;
+  min-block-size: 40rem;
+  overflow: hidden;
+  /*
+   * Sampled from the plate's own border, which measures a uniform #dddddf on all four
+   * edges. Because the field behind the artwork is the identical colour, the plate does
+   * not have to be blown up to fill the viewport — it can sit at a bounded, sharp size
+   * and the boundary is invisible.
+   */
+  background-color: var(--color-hero-field);
+  /* Definite size, so the stage below can resolve `cqw`/`cqh` against this section. */
+  container-type: size;
+  container-name: hero;
+}
+
+@media (min-width: 48rem) {
+  .hero {
+    background-color: var(--color-hero-field-landscape);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Stage — the reconstructed `cover` box.
+ *
+ * `inset: 0` plus `margin: auto` centres a box of definite size on both axes without
+ * naming a physical edge, so this behaves identically in RTL and LTR.
+ * ------------------------------------------------------------------------ */
+
+/*
+ * The stage is sized in two steps.
+ *
+ * 1. `--hero-cover-w` is the width a `cover` fit would need.
+ * 2. `--hero-stage-w` clamps that to `--hero-plate-max`, so the artwork is never enlarged
+ *    past the resolution of its master file.
+ *
+ * On a very wide monitor step 2 means the plate stops short of the viewport edges — and
+ * that is deliberate. The exposed field is the plate's own border colour, so the join is
+ * invisible, while the composition keeps the airy proportions of the approved design
+ * instead of being magnified until it reads as a crop. Sharpness and framing improve
+ * together.
+ *
+ * The block size is always derived from the same width, so the aspect ratio is exact and
+ * the trail and markers stay locked to the artwork.
+ */
+.hero-stage {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  pointer-events: none;
+  /* Portrait plate by default; the landscape plate takes over at `md`. */
+  --hero-plate-w: 941;
+  --hero-plate-h: 1672;
+  --hero-plate-max: 46rem;
+  --hero-cover-w: max(100cqw, 100cqh * var(--hero-plate-w) / var(--hero-plate-h));
+  --hero-stage-w: min(var(--hero-cover-w), var(--hero-plate-max));
+  inline-size: var(--hero-stage-w);
+  block-size: calc(var(--hero-stage-w) * var(--hero-plate-h) / var(--hero-plate-w));
+}
+
+/*
+ * Landscape fits the plate rather than covering the viewport. Covering would crop the
+ * artwork's left edge on a typical 16:10 window, and the first milestone lives there —
+ * `אפיון` would be sliced off. Fitting guarantees the whole composition is always on
+ * screen, and the leftover strips above and below are the plate's own border colour, so
+ * they read as the design's white space rather than as letterboxing.
+ */
+@media (min-width: 48rem) {
+  .hero-stage {
+    --hero-plate-w: 1672;
+    --hero-plate-h: 941;
+    --hero-plate-max: 120rem;
+    --hero-cover-w: min(100cqw, 100cqh * var(--hero-plate-w) / var(--hero-plate-h));
+  }
+}
+
+.hero-plate {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  /* The stage already matches the plate's ratio, so nothing is cropped or stretched. */
+  object-fit: cover;
+  /*
+   * The plate's border colour matches the field exactly, but a few faint contour lines
+   * do run all the way to the edge. A short fade dissolves them instead of letting them
+   * stop abruptly, which is what would otherwise reveal where the image ends.
+   */
+  mask-image: linear-gradient(to bottom, transparent 0, black 2.5%, black 97.5%, transparent 100%),
+    linear-gradient(to right, transparent 0, black 2.5%, black 97.5%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.hero-trail {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+}
+
+/* Only one plate's trail is ever drawn; the other is removed from the a11y tree too. */
+.hero-trail--mobile {
+  display: block;
+}
+
+.hero-trail--desktop {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .hero-trail--mobile {
+    display: none;
+  }
+
+  .hero-trail--desktop {
+    display: block;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Trail
+ * ------------------------------------------------------------------------ */
+
+/* `stroke`, `filter`, and every width are set on the elements themselves: the gradient
+   and filter ids differ per plate, and the widths are plate-specific by design. */
+.hero-trail-line {
+  fill: none;
+  stroke-linecap: round;
+  /* `pathLength="1"` normalises the geometry, so one unit is the whole line and the
+     same animation works for both plates regardless of their real path lengths. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hero-trail-draw 2.6s cubic-bezier(0.32, 0, 0.16, 1) 0.25s forwards;
+}
+
+.hero-trail-glow {
+  fill: none;
+  stroke: var(--color-trail);
+  stroke-linecap: round;
+  opacity: 0.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hero-trail-draw 2.6s cubic-bezier(0.32, 0, 0.16, 1) 0.25s forwards;
+}
+
+@keyframes hero-trail-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hero-node {
+  fill: none;
+  stroke: var(--color-trail);
+  opacity: 0;
+  animation: hero-node-in 0.6s ease-out forwards;
+}
+
+@keyframes hero-node-in {
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Milestones — real links, positioned as a percentage of the stage.
+ * ------------------------------------------------------------------------ */
+
+.hero-milestone {
+  position: absolute;
+  /* The stage carries `dir="ltr"` because the artwork is a picture, not text: its
+     coordinates are measured from the image's left edge whatever the page direction. */
+  inset-inline-start: var(--hero-x-mobile);
+  inset-block-start: var(--hero-y-mobile);
+  translate: -50% -50%;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: 2.75rem;
+  min-block-size: 1.75rem;
+  padding-inline: 0.75rem;
+  padding-block: 0.375rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px oklch(0.5 0.09 190 / 0.28);
+  opacity: 0;
+  animation: hero-milestone-in 0.5s ease-out forwards;
+  transition: background-color 0.2s ease;
+}
+
+.hero-milestone:hover {
+  background-color: var(--color-primary-hover);
+}
+
+@media (min-width: 48rem) {
+  .hero-milestone {
+    inset-inline-start: var(--hero-x-desktop);
+    inset-block-start: var(--hero-y-desktop);
+    font-size: 0.875rem;
+  }
+}
+
+@keyframes hero-milestone-in {
+  from {
+    opacity: 0;
+    translate: -50% calc(-50% + 0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    translate: -50% -50%;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Reduced motion — show the finished state immediately.
+ * ------------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-trail-line,
+  .hero-trail-glow {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .hero-node,
+  .hero-milestone {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Content
+ * ------------------------------------------------------------------------ */
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  /* On a phone the copy owns the top of the screen and the trail markers own the
+     bottom; from `md` the copy is centred beside the artwork. */
+  justify-content: flex-start;
+  inline-size: 100%;
+  max-inline-size: var(--container-content);
+  margin-inline: auto;
+  padding-inline: var(--spacing-page-x);
+  padding-block: 6rem 3rem;
+  pointer-events: none;
+}
+
+.hero-content > * {
+  pointer-events: auto;
+}
+
+/*
+ * From `md` the copy sits at the visual left. That is not a direction mistake: the
+ * artwork is never mirrored and its open area is always on the left, so the text has to
+ * follow the picture. The text itself remains right-to-left Hebrew, which is why the
+ * offset is written as a logical `margin-inline-start` rather than a physical one.
+ */
+.hero-copy {
+  max-inline-size: 34rem;
+}
+
+@media (min-width: 48rem) {
+  .hero-content {
+    justify-content: center;
+    /*
+     * The copy shares the artwork's frame rather than the narrower text container used
+     * elsewhere on the page. Matching `--hero-plate-max` is what puts the headline over
+     * the plate's open left third at every width, exactly as in the approved design,
+     * instead of drifting toward the middle on a wide monitor.
+     */
+    max-inline-size: 120rem;
+    padding-inline: clamp(1rem, 5vw, 9rem);
+  }
+
+  .hero-copy {
+    margin-inline-start: auto;
+  }
+}
+
+/*
+ * The lead paragraph is hidden on phones, where a full-height hero cannot hold the
+ * headline, the lead, two calls to action and four trail markers without collisions.
+ * The same wording opens the value section immediately below, so nothing is lost.
+ */
+@media (max-width: 47.99rem) {
+  .hero-lead {
+    display: none;
+  }
+}
+
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+
+.hero-eyebrow-rule {
+  display: block;
+  inline-size: 2.5rem;
+  block-size: 1px;
+  flex: none;
+  background-color: var(--color-primary);
+}
+
+.hero-heading {
+  margin-block-start: 1.25rem;
+  font-size: clamp(1.75rem, 5.2vw + 0.5rem, 3.5rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  color: var(--color-text-primary);
+}
+
+.hero-lead {
+  margin-block-start: 1.75rem;
+  padding-block-start: 1.75rem;
+  border-block-start: 1px solid var(--color-border);
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  line-height: 1.8;
+  text-wrap: pretty;
+  color: var(--color-text-secondary);
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block-start: 2rem;
+}
+
+@media (min-width: 48rem) {
+  .hero-actions {
+    gap: 1rem;
+  }
+
+  .hero-cta,
+  .hero-cta-secondary {
+    flex: 0 0 auto;
+  }
+}
+
+.hero-cta,
+.hero-cta-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* The pair must stay on one row: wrapping pushes the second button down into the
+     first trail marker on a small phone. */
+  flex: 1 1 auto;
+  white-space: nowrap;
+  min-block-size: 2.75rem;
+  padding-inline: clamp(0.875rem, 4vw, 1.5rem);
+  padding-block: 0.75rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.hero-cta {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  box-shadow: 0 8px 24px oklch(0.5 0.09 190 / 0.25);
+}
+
+.hero-cta:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.hero-cta-secondary {
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border-strong);
+  background-color: oklch(1 0 0 / 0.6);
+}
+
+.hero-cta-secondary:hover {
+  background-color: oklch(1 0 0 / 0.9);
+}
+
+/*
+ * Portrait only. On a phone the copy has to sit over the dashboard render at the top of
+ * the plate, so it needs a wash to hold contrast. In landscape the copy sits over the
+ * plate's flat open field, where near-black text already clears WCAG AA by a wide margin;
+ * a wash there would read as a pale band and break the illusion that the page background
+ * and the render are one continuous surface.
+ */
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    oklch(0.985 0.001 240 / 0.92) 0%,
+    oklch(0.985 0.001 240 / 0.7) 38%,
+    oklch(0.985 0.001 240 / 0) 62%
+  );
+}
+
+@media (min-width: 48rem) {
+  .hero-scrim {
+    display: none;
+  }
+}

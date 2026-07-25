@@ -1,41 +1,54 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Heebo } from "next/font/google";
 import { headers } from "next/headers";
 import { defaultLocale, getDirection, getHtmlLang } from "@/lib/i18n";
+import { siteDescription, siteName, siteTagline, siteUrl } from "@/lib/site-config";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
+/**
+ * Heebo covers both Hebrew and Latin glyphs. The boilerplate default, Inter, has no
+ * Hebrew coverage, so every heading on this site would have fallen back to a system font.
+ */
+const heebo = Heebo({
+  subsets: ["hebrew", "latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-heebo",
 });
 
-/**
- * Default metadata for the boilerplate.
- * Client projects override these values in AGENTS.client.md and route-level metadata.
- */
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
-    default: "Systemize",
-    template: "%s | Systemize",
+    default: `${siteName} — ${siteTagline}`,
+    template: `%s | ${siteName}`,
   },
-  description:
-    "Production-grade Next.js boilerplate with Supabase, strict TypeScript, and Tailwind CSS v4.",
+  description: siteDescription,
+  applicationName: siteName,
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: "/",
   },
   openGraph: {
     type: "website",
-    locale: defaultLocale,
-    siteName: "Systemize",
+    locale: "he_IL",
+    siteName,
+    title: `${siteName} — ${siteTagline}`,
+    description: siteDescription,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteName} — ${siteTagline}`,
+    description: siteDescription,
   },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#1a1a2e",
+  themeColor: "#f5f6f7",
 };
 
 export default async function RootLayout({
@@ -50,12 +63,12 @@ export default async function RootLayout({
   const lang = getHtmlLang(locale);
 
   return (
-    <html lang={lang} dir={dir} className={inter.variable}>
+    <html lang={lang} dir={dir} className={heebo.variable}>
       <body>
         <a href="#main-content" className="skip-link">
-          Skip to main content
+          דילוג לתוכן הראשי
         </a>
-        <main id="main-content">{children}</main>
+        {children}
       </body>
     </html>
   );

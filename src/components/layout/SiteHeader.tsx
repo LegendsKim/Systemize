@@ -1,0 +1,48 @@
+import Link from "next/link";
+import { SystemizeMark } from "@/components/brand/SystemizeMark";
+import { navigation, siteCoordinates, siteName } from "@/lib/site-config";
+
+/**
+ * Site header.
+ *
+ * The wordmark sits at the visual left and the navigation at the visual right, matching
+ * the approved design. That arrangement comes from element order inside a `space-between`
+ * row, never from a physical `left`/`right` offset, so it stays correct under RTL.
+ */
+export function SiteHeader() {
+  return (
+    <header className="site-header">
+      <div className="site-header-inner">
+        <nav aria-label="ניווט ראשי" className="site-nav">
+          <ul className="site-nav-list">
+            {navigation.map((item) => (
+              <li key={item.href}>
+                <Link href={item.href} className="site-nav-link">
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* The lockup is a Latin, left-to-right run: mark, then name, then coordinates.
+            Without an explicit direction the row reverses and the bidirectional algorithm
+            also reorders the coordinate string itself. */}
+        <Link
+          href="/"
+          className="site-wordmark"
+          dir="ltr"
+          aria-label={`${siteName} — לדף הבית`}
+        >
+          <SystemizeMark className="site-wordmark-mark" />
+          <span className="site-wordmark-text">
+            <span className="site-wordmark-name">{siteName}</span>
+            <span className="site-wordmark-coords" aria-hidden="true">
+              {siteCoordinates}
+            </span>
+          </span>
+        </Link>
+      </div>
+    </header>
+  );
+}

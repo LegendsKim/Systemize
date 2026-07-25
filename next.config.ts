@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
   // Restrict remote image patterns — add approved domains as needed
   images: {
     remotePatterns: [],
+    // AVIF first: the hero plates are smooth 3D renders, where AVIF is dramatically
+    // smaller than WebP at the same perceived quality.
+    formats: ["image/avif", "image/webp"],
+    // Next.js only generates the qualities listed here. 90 is for the hero plates, whose
+    // soft gradients band visibly at the default 75.
+    qualities: [75, 90],
   },
 
   // Security headers are applied via middleware for flexibility

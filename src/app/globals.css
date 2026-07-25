@@ -1,10 +1,16 @@
 @import "tailwindcss";
+@import "../components/layout/layout.css";
+@import "../features/hero/hero.css";
 
 /*
- * Systemize Boilerplate — Global Styles
+ * Systemize — Global Styles
  *
  * Tailwind CSS v4 uses CSS-first configuration via @theme.
  * All customization happens here, no tailwind.config.js needed.
+ *
+ * The palette is sampled from the hero artwork: a near-white "paper" topography with a
+ * single turquoise accent. Keeping the site tokens and the artwork in the same colour
+ * space is what makes the SVG trail read as part of the render rather than an overlay.
  */
 
 /* ============================================================================
@@ -13,43 +19,59 @@
 
 @theme {
   /* --- Typography --- */
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans: var(--font-heebo), "Heebo", Arial, ui-sans-serif, system-ui,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+    "Noto Color Emoji";
 
-  /* --- Colors — Neutral palette --- */
-  --color-surface-0: oklch(1 0 0);
-  --color-surface-1: oklch(0.985 0 0);
-  --color-surface-2: oklch(0.97 0 0);
-  --color-surface-3: oklch(0.92 0 0);
-  --color-border: oklch(0.87 0 0);
-  --color-border-strong: oklch(0.7 0 0);
-  --color-text-primary: oklch(0.15 0 0);
-  --color-text-secondary: oklch(0.4 0 0);
-  --color-text-muted: oklch(0.55 0 0);
+  /* --- Colors — Paper neutrals, matched to the hero render --- */
+  --color-surface-0: oklch(0.985 0.001 240);
+  --color-surface-1: oklch(0.97 0.002 240);
+  --color-surface-2: oklch(0.945 0.003 240);
+  --color-surface-3: oklch(0.9 0.004 240);
+  --color-border: oklch(0.88 0.004 240);
+  --color-border-strong: oklch(0.72 0.006 240);
+  --color-text-primary: oklch(0.24 0.008 240);
+  --color-text-secondary: oklch(0.45 0.006 240);
+  --color-text-muted: oklch(0.62 0.005 240);
   --color-text-on-primary: oklch(1 0 0);
 
-  /* --- Colors — Brand (generic boilerplate palette) --- */
-  --color-primary: oklch(0.55 0.2 250);
-  --color-primary-hover: oklch(0.48 0.2 250);
-  --color-primary-focus: oklch(0.45 0.2 250);
+  /* --- Colors — Brand turquoise, sampled from the hero trail --- */
+  --color-primary: oklch(0.63 0.098 190);
+  --color-primary-hover: oklch(0.56 0.096 190);
+  --color-primary-focus: oklch(0.5 0.09 190);
+  --color-primary-soft: oklch(0.93 0.03 190);
+  /* Luminous variant used only for the trail and its glow, never for text. */
+  --color-trail: oklch(0.72 0.13 189);
+
+  /* --- Colors — Hero field ---
+   * Measured from the hero plates' own borders, which are a uniform flat colour on all
+   * four edges. The page background behind the artwork uses these exact values, so the
+   * plate can stop short of the viewport edge without leaving a visible seam. */
+  --color-hero-field: #d5d7da;
+  --color-hero-field-landscape: #dddddf;
 
   /* --- Colors — Semantic --- */
   --color-success: oklch(0.55 0.15 145);
-  --color-warning: oklch(0.7 0.15 80);
+  --color-warning: oklch(0.6 0.14 65);
   --color-error: oklch(0.55 0.2 25);
-  --color-info: oklch(0.55 0.15 240);
+  --color-info: oklch(0.55 0.12 230);
 
   /* --- Spacing scale (supplements Tailwind defaults) --- */
   --spacing-page-x: clamp(1rem, 5vw, 3rem);
+  --spacing-section-y: clamp(4rem, 10vw, 8rem);
+
+  /* --- Content width --- */
+  --container-content: 78rem;
 
   /* --- Border Radius --- */
   --radius-sm: 0.375rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+  --radius-pill: 999px;
 
   /* --- Focus ring --- */
-  --color-focus-ring: oklch(0.55 0.2 250 / 0.5);
+  --color-focus-ring: oklch(0.5 0.09 190 / 0.65);
 }
 
 /* ============================================================================
@@ -66,6 +88,9 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+  /* In-page anchors must not land underneath the fixed header. */
+  scroll-padding-block-start: 6rem;
 }
 
 body {
@@ -88,6 +113,10 @@ body {
  * ============================================================================ */
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {

@@ -1,19 +1,29 @@
 /**
- * Supported locales for the boilerplate.
+ * Locale configuration for the Systemize marketing site.
  *
- * Client projects configure the actual locale set via AGENTS.client.md.
- * The boilerplate ships with Hebrew (RTL) and English (LTR) as representative defaults.
+ * Per AGENTS.client.md §2 this project ships a single locale, Hebrew, rendered
+ * right-to-left. Because there is exactly one locale, routes carry no locale segment.
  */
-export const supportedLocales = ["he", "en"] as const;
+
+export const supportedLocales = ["he"] as const;
 
 export type Locale = (typeof supportedLocales)[number];
 
-export const defaultLocale: Locale = "en";
+export const defaultLocale: Locale = "he";
+
+/** IANA timezone used for every presentation-edge date and time format. */
+export const timeZone = "Asia/Jerusalem";
+
+/** ISO 4217 currency used for every money format. */
+export const currency = "ILS";
+
+/** BCP 47 tag passed to `Intl` formatters. */
+export const formatLocale = "he-IL";
 
 /**
  * Returns the text direction for the given locale.
  *
- * Uses the standard RTL script list. Extend as needed for additional locales.
+ * Uses the standard RTL script list so that adding a locale later needs no change here.
  */
 export function getDirection(locale: Locale): "rtl" | "ltr" {
   const rtlLocales: ReadonlySet<string> = new Set(["he", "ar", "fa", "ur"]);
