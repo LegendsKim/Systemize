@@ -1,84 +1,110 @@
+import type { CSSProperties } from "react";
 import { getImageProps } from "next/image";
-import { desktopPlate, mobilePlate, trailNodes } from "../hero-geometry";
+import { landscapePlate } from "../hero-geometry";
 import { HeroMilestones } from "./HeroMilestones";
 import { HeroTrail } from "./HeroTrail";
 
 /**
- * Viewport width at which the artwork switches from the portrait plate to the landscape
- * one. It must stay in step with the `48rem` breakpoint in `hero.css`, so the image and
- * the stage geometry flip at the same moment.
+ * Hero section.
+ *
+ * Two compositions from one set of markup:
+ *
+ *   landscape — the topographic plate, with the trail and its milestones plotted on the
+ *               artwork and the copy beside it on the open left
+ *   portrait  — no plate at all: the same copy, the same four milestones as a vertical
+ *               track, and the brand's rings drifting behind it
+ *
+ * A wide panorama squeezed into a tall frame loses the composition that makes it worth
+ * showing, and costs a megabyte on the connection where it hurts most. So phones get a
+ * hero built from type, vector and motion instead, and the largest element on the page
+ * becomes text — it paints almost immediately.
+ *
+ * Crucially the headline and the milestone links are written once and restyled, not
+ * duplicated per orientation. Rendering both compositions would put two `<h1>`s and two
+ * sets of the same anchors in the document for a crawler to find.
+ *
+ * A Server Component: every animation here is CSS, so the first server and client render
+ * are identical and none of this reaches the client bundle.
  */
-const PLATE_BREAKPOINT = "(min-width: 768px)";
+
+const HEADLINE = [
+  "לא",
+  "מתאימים",
+  "את",
+  "העסק",
+  "למערכת.",
+  "בונים",
+  "את",
+  "המערכת",
+  "סביב",
+  "העסק.",
+];
+
+/**
+ * The condition under which the plate is shown. It must stay in step with the matching
+ * query in `hero.css`, so the image and the stage geometry appear together.
+ *
+ * Orientation is part of it deliberately. A 768px-wide portrait tablet satisfies a
+ * width-only query, but this artwork is a wide panorama — on a tall screen it would be
+ * reduced to a sliver stranded in the middle of the section.
+ */
+const PLATE_MEDIA = "(min-width: 768px) and (min-aspect-ratio: 1/1)";
 
 /**
  * Must be one of the values allowed by `images.qualities` in `next.config.ts`; Next.js
- * silently falls back to the default otherwise. The plates are smooth gradients, which
- * band visibly at the default quality.
+ * silently falls back to the default otherwise. The plate is a smooth render whose broad
+ * gradients band visibly at the default quality.
  */
-const HERO_QUALITY = 90;
+const PLATE_QUALITY = 90;
 
 /**
- * Hero section.
+ * A 1x1 transparent GIF.
  *
- * The background is a `<picture>` built with `getImageProps()` — the art-direction
- * pattern documented for `next/image`. The two plates are genuinely different renders,
- * one landscape and one portrait, not one image at two sizes, so the `<Image>` component
- * on its own cannot express them. Going through `getImageProps` still gets the optimizer:
- * AVIF/WebP negotiation plus responsive and DPR variants, which matters because the hero
- * is displayed everywhere from a 360px phone to a 2560px monitor.
- *
- * The recorded exception in AGENTS.client.md §3 covers rendering the resulting `<img>`
- * directly. Explicit `width`/`height` reserve the layout box and `fetchPriority="high"`
- * marks the LCP candidate.
+ * This is the `<img>` fallback inside the `<picture>`, and it is what keeps a megabyte of
+ * artwork off a phone. `display: none` does not reliably prevent an image from being
+ * fetched, but a `<source>` whose media query does not match is never selected — so on a
+ * portrait viewport the browser resolves to this instead and downloads 43 bytes.
  */
+const TRANSPARENT_PIXEL =
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
 export function Hero() {
-  const common = { alt: "", sizes: "100vw" as const };
-
   const {
-    props: { srcSet: desktopSrcSet },
+    props: { srcSet: plateSrcSet },
   } = getImageProps({
-    ...common,
-    src: "/hero/hero-desktop.webp",
-    width: desktopPlate.width,
-    height: desktopPlate.height,
-    quality: HERO_QUALITY,
-  });
-
-  const {
-    props: { srcSet: mobileSrcSet, ...imgProps },
-  } = getImageProps({
-    ...common,
-    src: "/hero/hero-mobile.webp",
-    width: mobilePlate.width,
-    height: mobilePlate.height,
-    quality: HERO_QUALITY,
+    alt: "",
+    sizes: "100vw",
+    src: "/hero/hero-landscape.webp",
+    width: landscapePlate.width,
+    height: landscapePlate.height,
+    quality: PLATE_QUALITY,
   });
 
   return (
     <section className="hero" aria-labelledby="hero-heading">
-      <div className="hero-stage" dir="ltr">
+      {/* Decorative layer. `dir="ltr"` because the artwork is a picture, not text: its
+          coordinates are measured from the image's left edge in either page direction. */}
+      <div className="hero-stage hero-stage--art" dir="ltr" aria-hidden="true">
         <picture>
-          <source media={PLATE_BREAKPOINT} srcSet={desktopSrcSet} />
-          <source srcSet={mobileSrcSet} />
+          <source media={PLATE_MEDIA} srcSet={plateSrcSet} />
           {/* A raw <img> is required here: art direction via getImageProps. See the
               docblock above and the recorded exception in AGENTS.client.md §3. */}
           <img
-            {...imgProps}
             className="hero-plate"
+            src={TRANSPARENT_PIXEL}
             alt=""
             fetchPriority="high"
             decoding="async"
           />
         </picture>
+        <HeroTrail />
+      </div>
 
-        <HeroTrail plate={mobilePlate} nodes={trailNodes("mobile")} variant="mobile" />
-        <HeroTrail plate={desktopPlate} nodes={trailNodes("desktop")} variant="desktop" />
-
-        {/* Inside the stage and above the artwork, but below the markers: painted after
-            them it would wash the markers out along with the background. */}
-        <div className="hero-scrim" aria-hidden="true" />
-
-        <HeroMilestones />
+      {/* Portrait only: the wordmark's rings, drifting behind the copy. */}
+      <div className="hero-rings" aria-hidden="true">
+        <span className="hero-ring hero-ring--1" />
+        <span className="hero-ring hero-ring--2" />
+        <span className="hero-ring hero-ring--3" />
       </div>
 
       <div className="hero-content">
@@ -89,7 +115,15 @@ export function Hero() {
           </p>
 
           <h1 id="hero-heading" className="hero-heading">
-            לא מתאימים את העסק למערכת. בונים את המערכת סביב העסק.
+            {HEADLINE.map((word, index) => (
+              <span
+                key={`${index}-${word}`}
+                className="hero-word"
+                style={{ "--hero-word-delay": `${0.26 + index * 0.055}s` } as CSSProperties}
+              >
+                {word}
+              </span>
+            ))}
           </h1>
 
           <p className="hero-lead">
@@ -107,6 +141,8 @@ export function Hero() {
           </div>
         </div>
       </div>
+
+      <HeroMilestones />
     </section>
   );
 }

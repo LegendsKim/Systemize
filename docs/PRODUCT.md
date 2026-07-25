@@ -3,7 +3,7 @@
 - Client: Systemize
 - Decision owner: Marlen Kimiagrov
 - Boilerplate source: Systemize Boilerplate v1.0.1
-- Status: awaiting owner approval
+- Status: approved 2026-07-25; scope narrowed the same day (§3.2)
 - Last reviewed: 2026-07-25
 
 Raw input is preserved at `docs/discovery/CLIENT_BRIEF.md`. Implementation-governing
@@ -22,7 +22,7 @@ Success criteria:
 
 1. A visitor can understand what Systemize does and how it works within one screen of
    the hero.
-2. A visitor can quantify their own potential saving without contacting anyone.
+2. A visitor can see the four-stage delivery process at a glance, on any device.
 3. A visitor can submit a lead in under a minute, and that lead is never lost.
 4. The visual quality of the site is itself a sales argument — the hero must render
    identically proportioned on every viewport from 360px to 2560px.
@@ -36,7 +36,7 @@ or e-commerce.
 
 | User | Access | May do | May not do |
 |---|---|---|---|
-| Public visitor | Anonymous | Read all public content, use the savings calculator, use the chat assistant, submit a lead | Read, list, enumerate, or modify any stored lead; read any other visitor's chat |
+| Public visitor | Anonymous | Read all public content and submit a lead | Read, list, enumerate, or modify any stored lead |
 | Owner / operator | Supabase dashboard + Telegram | Read and manage leads, receive notifications | — (no in-app admin surface exists in the MVP) |
 
 There is no sign-in anywhere on the site.
@@ -49,9 +49,11 @@ There is no sign-in anywhere on the site.
 
 **Single-page marketing surface** (`/`), composed of:
 
-1. **Hero** — 3D render background with an animated turquoise trail and four labelled
-   process milestones (אפיון · תכנון · פיתוח · הטמעה), headline, sub-copy, and a primary
-   call to action.
+1. **Hero** — two compositions from one set of markup. On landscape, the topographic
+   render with an animated turquoise trail and four milestones (אפיון · תכנון · פיתוח ·
+   הטמעה) plotted onto its terraces. On portrait, no artwork at all: the headline arrives
+   word by word over a generated contour field, and the same four stages draw down a
+   vertical track. Headline, sub-copy and two calls to action in both.
 2. **Value proposition** — why systems are built around the business, not the reverse.
 3. **Before / after automation** — a two-column comparison of manual versus automated
    workflow.
@@ -59,21 +61,21 @@ There is no sign-in anywhere on the site.
 5. **Portfolio examples** — project cards. Placeholder content at MVP.
 6. **Excel versus SaaS** — a semantic comparison table.
 7. **Founder** — who is behind Systemize.
-8. **Savings calculator** — a live client-side ROI estimate in ILS.
-9. **Blueprint lead form** — the primary conversion surface.
-10. **AI chat assistant** — a floating dialog that guides visitors toward conversion.
+8. **Blueprint lead form** — the primary conversion surface.
 
 **Standalone indexable routes:** `/privacy`, `/terms`, `/accessibility`. These are real
 pages, not modals.
 
 **Server capabilities:** durable lead persistence, idempotent submission, distributed
-rate limiting, best-effort Telegram notification, provider-neutral chat generation.
+rate limiting, best-effort Telegram notification.
 
 ### 3.2 Out of scope — MVP
 
 - Any authenticated area, admin dashboard, or lead management UI.
 - Any locale other than Hebrew; any currency other than ILS.
 - Payments, quotations, contracts, or scheduling/booking.
+- A savings/ROI calculator. Removed from scope by the owner on 2026-07-25.
+- The AI chat assistant. Deferred by the owner on 2026-07-25; not in the current build.
 - Analytics, marketing pixels, cookie consent.
 - Blog, CMS, or editorable content.
 - Email delivery. Telegram is the only notification channel.
@@ -84,7 +86,6 @@ rate limiting, best-effort Telegram notification, provider-neutral chat generati
 | Item | Owner | Milestone |
 |---|---|---|
 | Real portfolio content and founder copy | Marlen Kimiagrov | Before public launch |
-| Gemini API key, enabling the full chat path | Marlen Kimiagrov | Before public launch |
 | Hosted Supabase project and preview RLS verification | Marlen Kimiagrov | Before production release |
 | Firefox and WebKit visual coverage | Marlen Kimiagrov | Before public launch |
 | Final legal copy authored by a competent party | Marlen Kimiagrov | Before public launch |
@@ -124,39 +125,24 @@ observability without PII.
 
 Acceptance: verified by fault injection against the notification adapter.
 
-### J4 — Estimate a saving
+### J4 — Read the process on any device
 
-*Given* a visitor adjusts the calculator inputs,
-*when* values change,
-*then* the estimated annual saving updates immediately and is formatted as ILS via
-`Intl.NumberFormat("he-IL", …)`.
-
-Acceptance:
-- The pure calculation function has unit tests covering zero, typical, and boundary
-  inputs.
-- The initial server and client render are identical — no `Date.now()`, no `Math.random()`,
-  no `localStorage` in the first render.
-- The result is announced in a polite live region.
-- The output is labelled as an estimate, never as a quotation.
-
-### J5 — Use the chat assistant
-
-*Given* a visitor opens the chat dialog,
-*when* they send a message,
-*then* they receive a Hebrew reply within the configured timeout, or a clear, actionable
-failure state.
+*Given* any viewport,
+*when* the hero renders,
+*then* the four delivery stages are present as real, focusable links with readable text.
 
 Acceptance:
-- The dialog traps focus, closes on Escape, blocks background interaction, and restores
-  focus to the trigger.
-- Incoming messages are announced in a live region.
-- The message history is bounded; there is no unbounded polling or retry.
-- With no Gemini key configured, the local Hebrew intent adapter answers instead, and
-  the visitor is never shown a raw provider error.
+- Exactly one `<h1>` and exactly four milestone links exist in the document, whichever
+  composition is displayed. Neither is duplicated per orientation.
+- Each milestone has an accessible name that states its stage and its position in the
+  sequence.
+- The keyboard order matches the visual reading order.
+- With `prefers-reduced-motion: reduce`, every hero animation is at its finished state
+  within the first paint.
 
-### J6 — Hero renders proportionally at any viewport
+### J5 — Hero renders proportionally at any viewport
 
-*Given* any viewport between 360px and 2560px wide,
+*Given* any viewport between 320px and 2560px wide,
 *when* the hero renders,
 *then* the trail, its glow, and all four milestones remain anchored to the same points
 of the background artwork.
@@ -164,10 +150,10 @@ of the background artwork.
 Acceptance:
 - All hero geometry is expressed in `viewBox` units or percentages. No hard-coded pixel
   coordinates for trail or milestone placement.
-- The background image uses `object-fit: cover` and the overlay SVG uses
-  `preserveAspectRatio="xMidYMid slice"` over an identical aspect ratio, so both crop
-  identically.
-- Portrait viewports receive the dedicated portrait render via art direction.
+- The artwork layer and the marker layer take their size from one shared pair of CSS
+  variables, so they cannot diverge.
+- Portrait viewports download no artwork: the `<source>` media query does not match, so
+  the browser resolves to a transparent pixel.
 - Milestones are real focusable links with visible focus and a target size of at least
   24×24 CSS pixels.
 - With `prefers-reduced-motion: reduce`, the trail is shown fully drawn and static.
@@ -178,16 +164,18 @@ Acceptance:
 
 - **Accessibility:** WCAG 2.2 AA. Automated axe coverage on every indexable route plus
   manual keyboard verification of every interactive component.
-- **Performance:** the hero background is the LCP element and is preloaded. No layout
-  shift from hero or imagery. Hero plates are served as AVIF with a WebP fallback.
+- **Performance:** on landscape the hero plate is the LCP element. On portrait no
+  artwork is fetched at all — the largest element is text, and the topographic background
+  is a 46KB generated vector — so the page paints without waiting on an image.
 - **Reliability:** every outbound call has an explicit timeout; retries are bounded,
   jittered, and never applied to a non-idempotent mutation without a durable key.
 - **Security:** deny-by-default RLS on every table; the anon key can neither read nor
   write leads. Service-role credentials are server-only. Origin/CSRF protection on
   sensitive mutations. Nonce-based CSP retained from the boilerplate.
-- **Privacy:** lead PII is excluded from logs, error reports, and the chat transcript.
-- **Rendering:** Server Components by default; `"use client"` only on the savings
-  calculator, the lead form, and the chat widget, each at the smallest coherent subtree.
+- **Privacy:** lead PII is excluded from logs, error reports, and analytics.
+- **Rendering:** Server Components by default; `"use client"` only on the lead form, at
+  the smallest coherent subtree. The hero is entirely server-rendered — every animation
+  in it is CSS.
 - **Layout:** logical CSS properties only. Physical directional utilities are rejected
   by `npm run check:architecture`.
 
@@ -222,8 +210,7 @@ are reused unchanged.
 | Hero artwork and SVG trail drift apart at extreme aspect ratios | The primary visual argument breaks | Identical crop maths on image and SVG; visual regression at desktop and mobile RTL; manual sweep 360→2560px |
 | Placeholder content deployed publicly | Credibility damage | Content centralised in one module; launch checklist blocks on replacement |
 | No hosted Supabase at build time | RLS unverified in production | Local Supabase CLI stack for development; RLS re-verified in preview before release |
-| Chat adapter quality without Gemini | Weaker assistant than described | Local Hebrew intent fallback is scoped to conversion-oriented answers only |
-| Hero plates are ~2MB PNGs | Poor LCP | Convert to AVIF/WebP with an explicit size budget of 250KB per plate |
+| The hero artwork is a wide panorama unsuited to a tall screen | A cropped, cramped hero on the platform most visitors use | Portrait gets its own composition built from type, vector and motion; the artwork is never cropped to fit |
 
 ---
 
@@ -236,3 +223,4 @@ are reused unchanged.
 3. **Real portfolio, founder, and legal copy.** Blocks public launch.
 4. **Whether the owner wants an authenticated lead dashboard later.** Currently out of
    scope; would change the authentication model and RLS design.
+5. **Whether the AI chat assistant returns.** Deferred on 2026-07-25, not cancelled.

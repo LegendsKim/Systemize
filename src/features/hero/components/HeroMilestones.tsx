@@ -1,43 +1,83 @@
 import type { CSSProperties } from "react";
-import { desktopPlate, milestones, mobilePlate, toPercent } from "../hero-geometry";
+import { landscapePlate, milestones, toPercent } from "../hero-geometry";
 
 /**
- * The four process milestones plotted along the trail.
+ * The map-style teardrop that plants the first milestone on its mound.
  *
- * These are real anchors, not SVG text or image labels: they carry readable text for
- * search engines, they are reachable and operable from the keyboard, and they scroll to
- * the process section. Each is positioned as a percentage of the stage, and the stage
- * always has the background plate's exact aspect ratio, so a marker sits on the same
- * point of the artwork at every viewport size.
+ * Its tip is the anchor point, which is why that marker is translated by `-100%` in the
+ * block direction rather than centred like the others.
+ */
+function PinMarker() {
+  return (
+    <svg
+      className="hero-pin"
+      viewBox="0 0 24 34"
+      width="26"
+      height="37"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path
+        d="M12 33.2C12 33.2 22.4 20.6 22.4 12.4A10.4 10.4 0 1 0 1.6 12.4C1.6 20.6 12 33.2 12 33.2Z"
+        fill="var(--color-primary)"
+      />
+      <circle cx="12" cy="12" r="4" fill="var(--color-text-on-primary)" />
+    </svg>
+  );
+}
+
+/**
+ * The four process milestones — written once, laid out two ways.
  *
- * Both coordinate sets are emitted as custom properties and the stylesheet picks one at
- * the breakpoint, so a single element serves both plates and there is no duplicated
- * markup for a crawler or a screen reader to encounter twice.
+ * On landscape the list becomes a layer the exact size of the plate and each item is
+ * positioned as a percentage of it, so a marker sits on the same point of the artwork at
+ * every viewport size. On portrait the same list is a vertical track beside a drawn line,
+ * and each item shows its summary line.
+ *
+ * They are real anchors either way: readable text for search engines, reachable from the
+ * keyboard, and they scroll to the process section. An ordered list because the four
+ * stages are a sequence, and a screen reader should say so.
  */
 export function HeroMilestones() {
   return (
-    <>
-      {milestones.map((milestone) => {
-        const position = {
-          "--hero-x-mobile": toPercent(milestone.mobile.x, mobilePlate.width),
-          "--hero-y-mobile": toPercent(milestone.mobile.y, mobilePlate.height),
-          "--hero-x-desktop": toPercent(milestone.desktop.x, desktopPlate.width),
-          "--hero-y-desktop": toPercent(milestone.desktop.y, desktopPlate.height),
+    <ol className="hero-milestones">
+      {milestones.map((milestone, index) => {
+        const style = {
+          "--hero-x": toPercent(milestone.point.x, landscapePlate.width),
+          "--hero-y": toPercent(milestone.point.y, landscapePlate.height),
+          // The markers arrive in trail order, just behind the line that draws them.
+          "--hero-marker-delay": `${1.15 + index * 0.3}s`,
         } as CSSProperties;
 
         return (
-          <a
+          <li
             key={milestone.id}
-            href={milestone.href}
-            className="hero-milestone"
-            style={position}
-            aria-label={milestone.description}
+            className={`hero-milestone hero-milestone--${milestone.marker}`}
+            style={style}
           >
-            {/* The artwork's coordinate space is left-to-right, but the label is Hebrew. */}
-            <span dir="rtl">{milestone.label}</span>
-          </a>
+            {/*
+              An explicit accessible name. Left to compute itself, the name is the label
+              and the summary concatenated with no separator — "אפיוןממפים" — because the
+              two spans have no whitespace between them in the markup. Stating it also
+              carries the stage's position in the sequence, which the pill alone does not.
+            */}
+            <a
+              href={milestone.href}
+              className="hero-milestone-link"
+              aria-label={`${milestone.description}. ${milestone.summary}`}
+            >
+              <span className="hero-milestone-label">{milestone.label}</span>
+              <span className="hero-milestone-summary">{milestone.summary}</span>
+            </a>
+            {milestone.marker === "pin" && (
+              <>
+                <PinMarker />
+                <span className="hero-pin-pulse" aria-hidden="true" />
+              </>
+            )}
+          </li>
         );
       })}
-    </>
+    </ol>
   );
 }

@@ -21,16 +21,15 @@ Preserved raw input: `docs/discovery/CLIENT_BRIEF.md`.
 
 - **System type:** Public, single-page marketing and lead-generation site.
 - **Business objective:** Convert business visitors into qualified leads by
-  demonstrating automation value, quantifying ROI, and offering a guided AI chat.
+  demonstrating automation value and the delivery process behind it.
 - **Primary user groups:**
   - *Public visitor* — anonymous prospective business client. May read all public
-    content, use the savings calculator, use the chat assistant, and submit one lead.
-    May not read, list, or modify any stored lead.
+    content and submit one lead. May not read, list, or modify any stored lead.
   - *Owner / operator* — Marlen Kimiagrov. Receives Telegram notifications and reads
     leads directly in the Supabase dashboard. **No authenticated admin UI is in scope
     for the MVP.**
-- **Required integrations:** Supabase (database), Telegram Bot API (notifications),
-  Google Gemini (chat generation, behind a provider-neutral adapter).
+- **Required integrations:** Supabase (database), Telegram Bot API (notifications).
+  Google Gemini is deferred with the chat assistant; see §8.
 - **Database:** Supabase.
 - **Authentication model:** none — the public site has no sign-in.
 - **Environments:** local, preview, production.
@@ -51,9 +50,8 @@ with `Intl.NumberFormat` and the explicit `ILS` currency code.
 ## 3. Public routes and SEO
 
 - **Public/indexable routes:** `/`, `/privacy`, `/terms`, `/accessibility`
-- **Authenticated/non-indexable routes:** none. `/api/chat` is a Route Handler, not an
-  indexable document.
-- **Canonical host:** not yet decided — see the production-release blockers in §9.
+- **Authenticated/non-indexable routes:** none.
+- **Canonical host:** not yet decided — see the production-release blockers in §10.
   Until it is decided, `metadataBase` reads from `NEXT_PUBLIC_SITE_URL` and defaults to
   the local development origin. No production release may occur while this is open.
 - **Required structured-data types:** `ProfessionalService`, `FAQPage`. Both derive from
@@ -65,10 +63,12 @@ with `Intl.NumberFormat` and the explicit `ILS` currency code.
 
 Explicit SEO exceptions, with reason:
 
-- The hero background uses a raw `<picture>` element instead of `next/image`. Reason:
-  `next/image` does not support art direction, and the hero requires a different render
-  for portrait viewports. Explicit `width`/`height` are set to reserve layout space, and
-  the LCP candidate is preloaded. This is the documented exception to `AGENTS.md` §9.
+- The hero background is rendered as a raw `<img>` inside a `<picture>`, from srcSets
+  produced by `getImageProps()`. Reason: the `<source>` media query is what keeps the
+  artwork off portrait viewports entirely — `display: none` does not reliably prevent a
+  fetch, whereas an unmatched `<source>` is never selected, so a phone downloads a 43-byte
+  transparent pixel instead of a megabyte. The optimizer still supplies AVIF negotiation
+  and responsive variants. This is the documented exception to `AGENTS.md` §9.
 
 ## 4. Testing depth
 
@@ -80,15 +80,15 @@ operations always applies.
   2. Duplicate submission of the same lead creates exactly one record.
   3. Lead persistence succeeds while Telegram notification fails — the visitor still
      sees success and the record survives.
-  4. Visitor adjusts the savings calculator and sees a correctly formatted ILS result.
-  5. Visitor opens the chat assistant, sends a message, and receives a reply.
+  4. Visitor navigates the hero's four process milestones from the keyboard, in both
+     the landscape and the portrait composition.
 - **Required browser/device matrix:** latest Chromium desktop (1440×900) and mobile
   viewport (390×844). Firefox and WebKit are deferred.
 - **Visual regression scope:** home page and the three legal routes, each at desktop RTL
   and mobile RTL. The hero is included because it is the primary conversion surface.
 - **Accessibility verification scope:** automated axe on every indexable route, plus
-  manual keyboard verification of the hero milestones, services accordion, savings
-  calculator, lead form, and chat dialog.
+  keyboard verification of the hero milestones, the services accordion and the lead form,
+  and a reduced-motion check that every hero animation resolves to its finished state.
 - **Deferred non-critical coverage:** cross-browser Firefox/WebKit visual coverage —
   owner Marlen Kimiagrov, target milestone: before public launch.
 
@@ -105,10 +105,8 @@ Business rules that must never be inferred or altered by an agent.
   are generated on the server. A client-supplied value for any of them is ignored.
 - Lead records are never hard-deleted by application code. Deletion is an explicit,
   manual operator action tied to the retention policy.
-- The savings calculator is an illustrative estimate, not a quotation. Its output must
-  never be persisted as a commercial commitment or presented as a binding price.
-- The chat assistant never asks for, echoes, or stores payment details, credentials, or
-  government identifiers.
+- The hero's trail, its milestone markers and the terrain they stand on are derived from
+  one coordinate list. A marker is never positioned independently of the artwork.
 
 ## 6. Data and integration boundaries
 
@@ -120,19 +118,18 @@ Business rules that must never be inferred or altered by an agent.
 - **Outbound provider contracts:**
   - Telegram `sendMessage` — explicit timeout, no retry on ordinary 4xx, bounded
     backoff with jitter on network failure/429/transient 5xx, honours `Retry-After`.
-  - Google Gemini text generation — explicit timeout, same retry policy. Selected only
-    when its API key is configured; otherwise the local Hebrew intent adapter serves.
+  - Google Gemini text generation — deferred with the chat assistant; see §8.
 - **PII fields and retention:** collected on the lead form — full name, business name,
   phone number, email address, and a free-text description of the need. Purpose:
   responding to a business enquiry. Retention: not yet decided — see the
-  production-release blockers in §9. Access: owner only, via Supabase.
+  production-release blockers in §10. Access: owner only, via Supabase.
   Deletion/export: manual operator action on request.
-  Lead PII must never appear in logs, error reports, analytics, or the chat transcript.
+  Lead PII must never appear in logs, error reports, or analytics.
 - **Idempotency requirements:** mandatory on lead submission. Key is generated on the
   client per form session, enforced by a unique database constraint.
 - **Rate-limit policy:** database-backed and therefore distributed, never process-local.
-  Lead submission: 5 requests per IP per hour. Chat messages: 30 requests per IP per
-  hour. Both return a typed, user-visible rate-limit state rather than a generic error.
+  Lead submission: 5 requests per IP per hour, returning a typed, user-visible
+  rate-limit state rather than a generic error.
 
 ## 7. Approved tunings and exceptions
 
@@ -140,10 +137,21 @@ Only rules explicitly marked **TUNABLE** in `AGENTS.md` may be configured here.
 
 | Rule | Decision | Reason | Owner | Review date |
 |---|---|---|---|---|
-| §9 SEO and assets — `next/image` for content images | Hero background plates use a raw `<picture>` element with explicit dimensions and an LCP preload | `next/image` has no art-direction support; the hero needs distinct landscape and portrait renders | Marlen Kimiagrov | 2026-10-25 |
+| §9 SEO and assets — `next/image` for content images | The hero plate is rendered as a raw `<img>` inside a `<picture>`, from `getImageProps()` srcSets | An unmatched `<source>` media query is the only reliable way to keep the artwork off portrait viewports; the optimizer is still used | Marlen Kimiagrov | 2026-10-25 |
 | §10 Testing depth — browser matrix | Chromium desktop and mobile only for the MVP | Single-locale marketing site; cross-browser visual coverage deferred to pre-launch | Marlen Kimiagrov | 2026-10-25 |
 
-## 8. Known deviations
+## 8. Scope changes since approval
+
+Recorded on 2026-07-25 at the owner's direction.
+
+| Item | Decision | Effect |
+|---|---|---|
+| Savings calculator | **Removed from scope.** Not required at all. | Journey J4 and its rate-limit and formatting requirements no longer apply. `Intl` money formatting stays in `src/lib/i18n` for the lead flow. |
+| AI chat assistant | **Deferred.** Not required now. | Journey J5, the Gemini adapter, the chat route and its rate limit are out of the current build. The provider-neutral boundary is still the design if it returns. |
+
+Neither change weakens a LOCKED rule; both narrow the product surface.
+
+## 9. Known deviations
 
 This section documents existing non-compliance. It does not authorize new violations of
 a **LOCKED** rule.
@@ -151,10 +159,9 @@ a **LOCKED** rule.
 | Deviation | Risk | Remediation | Owner | Target date |
 |---|---|---|---|---|
 | Portfolio, founder, and legal copy ship as clearly marked placeholder content | A premature deploy could publish non-final text | Replace from a single content module before public launch; the launch checklist blocks on it | Marlen Kimiagrov | Before public launch |
-| No Gemini API key is provisioned; the local Hebrew intent adapter is the active chat path | Chat answers are narrower than the brief describes | Provide `GEMINI_API_KEY`; adapter selection is environment-driven and needs no code change | Marlen Kimiagrov | Before public launch |
 | No hosted Supabase project; development runs against the local Supabase CLI stack | Production RLS and migrations are unverified against the real project | Provision the project, apply migrations, re-run RLS tests in preview | Marlen Kimiagrov | Before production release |
 
-## 9. Approval
+## 10. Approval
 
 - **Configuration status:** `APPROVED`
 - **Approved by:** Marlen Kimiagrov

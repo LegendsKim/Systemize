@@ -32,7 +32,9 @@
   --color-border-strong: oklch(0.72 0.006 240);
   --color-text-primary: oklch(0.24 0.008 240);
   --color-text-secondary: oklch(0.45 0.006 240);
-  --color-text-muted: oklch(0.62 0.005 240);
+  /* Dark enough for 4.5:1 on surface-1, which the footer uses at 13px — below the
+     large-text threshold, so the reduced ratio does not apply. */
+  --color-text-muted: oklch(0.5 0.006 240);
   --color-text-on-primary: oklch(1 0 0);
 
   /* --- Colors — Brand turquoise, sampled from the hero trail --- */
@@ -42,13 +44,6 @@
   --color-primary-soft: oklch(0.93 0.03 190);
   /* Luminous variant used only for the trail and its glow, never for text. */
   --color-trail: oklch(0.72 0.13 189);
-
-  /* --- Colors — Hero field ---
-   * Measured from the hero plates' own borders, which are a uniform flat colour on all
-   * four edges. The page background behind the artwork uses these exact values, so the
-   * plate can stop short of the viewport edge without leaving a visible seam. */
-  --color-hero-field: #d5d7da;
-  --color-hero-field-landscape: #dddddf;
 
   /* --- Colors — Semantic --- */
   --color-success: oklch(0.55 0.15 145);
@@ -72,6 +67,26 @@
 
   /* --- Focus ring --- */
   --color-focus-ring: oklch(0.5 0.09 190 / 0.65);
+}
+
+/* ============================================================================
+ * Hero field colours
+ *
+ * The median colour of the outermost two pixels of each hero plate, produced by
+ * `scripts/prepare-hero-plates.mjs`. The page background behind the artwork uses these
+ * exact values, which is what lets the plate stop short of the viewport edge without
+ * leaving a visible seam. A median rather than a mean, because the contour lines that
+ * touch the edge drag an average noticeably darker than the field they sit on.
+ *
+ * Deliberately plain custom properties rather than `@theme` entries: Tailwind drops theme
+ * variables it cannot see referenced, and these are only referenced from inside a media
+ * query, which is exactly the case it prunes.
+ * ============================================================================ */
+
+:root {
+  --color-hero-field: #e5e4e7;
+  /* The plate is drawn over the contour field, so the page carries the same base tone. */
+  --color-hero-base: #ececed;
 }
 
 /* ============================================================================
