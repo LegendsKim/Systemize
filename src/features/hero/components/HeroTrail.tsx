@@ -3,7 +3,7 @@ import { landscapePlate, trailNodes } from "../hero-geometry";
 /**
  * The turquoise trail drawn over the hero plate.
  *
- * Purely decorative — every milestone it passes through is also rendered as a real link
+ * Purely decorative, every milestone it passes through is also rendered as a real link
  * in `HeroMilestones`, so hiding this from assistive technology loses nothing.
  *
  * A Server Component. The draw-in is a CSS animation rather than JavaScript, so the

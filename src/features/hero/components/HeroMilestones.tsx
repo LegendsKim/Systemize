@@ -1,12 +1,35 @@
+"use client";
+// Required: selecting a milestone opens an accessible modal dialog.
+
 import type { CSSProperties } from "react";
-import { landscapePlate, milestones, toPercent } from "../hero-geometry";
+import { useState } from "react";
+import { Dialog } from "@/components/ui/dialog";
+import {
+  landscapePlate,
+  milestones,
+  toPercent,
+  type Milestone,
+} from "../hero-geometry";
 
 /**
- * The map-style teardrop that plants the first milestone on its mound.
+ * The tangle, in the portrait track's own coordinates: 16 units to the rem, so the box is
+ * 12rem × 5.5rem. The amplitude falls monotonically on the way down — that decay is what
+ * reads as "resolving" rather than "decorative squiggle" — and the last segment is
+ * genuinely vertical so the eye is handed straight to the first stage.
  *
- * Its tip is the anchor point, which is why that marker is translated by `-100%` in the
- * block direction rather than centred like the others.
+ * x = 168 is the tail, which is 1.5rem in from the inline-start edge and therefore the
+ * centre of the 3rem node column beneath it.
  */
+const RESOLVE_PATH = [
+  "M 18 8",
+  "C 78 -4, 122 20, 58 26",
+  "C 6 31, 150 37, 146 46",
+  "C 142 55, 66 54, 104 62",
+  "C 132 68, 172 64, 158 72",
+  "C 150 77, 162 78, 166 82",
+  "L 168 88",
+].join(" ");
+
 function PinMarker() {
   return (
     <svg
@@ -26,58 +49,113 @@ function PinMarker() {
   );
 }
 
-/**
- * The four process milestones — written once, laid out two ways.
- *
- * On landscape the list becomes a layer the exact size of the plate and each item is
- * positioned as a percentage of it, so a marker sits on the same point of the artwork at
- * every viewport size. On portrait the same list is a vertical track beside a drawn line,
- * and each item shows its summary line.
- *
- * They are real anchors either way: readable text for search engines, reachable from the
- * keyboard, and they scroll to the process section. An ordered list because the four
- * stages are a sequence, and a screen reader should say so.
- */
 export function HeroMilestones() {
-  return (
-    <ol className="hero-milestones">
-      {milestones.map((milestone, index) => {
-        const style = {
-          "--hero-x": toPercent(milestone.point.x, landscapePlate.width),
-          "--hero-y": toPercent(milestone.point.y, landscapePlate.height),
-          // The markers arrive in trail order, just behind the line that draws them.
-          "--hero-marker-delay": `${1.15 + index * 0.3}s`,
-        } as CSSProperties;
+  const [selected, setSelected] = useState<Milestone | null>(null);
 
-        return (
-          <li
-            key={milestone.id}
-            className={`hero-milestone hero-milestone--${milestone.marker}`}
-            style={style}
-          >
-            {/*
-              An explicit accessible name. Left to compute itself, the name is the label
-              and the summary concatenated with no separator — "אפיוןממפים" — because the
-              two spans have no whitespace between them in the markup. Stating it also
-              carries the stage's position in the sequence, which the pill alone does not.
-            */}
-            <a
-              href={milestone.href}
-              className="hero-milestone-link"
-              aria-label={`${milestone.description}. ${milestone.summary}`}
-            >
-              <span className="hero-milestone-label">{milestone.label}</span>
-              <span className="hero-milestone-summary">{milestone.summary}</span>
+  return (
+    <>
+      <div className="hero-milestone-map">
+        {/*
+         * Portrait only: the line that enters tangled and leaves straight.
+         *
+         * This is the whole sales argument with no words in it — a knotted process
+         * resolving into one clear track — and the four stages below sit on the
+         * straightened end of it as the evidence. It replaced a closed circle, which
+         * read as "repeats forever, no beginning and no end": the opposite of the
+         * promise, and precisely the fear a buyer brings to bespoke software.
+         *
+         * `dir` is irrelevant to it but the coordinates are not: the tail must land on
+         * the first node's centre, so the box is exactly as wide as the node column and
+         * the tail sits `NODE_CENTRE` in from the inline-start edge. Same reasoning as
+         * the `dir="ltr"` on the art stage — a vector's coordinates are physical even
+         * when the page is not.
+         */}
+        <svg
+          className="hero-mobile-route"
+          viewBox="0 0 192 88"
+          fill="none"
+          aria-hidden="true"
+          focusable="false"
+          preserveAspectRatio="xMaxYMid meet"
+        >
+          <path
+            className="hero-mobile-route-base"
+            d={RESOLVE_PATH}
+            fill="none"
+            pathLength="1"
+          />
+          <path
+            className="hero-mobile-route-progress"
+            d={RESOLVE_PATH}
+            fill="none"
+            pathLength="1"
+          />
+        </svg>
+
+        <ol className="hero-milestones">
+          {milestones.map((milestone, index) => {
+            const style = {
+              "--hero-x": toPercent(milestone.point.x, landscapePlate.width),
+              "--hero-y": toPercent(milestone.point.y, landscapePlate.height),
+              "--hero-marker-delay": `${1.15 + index * 0.3}s`,
+            } as CSSProperties;
+
+            return (
+              <li
+                key={milestone.id}
+                className={`hero-milestone hero-milestone--${milestone.marker}`}
+                style={style}
+              >
+                <button
+                  type="button"
+                  className="hero-milestone-link"
+                  aria-haspopup="dialog"
+                  aria-label={`${milestone.description}. ${milestone.summary}. לפתיחת מידע נוסף`}
+                  onClick={() => setSelected(milestone)}
+                >
+                  <span className="hero-milestone-number" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className="hero-milestone-label">{milestone.label}</span>
+                  <span className="hero-milestone-summary">{milestone.summary}</span>
+                </button>
+                {milestone.marker === "pin" && (
+                  <>
+                    <PinMarker />
+                    <span className="hero-pin-pulse" aria-hidden="true" />
+                  </>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+
+      <Dialog
+        open={selected !== null}
+        onClose={() => setSelected(null)}
+        title={selected?.label ?? ""}
+        description={selected?.summary}
+        className="hero-milestone-dialog"
+      >
+        {selected && (
+          <div className="hero-dialog-body">
+            <div className="hero-dialog-status" aria-hidden="true">
+              <span />
+              PROCESS_STAGE_{selected.id.toUpperCase()}
+            </div>
+            <p>{selected.detail}</p>
+            <ul>
+              {selected.highlights.map((highlight) => (
+                <li key={highlight}>{highlight}</li>
+              ))}
+            </ul>
+            <a href="#process" onClick={() => setSelected(null)}>
+              לראות את התהליך המלא
             </a>
-            {milestone.marker === "pin" && (
-              <>
-                <PinMarker />
-                <span className="hero-pin-pulse" aria-hidden="true" />
-              </>
-            )}
-          </li>
-        );
-      })}
-    </ol>
+          </div>
+        )}
+      </Dialog>
+    </>
   );
 }

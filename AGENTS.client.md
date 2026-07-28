@@ -3,7 +3,7 @@ configuration_status: APPROVED
 boilerplate_version: "v1.0.1"
 client_name: "Systemize"
 decision_owner: "Marlen Kimiagrov"
-last_reviewed: "2026-07-25"
+last_reviewed: "2026-07-26"
 project_phase: "MVP"
 deployment_target: "Vercel"
 data_classification: "confidential"
@@ -22,6 +22,11 @@ Preserved raw input: `docs/discovery/CLIENT_BRIEF.md`.
 - **System type:** Public, single-page marketing and lead-generation site.
 - **Business objective:** Convert business visitors into qualified leads by
   demonstrating automation value and the delivery process behind it.
+- **Offer, as stated by the owner on 2026-07-26:** bespoke cloud management systems for
+  small and medium businesses in any trade. The customer-facing word is *cloud*, not
+  *web*. The site's central claim is that the business dictates how the software is
+  built, and the breadth of the client range is the evidence. See `docs/PRODUCT.md` §1;
+  the scope-change entry is in §8 below.
 - **Primary user groups:**
   - *Public visitor* — anonymous prospective business client. May read all public
     content and submit one lead. May not read, list, or modify any stored lead.
@@ -57,9 +62,12 @@ with `Intl.NumberFormat` and the explicit `ILS` currency code.
 - **Required structured-data types:** `ProfessionalService`, `FAQPage`. Both derive from
   the same content source as the visible text.
 - **Sitemap policy:** all four indexable routes listed; no route is excluded.
-- **Analytics/consent requirements:** no analytics and no marketing cookies in the MVP,
-  therefore no consent banner is required. Adding analytics later requires a new
-  decision recorded in this file.
+- **Analytics/consent requirements:** a compact consent panel is required. Necessary
+  cookies are always active; preferences, analytics, and marketing categories default to
+  off and remain user-selectable. The choice is stored in a first-party consent cookie
+  for 180 days and can be reopened from the footer. No analytics, pixels, or marketing
+  providers are currently installed; adding one requires gating it on the relevant
+  consent category and updating the privacy text before activation.
 
 Explicit SEO exceptions, with reason:
 
@@ -87,7 +95,7 @@ operations always applies.
 - **Visual regression scope:** home page and the three legal routes, each at desktop RTL
   and mobile RTL. The hero is included because it is the primary conversion surface.
 - **Accessibility verification scope:** automated axe on every indexable route, plus
-  keyboard verification of the hero milestones, the services accordion and the lead form,
+  keyboard verification of the hero milestones, FAQ disclosures and the lead form,
   and a reduced-motion check that every hero animation resolves to its finished state.
 - **Deferred non-critical coverage:** cross-browser Firefox/WebKit visual coverage —
   owner Marlen Kimiagrov, target milestone: before public launch.
@@ -142,12 +150,14 @@ Only rules explicitly marked **TUNABLE** in `AGENTS.md` may be configured here.
 
 ## 8. Scope changes since approval
 
-Recorded on 2026-07-25 at the owner's direction.
+Recorded at the owner's direction on the dates given.
 
 | Item | Decision | Effect |
 |---|---|---|
+| Positioning and vocabulary (2026-07-26) | Systemize builds **bespoke cloud management systems for small and medium businesses in any trade**, not specifically an automation-and-Excel/VBA agency. *Cloud* is the customer-facing word. | Site copy states the offer at its real scope. The "Excel versus SaaS" section becomes **off-the-shelf versus built around you** — same marketing job, correct positioning. No LOCKED rule, route, data field, or integration changes. |
 | Savings calculator | **Removed from scope.** Not required at all. | Journey J4 and its rate-limit and formatting requirements no longer apply. `Intl` money formatting stays in `src/lib/i18n` for the lead flow. |
 | AI chat assistant | **Deferred.** Not required now. | Journey J5, the Gemini adapter, the chat route and its rate limit are out of the current build. The provider-neutral boundary is still the design if it returns. |
+| Cookie preferences (2026-07-27) | **Added.** A compact Systemize-branded consent panel lets visitors accept all, keep only necessary cookies, or choose preferences, analytics, and marketing individually. | Consent is explicit, optional categories default off, the first-party choice expires after 180 days, and settings remain reachable from the footer. No analytics or marketing provider is activated by this UI alone. |
 
 Neither change weakens a LOCKED rule; both narrow the product surface.
 

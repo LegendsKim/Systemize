@@ -1,0 +1,199 @@
+/*
+ * Founder section.
+ *
+ * The portrait column holds either a photograph or the vector medallion that stands in for
+ * one, and both occupy the same reserved square, so supplying a real photograph later
+ * changes the picture, not the layout.
+ */
+
+.founder-section {
+  background-color: var(--color-surface-0);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.founder-inner {
+  display: grid;
+  grid-template-columns: minmax(14rem, 22rem) minmax(0, 1.6fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  inline-size: 100%;
+  max-inline-size: var(--container-content);
+  margin-inline: auto;
+  padding: var(--spacing-section-y) var(--spacing-page-x);
+}
+
+.founder-portrait {
+  align-self: start;
+  position: sticky;
+  inset-block-start: 7rem;
+  text-align: center;
+}
+
+.founder-portrait-image,
+.founder-medallion {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  max-inline-size: 15rem;
+  margin-inline: auto;
+  aspect-ratio: 1;
+  border-radius: 50%;
+}
+
+.founder-portrait-image {
+  object-fit: cover;
+  border: 1px solid var(--color-border);
+}
+
+.founder-medallion {
+  color: var(--color-border-strong);
+  background:
+    radial-gradient(
+      circle at 50% 40%,
+      oklch(1 0 0) 0%,
+      var(--color-surface-1) 62%,
+      var(--color-surface-2) 100%
+    );
+  box-shadow: 0 1.5rem 4rem oklch(0.24 0.008 240 / 0.08);
+}
+
+.founder-medallion-initials {
+  fill: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 4.25rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+
+.founder-name {
+  margin-block-start: 1.75rem;
+  font-size: clamp(1.125rem, 2vw, 1.375rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.founder-role {
+  margin-block-start: 0.375rem;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.founder-eyebrow {
+  color: var(--color-primary-focus);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.founder-copy h2 {
+  max-inline-size: 26ch;
+  margin-block-start: 1.25rem;
+  font-size: clamp(1.75rem, 4.2vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.founder-paragraph {
+  max-inline-size: 44rem;
+  margin-block-start: 1.75rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  line-height: 1.95;
+  text-wrap: pretty;
+}
+
+.founder-pledge {
+  max-inline-size: 44rem;
+  margin-block-start: 2.5rem;
+  padding-inline-start: 1.375rem;
+  border-inline-start: 2px solid var(--color-primary);
+  font-size: clamp(1.0625rem, 1.9vw, 1.3125rem);
+  font-weight: 500;
+  line-height: 1.65;
+  letter-spacing: -0.015em;
+  text-wrap: pretty;
+}
+
+/*
+ * Rendered only when `credentials` is non-empty. Nothing here compensates for the empty
+ * case, the section simply has one fewer block.
+ */
+.founder-credentials {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 1.5rem;
+  margin-block-start: 2.5rem;
+  padding-block-start: 2rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.founder-credential dt {
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.founder-credential dd {
+  margin-block-start: 0.375rem;
+  margin-inline: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.founder-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-block-size: 3rem;
+  margin-block-start: 2.5rem;
+  padding-inline: 1.5rem;
+  padding-block: 0.75rem;
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-pill);
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.founder-cta:hover {
+  border-color: var(--color-primary-hover);
+  background-color: var(--color-primary-hover);
+}
+
+.founder-cta svg {
+  transition: translate 0.25s ease;
+}
+
+.founder-cta:hover svg {
+  translate: 0 2px;
+}
+
+@media (max-width: 56rem) {
+  .founder-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .founder-portrait {
+    position: static;
+    text-align: start;
+  }
+
+  .founder-portrait-image,
+  .founder-medallion {
+    max-inline-size: 11rem;
+    margin-inline: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .founder-cta,
+  .founder-cta svg {
+    transition: none;
+  }
+}

@@ -26,13 +26,51 @@ test.describe('Home page', () => {
   test('presents the four delivery stages in order', async ({ page }) => {
     await page.goto('/');
 
-    const process = page.getByRole('region', { name: 'מתהליך עמום למערכת שעובדת' });
+    const process = page.getByRole('region', {
+      name: 'מהשיחה הראשונה ועד מערכת שעובדת בעסק.',
+    });
+    // The same four names, in the same order, as the hero's trail milestones.
     await expect(process.getByRole('heading', { level: 3 })).toHaveText([
       'אפיון',
       'תכנון',
       'פיתוח',
       'הטמעה',
     ]);
+  });
+
+  test('opens only one FAQ answer at a time', async ({ page }) => {
+    await page.goto('/');
+
+    // Exclusivity comes from the shared `name` attribute, which is a browser feature
+    // rather than our code, so it is worth asserting in a real browser and not only in
+    // the unit test that checks the markup.
+    const entries = page.locator('.faq-entry');
+    const first = entries.nth(0);
+    const second = entries.nth(1);
+
+    await first.locator('summary').click();
+    await expect(first).toHaveAttribute('open', '');
+
+    await second.locator('summary').click();
+    await expect(second).toHaveAttribute('open', '');
+    await expect(first).not.toHaveAttribute('open', '');
+  });
+
+  test('opens an accessible detail dialog from every hero milestone', async ({ page }) => {
+    await page.goto('/');
+
+    const discovery = page.getByRole('button', {
+      name: 'אפיון, שלב ראשון בתהליך. מבינים איך העבודה מתנהלת באמת. לפתיחת מידע נוסף',
+    });
+    await discovery.click();
+
+    const dialog = page.getByRole('dialog');
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole('heading', { level: 2 })).toHaveText('אפיון');
+    await expect(dialog).toContainText('מיפוי הצורך');
+
+    await dialog.getByRole('button', { name: 'סגירת החלונית' }).click();
+    await expect(dialog).not.toBeVisible();
   });
 
   test('has no console errors', async ({ page }) => {

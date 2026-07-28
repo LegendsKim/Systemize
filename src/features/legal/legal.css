@@ -1,0 +1,304 @@
+/*
+ * Legal routes, privacy, terms, accessibility statement.
+ *
+ * These are reading pages, not marketing surfaces, so the rhythm is quieter than the
+ * sections on the home page: one measured column, the same section spacing tokens, the
+ * same eyebrow treatment, and no scroll-driven motion at all.
+ *
+ * Every token here already exists in `globals.css`. Nothing new is introduced, and the
+ * heading scale is the FAQ's scale rather than the process section's display scale
+ * a legal page's job is legibility, not impact.
+ */
+
+.legal-page {
+  background-color: var(--color-surface-0);
+}
+
+/* ---------------------------------------------------------------------------
+ * Masthead
+ *
+ * A full-bleed band so the title has a register of its own rather than floating at the
+ * top of the reading column. The dot grid is the same motif as the diagnostic section,
+ * which is what ties a legal route back to the marketing page visually.
+ * ------------------------------------------------------------------------ */
+
+.legal-masthead {
+  border-block-end: 1px solid var(--color-border);
+  background:
+    linear-gradient(oklch(0.985 0.001 240 / 0.94), oklch(0.97 0.006 190 / 0.96)),
+    radial-gradient(circle at 1px 1px, oklch(0.55 0.098 190 / 0.13) 1px, transparent 1.5px);
+  background-size: auto, 28px 28px;
+}
+
+.legal-masthead-inner {
+  inline-size: 100%;
+  max-inline-size: var(--container-content);
+  margin-inline: auto;
+  padding-inline: var(--spacing-page-x);
+  padding-block: clamp(3.5rem, 9vw, 6.5rem);
+}
+
+.legal-eyebrow {
+  color: var(--color-primary-focus);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.legal-title {
+  margin-block-start: 1.25rem;
+  font-size: clamp(2.25rem, 6vw, 4rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.legal-lead {
+  max-inline-size: 52ch;
+  margin-block-start: 1.5rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(1rem, 2vw, 1.1875rem);
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+
+/* ---------------------------------------------------------------------------
+ * Reading area
+ * ------------------------------------------------------------------------ */
+
+.legal-inner {
+  inline-size: 100%;
+  max-inline-size: var(--container-content);
+  margin-inline: auto;
+  padding-inline: var(--spacing-page-x);
+  padding-block: clamp(3rem, 7vw, 5rem);
+}
+
+.legal-layout {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 4rem);
+}
+
+/*
+ * The rail comes second in the source so that on one column the prose is not pushed below
+ * a long list of links; `order` lifts it back above on wide screens where it is a sidebar
+ * rather than an interruption. Both orders match the visual order in their own layout, so
+ * keyboard order stays correct (AGENTS.md §8).
+ */
+@media (min-width: 64rem) {
+  .legal-layout {
+    grid-template-columns: minmax(0, 16rem) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Contents rail
+ * ------------------------------------------------------------------------ */
+
+.legal-toc {
+  padding: 1.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: oklch(1 0 0 / 0.66);
+}
+
+@media (min-width: 64rem) {
+  .legal-toc {
+    position: sticky;
+    /* Clears the sticky header, which the sections also allow for in scroll-margin. */
+    inset-block-start: 6rem;
+    max-block-size: calc(100vh - 8rem);
+    overflow-y: auto;
+  }
+}
+
+.legal-toc-heading {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.legal-toc-list {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0;
+  margin-block-start: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.legal-toc-link {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  gap: 0.5rem;
+  align-items: baseline;
+  padding-block: 0.4375rem;
+  padding-inline: 0.5rem;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.legal-toc-number {
+  color: var(--color-primary-focus);
+  font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.legal-toc-link:hover {
+  background-color: var(--color-primary-soft);
+  color: var(--color-text-primary);
+}
+
+/* ---------------------------------------------------------------------------
+ * Draft notice
+ *
+ * Deliberately the loudest element on the page. It uses the warning token rather than
+ * the brand accent, because it must not read as decoration, a reader who skims must
+ * still register that the text below is not in force. The inline start border is the
+ * logical edge, so it sits at the reading edge under RTL without a mirrored rule.
+ * ------------------------------------------------------------------------ */
+
+.legal-draft {
+  /*
+   * The shared `--color-warning` token is the right hue for the border, where the 3:1
+   * non-text threshold applies, but axe measured it at 3.79:1 against this tint, under
+   * the 4.5:1 that 12px bold label text requires. Same hue, darkened until it passes,
+   * scoped here rather than shifted globally: the token is used elsewhere at other sizes.
+   */
+  --legal-draft-label: oklch(0.46 0.12 65);
+
+  margin-block-end: clamp(2rem, 5vw, 3rem);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border: 1px solid var(--color-warning);
+  border-inline-start-width: 4px;
+  border-radius: var(--radius-lg);
+  background-color: oklch(0.97 0.03 80 / 0.55);
+}
+
+.legal-draft-label {
+  color: var(--legal-draft-label);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.legal-draft-text {
+  margin-block-start: 0.75rem;
+  color: var(--color-text-primary);
+  font-size: clamp(0.9375rem, 1.6vw, 1.0625rem);
+  font-weight: 500;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+/* ---------------------------------------------------------------------------
+ * Body
+ * ------------------------------------------------------------------------ */
+
+.legal-section {
+  scroll-margin-block-start: 6rem;
+}
+
+/* The numbered prefix hangs beside the heading rather than indenting it. */
+.legal-section-number {
+  margin-inline-end: 0.625rem;
+  color: var(--color-primary-focus);
+  font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+.legal-section + .legal-section {
+  margin-block-start: clamp(2.5rem, 6vw, 3.5rem);
+  padding-block-start: clamp(2rem, 5vw, 2.5rem);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.legal-section-heading {
+  font-size: clamp(1.25rem, 2.6vw, 1.625rem);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.legal-paragraph {
+  margin-block-start: 1.125rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.9375rem, 1.6vw, 1.0625rem);
+  line-height: 1.95;
+  text-wrap: pretty;
+}
+
+.legal-list {
+  display: grid;
+  gap: 0.875rem;
+  margin-block-start: 1.25rem;
+  padding: 0;
+  list-style: none;
+}
+
+.legal-list li {
+  position: relative;
+  padding-inline-start: 1.5rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(0.9375rem, 1.6vw, 1.0625rem);
+  line-height: 1.75;
+}
+
+.legal-list li::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.7em;
+  inset-inline-start: 0;
+  inline-size: 0.4375rem;
+  block-size: 0.4375rem;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+/* ---------------------------------------------------------------------------
+ * Open owner decisions
+ *
+ * The gaps we refused to fill in with invented text. Marked as a distinct block so the
+ * reader can tell "we have not decided this yet" from "this is the rule".
+ * ------------------------------------------------------------------------ */
+
+.legal-open-decisions {
+  margin-block-start: clamp(2.5rem, 6vw, 3.5rem);
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border: 1px dashed var(--color-border-strong);
+  border-radius: var(--radius-xl);
+  background-color: var(--color-surface-1);
+}
+
+.legal-section + .legal-open-decisions {
+  border-block-start: 1px dashed var(--color-border-strong);
+  padding-block-start: clamp(1.5rem, 3vw, 2rem);
+}
+
+.legal-open-decisions .legal-list li::before {
+  background-color: var(--color-text-muted);
+  box-shadow: none;
+}
+
+.legal-paragraph,
+.legal-list li {
+  max-inline-size: 68ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legal-toc-link {
+    transition: none;
+  }
+}

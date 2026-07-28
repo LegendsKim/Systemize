@@ -3,8 +3,9 @@
 - Client: Systemize
 - Decision owner: Marlen Kimiagrov
 - Boilerplate source: Systemize Boilerplate v1.0.1
-- Status: approved 2026-07-25; scope narrowed the same day (§3.2)
-- Last reviewed: 2026-07-25
+- Status: approved 2026-07-25; scope narrowed the same day (§3.2); positioning restated
+  by the owner on 2026-07-26 (§1, §3.1.6)
+- Last reviewed: 2026-07-26
 
 Raw input is preserved at `docs/discovery/CLIENT_BRIEF.md`. Implementation-governing
 configuration lives in `AGENTS.client.md`. This document defines *what* is being built
@@ -14,9 +15,24 @@ and how completion is judged.
 
 ## 1. Objective and success criteria
 
-Systemize is a business-automation and Excel/VBA services agency. The site is a public,
-single-page marketing and lead-generation platform whose purpose is to convert business
-visitors into qualified leads.
+Systemize builds bespoke cloud management systems for small and medium businesses, in
+any trade — a judo coach tracking memberships and attendance, or a company tracking
+cleanroom inventory. The delivery model is the product: learn the client's existing
+workflow, specify, plan, build with the client in the loop, and roll the system out.
+
+The claim that carries the site: *software does not dictate how the business works; the
+business dictates how the software is built.* The breadth of the client range is itself
+the proof — two businesses with nothing in common both received a system cut to fit.
+
+"Cloud" is the customer-facing word, not "web". It names the benefit the buyer is
+actually purchasing: reachable from anywhere, nothing to install, no server in the
+office. The site is a public, single-page marketing and lead-generation platform whose
+purpose is to convert business visitors into qualified leads.
+
+This restates the positioning captured at intake, which described an
+automation-and-Excel/VBA services agency. The owner narrowed nothing and removed no
+capability — the offer is stated at its real scope. Recorded 2026-07-26 at the owner's
+direction.
 
 Success criteria:
 
@@ -53,21 +69,24 @@ There is no sign-in anywhere on the site.
    render with an animated turquoise trail and four milestones (אפיון · תכנון · פיתוח ·
    הטמעה) plotted onto its terraces. On portrait, no artwork at all: the headline arrives
    word by word over a generated contour field, and the same four stages draw down a
-   vertical track. Headline, sub-copy and two calls to action in both.
-2. **Value proposition** — why systems are built around the business, not the reverse.
-3. **Before / after automation** — a two-column comparison of manual versus automated
-   workflow.
-4. **Services and capabilities** — expandable accordions describing each service.
-5. **Portfolio examples** — project cards. Placeholder content at MVP.
-6. **Excel versus SaaS** — a semantic comparison table.
-7. **Founder** — who is behind Systemize.
-8. **Blueprint lead form** — the primary conversion surface.
+   vertical track. Headline, sub-copy and one primary call to action in both.
+2. **Delivery process** — the four stages from introductory mapping through planning,
+   development, rollout, and ongoing service.
+3. **Client workspace journey** — a responsive two-state preview that explains what the
+   prospect receives after the introductory call (agreement, detailed preferences and
+   discovery questionnaire, delivery options, pricing, and payment terms), and what opens
+   after approval and payment (project progress, update history, comments, service
+   requests, and direct contact). This is intentionally presented as cards rather than a
+   comparison table on mobile.
+4. **FAQ** — purchasing and delivery questions that support a complete system project.
+5. **Blueprint lead form** — the primary conversion surface.
 
 **Standalone indexable routes:** `/privacy`, `/terms`, `/accessibility`. These are real
 pages, not modals.
 
 **Server capabilities:** durable lead persistence, idempotent submission, distributed
-rate limiting, best-effort Telegram notification.
+rate limiting, best-effort Telegram notification. The public shell also includes
+first-party cookie preference management with optional categories disabled by default.
 
 ### 3.2 Out of scope — MVP
 
@@ -76,7 +95,8 @@ rate limiting, best-effort Telegram notification.
 - Payments, quotations, contracts, or scheduling/booking.
 - A savings/ROI calculator. Removed from scope by the owner on 2026-07-25.
 - The AI chat assistant. Deferred by the owner on 2026-07-25; not in the current build.
-- Analytics, marketing pixels, cookie consent.
+- Analytics and marketing pixels. The consent interface exists, but no analytics or
+  marketing provider is activated by it.
 - Blog, CMS, or editorable content.
 - Email delivery. Telegram is the only notification channel.
 - File uploads or attachments on the lead form.

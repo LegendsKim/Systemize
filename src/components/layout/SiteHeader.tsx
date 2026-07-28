@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SystemizeMark } from "@/components/brand/SystemizeMark";
-import { navigation, siteCoordinates, siteName } from "@/lib/site-config";
+import { navigation, siteName } from "@/lib/site-config";
 
 /**
  * Site header.
@@ -25,22 +25,15 @@ export function SiteHeader() {
           </ul>
         </nav>
 
-        {/* The lockup is a Latin, left-to-right run: mark, then name, then coordinates.
-            Without an explicit direction the row reverses and the bidirectional algorithm
-            also reorders the coordinate string itself. */}
+        {/* The lockup is a Latin, left-to-right run: mark, then name. */}
         <Link
           href="/"
           className="site-wordmark"
           dir="ltr"
-          aria-label={`${siteName} — לדף הבית`}
+          aria-label={`${siteName}, חזרה לדף הבית`}
         >
           <SystemizeMark className="site-wordmark-mark" />
-          <span className="site-wordmark-text">
-            <span className="site-wordmark-name">{siteName}</span>
-            <span className="site-wordmark-coords" aria-hidden="true">
-              {siteCoordinates}
-            </span>
-          </span>
+          <span className="site-wordmark-name">{siteName}</span>
         </Link>
       </div>
     </header>

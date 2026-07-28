@@ -1,0 +1,212 @@
+.lead-section {
+  padding: var(--spacing-section-y) var(--spacing-page-x);
+  color: var(--color-text-primary);
+  background:
+    linear-gradient(oklch(0.98 0.002 240 / 0.94), oklch(0.965 0.008 190 / 0.96)),
+    radial-gradient(circle at 1px 1px, oklch(0.55 0.098 190 / 0.14) 1px, transparent 1.5px);
+  background-size: auto, 30px 30px;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.lead-inner {
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  max-inline-size: var(--container-content);
+  margin-inline: auto;
+}
+
+@media (min-width: 64rem) {
+  .lead-inner {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    align-items: start;
+  }
+
+  .lead-intro {
+    position: sticky;
+    inset-block-start: 6rem;
+  }
+}
+
+.lead-kicker,
+.lead-command-label {
+  font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.08em;
+}
+
+.lead-kicker {
+  color: var(--color-primary-focus);
+  font-size: 0.8125rem;
+}
+
+.lead-intro h2 {
+  margin-block-start: 1rem;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  line-height: 1.03;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.lead-lede {
+  margin-block-start: 1.25rem;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.lead-assurances {
+  display: grid;
+  gap: 0.8rem;
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+}
+
+.lead-assurances li {
+  position: relative;
+  padding-inline-start: 1.5rem;
+  color: var(--color-text-primary);
+  font-size: 0.9rem;
+}
+
+.lead-assurances li::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.45em;
+  inline-size: 0.55rem;
+  block-size: 0.55rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px var(--color-primary-soft);
+}
+
+.lead-form-panel {
+  position: relative;
+  padding: clamp(1rem, 3vw, 2.25rem);
+  border: 1px solid oklch(0.55 0.098 190 / 0.34);
+  border-radius: var(--radius-xl);
+  background: oklch(0.99 0.002 190 / 0.92);
+  box-shadow: 0 30px 80px oklch(0.24 0.008 240 / 0.1);
+}
+
+.lead-form-panel::before,
+.lead-form-panel::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.lead-form-panel::before {
+  inset-block-start: -1px;
+  inset-inline-start: -1px;
+  border-block-start: 2px solid var(--color-primary);
+  border-inline-start: 2px solid var(--color-primary);
+}
+
+.lead-form-panel::after {
+  inset-block-end: -1px;
+  inset-inline-end: -1px;
+  border-block-end: 2px solid var(--color-primary);
+  border-inline-end: 2px solid var(--color-primary);
+}
+
+.lead-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.lead-form-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 44rem) {
+  .lead-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lead-command {
+  padding: 1rem;
+  border: 1px solid oklch(0.55 0.098 190 / 0.22);
+  background: oklch(0.975 0.006 190 / 0.75);
+}
+
+.lead-command::after {
+  content: "";
+  display: block;
+  margin-block-start: 0.9rem;
+  block-size: 2px;
+  background: linear-gradient(90deg, var(--color-primary), transparent);
+  opacity: 0.35;
+}
+
+.lead-command-label {
+  display: block;
+  margin-block-end: 0.8rem;
+  color: var(--color-primary-focus);
+  direction: ltr;
+  font-size: 0.7rem;
+  text-align: start;
+}
+
+.lead-command input,
+.lead-command textarea {
+  inline-size: 100%;
+  min-block-size: 3.25rem;
+  border-color: var(--color-border-strong);
+  color: var(--color-text-primary);
+  background: white;
+}
+
+.lead-command textarea {
+  min-block-size: 8.5rem;
+}
+
+.lead-command input::placeholder,
+.lead-command textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+.lead-status-title {
+  display: block;
+  margin-block-end: 0.25rem;
+  font-weight: 700;
+}
+
+.lead-form-actions {
+  display: grid;
+  gap: 0.9rem;
+  justify-items: center;
+  padding-block-start: 0.5rem;
+}
+
+.lead-submit {
+  min-inline-size: min(100%, 19rem);
+  min-block-size: 3.25rem;
+  border: 1px solid var(--color-primary);
+  border-radius: 0;
+  color: white;
+  background: var(--color-primary);
+  font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+}
+
+.lead-submit:hover {
+  background: var(--color-primary-hover);
+}
+
+.lead-privacy-note {
+  max-inline-size: 52ch;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.lead-privacy-note a {
+  color: var(--color-primary-focus);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}

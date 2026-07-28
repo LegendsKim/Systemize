@@ -1,0 +1,526 @@
+/* ---------------------------------------------------------------------------
+ * Cookie consent panel
+ *
+ * A single fixed card that has to sit correctly on a desktop viewport, on a tall
+ * Android screen with a gesture bar, and on an iPhone whose browser chrome moves while
+ * the page is open. Three rules keep that honest:
+ *
+ * - `svh` rather than `vh`, so the card is sized against the *small* viewport and never
+ *   ends up under Safari's collapsing toolbar.
+ * - `env(safe-area-inset-*)` on every edge it is pinned to, for the home indicator and
+ *   for landscape notches.
+ * - The card itself never scrolls the page: the category list is the only scroll area,
+ *   so the heading and the action buttons stay reachable on short screens.
+ * ------------------------------------------------------------------------ */
+
+.cookie-consent {
+  position: fixed;
+  z-index: 70;
+  inset-block-end: calc(1rem + env(safe-area-inset-bottom, 0px));
+  inset-inline-start: calc(1rem + env(safe-area-inset-left, 0px));
+  inset-inline-end: calc(1rem + env(safe-area-inset-right, 0px));
+  inline-size: min(27rem, 100%);
+  max-block-size: calc(100svh - 2rem);
+  margin-inline: auto;
+  display: grid;
+  gap: 0.85rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.1rem;
+  border: 1px solid oklch(0.55 0.098 190 / 0.32);
+  border-radius: 1.15rem;
+  background:
+    linear-gradient(135deg, oklch(1 0 0 / 0.98), oklch(0.965 0.012 190 / 0.98)),
+    radial-gradient(circle at 1px 1px, oklch(0.55 0.098 190 / 0.12) 1px, transparent 1.4px);
+  background-size: auto, 20px 20px;
+  box-shadow:
+    0 24px 70px oklch(0.18 0.02 220 / 0.2),
+    0 4px 18px oklch(0.18 0.02 220 / 0.1);
+  animation: cookie-consent-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cookie-consent:focus {
+  outline: none;
+}
+
+.cookie-consent-header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.cookie-consent-brand {
+  display: grid;
+  place-items: center;
+  flex: none;
+  inline-size: 3rem;
+  block-size: 3rem;
+  filter: drop-shadow(0 5px 9px oklch(0.2 0.02 220 / 0.16));
+}
+
+.cookie-consent-brand img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: contain;
+}
+
+/*
+ * The kicker is Latin text inside an RTL card, so it gets its own `direction`. Sizing
+ * the box to its content keeps it anchored to the card's inline start; a full-width line
+ * box would push the Latin run to the far visual left, detached from the heading.
+ */
+.cookie-consent-kicker {
+  inline-size: fit-content;
+  color: var(--color-primary-focus);
+  direction: ltr;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: start;
+}
+
+.cookie-consent-copy h2 {
+  margin-block-start: 0.2rem;
+  font-size: clamp(1.1rem, 4.4vw, 1.35rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.cookie-consent-lede {
+  margin-block-start: 0.35rem;
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+/* The compact lede belongs to phones only; the phone block swaps the pair over. */
+.cookie-consent-lede--compact {
+  display: none;
+}
+
+/*
+ * The list is the flexible part of the card. Capping it against `svh` means the
+ * buttons below stay on screen on a small phone, instead of the whole card growing past
+ * the viewport and pushing them out of reach.
+ */
+.cookie-consent-options {
+  display: grid;
+  gap: 0.4rem;
+  max-block-size: min(17rem, 40svh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0;
+  border: 0;
+}
+
+.cookie-option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-block-size: 3rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: oklch(1 0 0 / 0.74);
+  cursor: pointer;
+}
+
+.cookie-option:hover {
+  border-color: oklch(0.55 0.098 190 / 0.45);
+}
+
+.cookie-option--locked {
+  background: oklch(0.965 0.012 190 / 0.72);
+  cursor: default;
+}
+
+.cookie-option-copy {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.cookie-option-copy strong {
+  font-size: 0.8125rem;
+}
+
+.cookie-option-copy small {
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+.cookie-option input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.cookie-switch {
+  position: relative;
+  flex: none;
+  inline-size: 2.45rem;
+  block-size: 1.45rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-2);
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.cookie-switch::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 0.2rem;
+  inline-size: 0.92rem;
+  block-size: 0.92rem;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  translate: 0 -50%;
+  transition: translate 160ms ease, background-color 160ms ease;
+}
+
+.cookie-option input:checked + .cookie-switch {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.cookie-option input:checked + .cookie-switch::after {
+  background: var(--color-text-on-primary);
+  translate: 1rem -50%;
+}
+
+.cookie-option input:focus-visible + .cookie-switch {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.cookie-option input:disabled + .cookie-switch {
+  opacity: 0.72;
+}
+
+/*
+ * Two decisions plus one text link. The grid gives the two decisions equal weight at
+ * every width, which is what keeps the row from reflowing into a ragged wrap on a
+ * narrow phone, and the text link spans below them.
+ */
+.cookie-consent-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.cookie-consent--customizing .cookie-consent-actions {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.cookie-consent-actions > .cookie-button--text {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+
+/* 2.75rem keeps every control clear of the WCAG 2.2 target-size minimum. */
+.cookie-button {
+  min-block-size: 2.75rem;
+  padding-inline: 0.75rem;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-wrap: nowrap;
+}
+
+.cookie-button--primary {
+  border: 1px solid var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  box-shadow: 0 7px 18px oklch(0.5 0.09 190 / 0.2);
+}
+
+.cookie-button--primary:hover {
+  background: var(--color-primary-hover);
+}
+
+.cookie-button--secondary {
+  border: 1px solid var(--color-border-strong);
+  background: oklch(1 0 0 / 0.75);
+  color: var(--color-text-primary);
+}
+
+.cookie-button--text {
+  border: 0;
+  background: transparent;
+  color: var(--color-primary-focus);
+  text-decoration: underline;
+  text-decoration-color: oklch(0.5 0.09 190 / 0.35);
+  text-underline-offset: 0.22em;
+}
+
+.cookie-consent-privacy {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+
+.cookie-consent-privacy a {
+  color: var(--color-primary-focus);
+  font-weight: 700;
+}
+
+.cookie-settings-link {
+  inline-size: fit-content;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+@keyframes cookie-consent-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*
+ * Phones. The WhatsApp launcher and the accessibility launcher own both bottom corners,
+ * so the card is lifted clear of them rather than covering either one. While the
+ * categories are open the card needs the height more than the clearance, so it drops
+ * back down and takes the full column.
+ *
+ * A phone also gets the compact treatment: the panel is an interruption, so it takes
+ * roughly half the height it takes on desktop. Everything that is decoration rather
+ * than decision — the Latin kicker, the privacy lede — is dropped, and the type and
+ * controls shrink to the smallest sizes that still clear the WCAG 2.2 target minimum
+ * (every control stays well above 24px).
+ */
+@media (max-width: 40rem) {
+  .cookie-consent {
+    inset-block-end: calc(5.4rem + env(safe-area-inset-bottom, 0px));
+    inset-inline-start: calc(0.75rem + env(safe-area-inset-left, 0px));
+    inset-inline-end: calc(0.75rem + env(safe-area-inset-right, 0px));
+    max-block-size: calc(100svh - 6.4rem);
+    gap: 0.5rem;
+    border-radius: 0.95rem;
+    padding: 0.7rem 0.8rem;
+  }
+
+  .cookie-consent--customizing {
+    inset-block-end: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    max-block-size: calc(100svh - 1.5rem);
+  }
+
+  .cookie-consent-header {
+    gap: 0.6rem;
+  }
+
+  .cookie-consent-brand {
+    inline-size: 2rem;
+    block-size: 2rem;
+  }
+
+  .cookie-consent-kicker {
+    display: none;
+  }
+
+  .cookie-consent-copy h2 {
+    margin-block-start: 0;
+    font-size: 0.925rem;
+    line-height: 1.2;
+  }
+
+  .cookie-consent-lede {
+    display: none;
+  }
+
+  .cookie-consent-lede--compact {
+    display: block;
+    margin-block-start: 0.15rem;
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  .cookie-consent-options {
+    gap: 0.3rem;
+    max-block-size: min(13rem, 34svh);
+  }
+
+  .cookie-option {
+    min-block-size: 2.5rem;
+    padding: 0.4rem 0.55rem;
+  }
+
+  .cookie-option-copy small {
+    font-size: 0.65rem;
+  }
+
+  /*
+   * The "choose for yourself" link joins the decision row instead of claiming a line of
+   * its own — that single change is most of the height the panel gives back on a phone.
+   */
+  .cookie-consent-actions {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .cookie-consent--customizing .cookie-consent-actions {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .cookie-consent-actions > .cookie-button--text {
+    grid-column: auto;
+    justify-self: end;
+    min-block-size: 2.25rem;
+    padding-inline: 0.35rem;
+    font-size: 0.72rem;
+  }
+
+  .cookie-button {
+    min-block-size: 2.25rem;
+    padding-inline: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  .cookie-consent-privacy {
+    font-size: 0.65rem;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .cookie-consent-privacy-lede {
+    display: none;
+  }
+}
+
+/*
+ * Wide viewports get a landscape bar rather than a tall card: the cookie, the copy and
+ * the decisions sit on one line, so the panel covers a strip of the page instead of a
+ * column of it. Between this width and the one below, the bar still rides above the two
+ * floating corner launchers rather than across them.
+ */
+@media (min-width: 52rem) {
+  .cookie-consent {
+    inset-block-end: calc(5.5rem + env(safe-area-inset-bottom, 0px));
+    inline-size: min(58rem, 100%);
+    max-block-size: calc(100svh - 6.5rem);
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "copy    actions"
+      "privacy actions";
+    align-items: center;
+    column-gap: 1.75rem;
+    row-gap: 0.35rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .cookie-consent--customizing {
+    grid-template-areas:
+      "copy    copy"
+      "options options"
+      "privacy actions";
+    row-gap: 0.85rem;
+  }
+
+  .cookie-consent-header {
+    grid-area: copy;
+    align-items: center;
+    gap: 0.9rem;
+  }
+
+  .cookie-consent-brand {
+    inline-size: 3.25rem;
+    block-size: 3.25rem;
+  }
+
+  .cookie-consent-copy h2 {
+    font-size: 1.3rem;
+  }
+
+  .cookie-consent-lede {
+    max-inline-size: 44ch;
+  }
+
+  .cookie-consent-options {
+    grid-area: options;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-block-size: none;
+    overflow: visible;
+  }
+
+  .cookie-consent-actions {
+    grid-area: actions;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: end;
+    gap: 0.5rem;
+  }
+
+  .cookie-consent-privacy {
+    grid-area: privacy;
+  }
+}
+
+/*
+ * Once the viewport is wide enough for a 58rem bar to leave both bottom corners clear,
+ * it settles onto the bottom edge and the launchers stay visible beside it.
+ */
+@media (min-width: 80rem) {
+  .cookie-consent {
+    inset-block-end: calc(1rem + env(safe-area-inset-bottom, 0px));
+    inline-size: min(58rem, 100% - 18rem);
+    max-block-size: calc(100svh - 2rem);
+  }
+}
+
+/* Very narrow phones: the two decisions stack rather than truncating. */
+@media (max-width: 22rem) {
+  .cookie-consent-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/*
+ * Landscape phones, where height is the scarce axis. The header shrinks and the
+ * category list gives up most of its cap so the buttons stay visible without scrolling.
+ */
+@media (max-height: 30rem) {
+  .cookie-consent {
+    gap: 0.6rem;
+    padding: 0.8rem;
+  }
+
+  .cookie-consent-lede {
+    font-size: 0.8rem;
+  }
+
+  .cookie-consent-options {
+    max-block-size: 34svh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cookie-consent,
+  .cookie-switch,
+  .cookie-switch::after {
+    animation: none;
+    transition: none;
+  }
+}

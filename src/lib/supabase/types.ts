@@ -3,6 +3,10 @@
  *
  * Regenerate after every migration with:
  * npx supabase gen types typescript --local > src/lib/supabase/types.ts
+ *
+ * `leads` is append-only from the application's side: the Update shape exists
+ * because Supabase generates one, but no role is granted UPDATE or DELETE and no
+ * application code mutates or removes a lead.
  */
 
 export type Json =
@@ -16,45 +20,35 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      contact_requests: {
+      leads: {
         Row: {
           id: string;
           created_at: string;
-          updated_at: string;
-          name: string;
+          full_name: string;
+          business_name: string;
+          phone: string;
           email: string;
           message: string;
           idempotency_key: string;
-          status: "pending" | "notified" | "failed";
-          notification_error: string | null;
-          ip_address: string | null;
-          user_id: string | null;
+          request_id: string;
         };
         Insert: {
           id?: string;
           created_at?: string;
-          updated_at?: string;
-          name: string;
+          full_name: string;
+          business_name: string;
+          phone: string;
           email: string;
           message: string;
           idempotency_key: string;
-          status?: "pending" | "notified" | "failed";
-          notification_error?: string | null;
-          ip_address?: string | null;
-          user_id?: string | null;
+          request_id: string;
         };
         Update: {
-          id?: string;
-          created_at?: string;
-          updated_at?: string;
-          name?: string;
+          full_name?: string;
+          business_name?: string;
+          phone?: string;
           email?: string;
           message?: string;
-          idempotency_key?: string;
-          status?: "pending" | "notified" | "failed";
-          notification_error?: string | null;
-          ip_address?: string | null;
-          user_id?: string | null;
         };
         Relationships: [];
       };

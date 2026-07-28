@@ -1,0 +1,549 @@
+/*
+ * Accessibility toolbar.
+ *
+ * Two halves:
+ *   1. the trigger and panel chrome, in the Systemize language — dot-grid masthead, the
+ *      turquoise accent, monospace numerals, pill radii;
+ *   2. the effect rules, each keyed off a `data-a11y-*` attribute on `<html>` that
+ *      `a11y-settings.ts` sets.
+ *
+ * The effect rules use `!important` deliberately and almost nowhere else in this codebase
+ * does. An accessibility override exists precisely to beat the author's own styling; a
+ * visitor who turns on high contrast and gets it everywhere except the one section with a
+ * more specific selector has not been helped.
+ */
+
+/* ---------------------------------------------------------------------------
+ * Trigger
+ *
+ * Bottom inline-end, which is the visual left on this RTL site — the opposite corner from
+ * the WhatsApp launcher, so the two never overlap in either writing direction.
+ * ------------------------------------------------------------------------ */
+
+:root {
+  /* Declared once; the panel uses it for every code-register detail. */
+  --a11y-mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+}
+
+.a11y-trigger {
+  position: fixed;
+  inset-block-end: calc(1.25rem + env(safe-area-inset-bottom, 0px));
+  inset-inline-end: calc(1.25rem + env(safe-area-inset-left, 0px));
+  z-index: 50;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 3.25rem;
+  block-size: 3.25rem;
+
+  border: 1px solid oklch(0.55 0.098 190 / 0.35);
+  border-radius: 50%;
+  background: var(--color-primary-focus);
+  color: var(--color-text-on-primary);
+  box-shadow: 0 6px 20px oklch(0 0 0 / 0.22);
+  cursor: pointer;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.a11y-trigger:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px oklch(0 0 0 / 0.28);
+}
+
+.a11y-trigger:focus-visible {
+  outline: 3px solid var(--color-primary-focus);
+  outline-offset: 3px;
+}
+/* ---------------------------------------------------------------------------
+ * Panel
+ *
+ * `dialog.a11y-dialog` — element plus class — outranks the utility classes the shared
+ * Dialog primitive sets, without touching that primitive or resorting to `!important`.
+ *
+ * The layout is sized to fit a laptop viewport without scrolling: label and control share
+ * a row in the level controls, and the toggles are two compact columns. Stacked, those
+ * two groups alone ran past 600px and the last control could only be reached by scrolling.
+ * ------------------------------------------------------------------------ */
+
+dialog.a11y-dialog {
+  inline-size: min(34rem, calc(100vw - 1.5rem));
+  max-inline-size: none;
+  /*
+   * A fallback, not the plan. `dvh` rather than `vh` so a mobile browser's retracting
+   * toolbar does not leave the panel taller than the space actually visible.
+   */
+  max-block-size: calc(100dvh - 1.5rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(oklch(0.985 0.001 240 / 0.97), oklch(0.97 0.006 190 / 0.98)),
+    radial-gradient(circle at 1px 1px, oklch(0.55 0.098 190 / 0.13) 1px, transparent 1.5px);
+  background-size: auto, 28px 28px;
+  box-shadow: 0 30px 80px oklch(0.24 0.008 240 / 0.22);
+  overflow: auto;
+}
+
+dialog.a11y-dialog::backdrop {
+  background: oklch(0.24 0.008 240 / 0.55);
+}
+
+/*
+ * The shared Dialog primitive pads its content with `p-6`. Four pixels a side back is
+ * eight pixels of height, which is the difference between fitting and not fitting on a
+ * 650px-tall viewport.
+ */
+dialog.a11y-dialog > div {
+  padding: 1.25rem;
+}
+
+.a11y-panel {
+  display: grid;
+  gap: 1rem;
+}
+
+/*
+ * A `//` prefix in monospace: the heading reads as a section comment in a config file,
+ * which is the conceit the whole panel is styled around, and it costs no vertical space.
+ */
+.a11y-group-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block-end: 0.5rem;
+  border-block-end: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.a11y-group-heading::before {
+  content: "//";
+  color: var(--color-primary-focus);
+  font-family: var(--a11y-mono);
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.a11y-hint {
+  display: block;
+  margin-block-start: 0.125rem;
+  color: var(--color-text-muted);
+  font-size: 0.6875rem;
+  font-weight: 400;
+  line-height: 1.35;
+}
+
+/* ---------------------------------------------------------------------------
+ * Level controls
+ * ------------------------------------------------------------------------ */
+
+.a11y-levels {
+  display: grid;
+  gap: 0.5rem;
+  margin-block-start: 0.75rem;
+}
+
+.a11y-level {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 0.25rem 0.75rem;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/*
+ * A `<legend>` is not laid out as a grid item by the fieldset in most engines. Setting it
+ * to `contents` lets its two spans join the grid directly, which keeps the native
+ * fieldset/legend grouping that the radios depend on for their announced name.
+ */
+.a11y-level-legend {
+  display: contents;
+  padding: 0;
+}
+
+.a11y-level-name {
+  grid-column: 1;
+  grid-row: 1;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.a11y-level-meter {
+  margin-inline-start: 0.375rem;
+  color: var(--color-primary-focus);
+  font-family: var(--a11y-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.a11y-level-legend > .a11y-hint {
+  grid-column: 1;
+  grid-row: 2;
+  margin-block-start: 0;
+}
+
+/* Spans both rows of its column, so it centres against the label and hint together. */
+.a11y-level-options {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 2px;
+  padding: 2px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-2);
+}
+
+.a11y-level-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 1.875rem;
+  padding-inline: 0.125rem;
+  border-radius: 0.3125rem;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  text-align: center;
+  cursor: pointer;
+}
+
+/*
+ * The radio stays in the accessibility tree and keeps its native keyboard behaviour; it is
+ * only visually replaced by the tile. `appearance: none` plus zero size would drop it out
+ * of the tree in some engines, so it is made transparent and stretched instead.
+ */
+.a11y-level-option input {
+  position: absolute;
+  opacity: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+
+.a11y-level-option:has(input:checked) {
+  background: var(--color-primary-focus);
+  color: var(--color-text-on-primary);
+  font-weight: 600;
+}
+
+.a11y-level-option:has(input:focus-visible) {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 1px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Toggles
+ * ------------------------------------------------------------------------ */
+
+.a11y-toggles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.375rem;
+  margin-block-start: 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.a11y-toggle {
+  position: relative;
+  inline-size: 100%;
+  block-size: 100%;
+  /* The inline-end padding reserves the strip the state chip is absolutely placed into. */
+  padding: 0.5rem 0.625rem;
+  padding-inline-end: 3rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: oklch(1 0 0 / 0.72);
+  color: var(--color-text-primary);
+  text-align: start;
+  cursor: pointer;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.a11y-toggle-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+/*
+ * The state chip is the diagnostic console's mono tag in another guise. It spells the
+ * state as a word, so the control never depends on colour alone to say whether it is on.
+ */
+.a11y-toggle-state {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
+  min-inline-size: 2.125rem;
+  padding-block: 0.0625rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  background: var(--color-surface-2);
+  color: var(--color-text-muted);
+  font-family: var(--a11y-mono);
+  font-size: 0.5625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+
+.a11y-toggle[aria-pressed="true"] {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.a11y-toggle[aria-pressed="true"] .a11y-toggle-state {
+  border-color: var(--color-primary-focus);
+  background: var(--color-primary-focus);
+  color: var(--color-text-on-primary);
+}
+
+.a11y-toggle:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/*
+ * One column below 26rem. Two columns of a 13-character Hebrew label plus a state chip do
+ * not fit a small phone, and the labels would wrap to three lines each.
+ */
+@media (max-width: 26rem) {
+  .a11y-toggles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .a11y-level {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .a11y-level-options {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Panel footer
+ * ------------------------------------------------------------------------ */
+
+.a11y-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-block-start: 0.875rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.a11y-reset {
+  min-block-size: 2.5rem;
+  padding-inline: 1rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.a11y-reset:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary-focus);
+}
+
+.a11y-reset:disabled {
+  color: var(--color-text-muted);
+  border-color: var(--color-border);
+  cursor: default;
+}
+
+.a11y-statement-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.5rem;
+  color: var(--color-primary-focus);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+/* ===========================================================================
+ * Effects
+ * ======================================================================== */
+
+/*
+ * High contrast.
+ *
+ * Token overrides rather than a `filter`, because a filter on a root element makes it the
+ * containing block for fixed descendants, which would break both floating launchers. Every
+ * colour on the site resolves through these tokens, so overriding them is enough.
+ */
+[data-a11y-contrast="on"] {
+  --color-surface-0: #ffffff;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #f2f2f2;
+  --color-surface-3: #e6e6e6;
+  --color-text-primary: #000000;
+  --color-text-secondary: #1a1a1a;
+  --color-text-muted: #262626;
+  --color-border: #000000;
+  --color-border-strong: #000000;
+  --color-primary: #00504f;
+  --color-primary-hover: #003b3a;
+  --color-primary-focus: #00403f;
+  --color-primary-soft: #d9ecec;
+}
+
+[data-a11y-contrast="on"] body {
+  background: #ffffff !important;
+}
+
+/* Decorative gradients and dot grids destroy contrast, so they are flattened. */
+[data-a11y-contrast="on"] .legal-masthead,
+[data-a11y-contrast="on"] .workspace-section,
+[data-a11y-contrast="on"] dialog.a11y-dialog {
+  background-image: none !important;
+  background-color: #ffffff !important;
+}
+
+/* Low saturation.
+ *
+ * Applied to the page regions rather than to `html`/`body`, for the fixed-descendant
+ * reason above: the two launchers must keep escaping to the viewport.
+ */
+[data-a11y-saturation="on"] .site-header,
+[data-a11y-saturation="on"] main,
+[data-a11y-saturation="on"] .site-footer {
+  filter: saturate(0.25);
+}
+
+/* Highlight links. */
+[data-a11y-links="on"] a {
+  text-decoration: underline !important;
+  text-underline-offset: 0.2em !important;
+  outline: 1px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Readable font.
+ *
+ * A widely-installed stack, not a claim to ship OpenDyslexic: the site does not bundle
+ * that face, and naming a font we do not serve would be a promise the page cannot keep.
+ * Verdana and Tahoma are the standard high-legibility fallbacks with full Hebrew coverage.
+ */
+[data-a11y-font="on"],
+[data-a11y-font="on"] body,
+[data-a11y-font="on"] button,
+[data-a11y-font="on"] input,
+[data-a11y-font="on"] textarea {
+  font-family: Verdana, Tahoma, "Segoe UI", Arial, sans-serif !important;
+}
+
+/* Hide images.
+ *
+ * `img`, `picture` and `video` only. Inline SVG is left alone: on this site it is icons
+ * and interface furniture, and hiding it would remove meaning rather than noise.
+ */
+[data-a11y-images="on"] img,
+[data-a11y-images="on"] picture,
+[data-a11y-images="on"] video,
+[data-a11y-images="on"] .hero-stage--art,
+[data-a11y-images="on"] .hero-rings {
+  display: none !important;
+}
+
+/* Stop animations. */
+[data-a11y-motion="on"] * ,
+[data-a11y-motion="on"] *::before,
+[data-a11y-motion="on"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* Large cursor. An inline SVG arrow, so nothing extra is fetched. */
+[data-a11y-cursor="on"],
+[data-a11y-cursor="on"] * {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 32 32'%3E%3Cpath d='M6 2l0 24 6-6 4 9 5-2-4-9 8 0z' fill='%23ffffff' stroke='%23000000' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E")
+      2 2,
+    auto !important;
+}
+
+[data-a11y-cursor="on"] a,
+[data-a11y-cursor="on"] button,
+[data-a11y-cursor="on"] summary,
+[data-a11y-cursor="on"] label {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 32 32'%3E%3Cpath d='M12 2a3 3 0 016 0v10h2a6 6 0 016 6v8a4 4 0 01-4 4h-8a6 6 0 01-6-6V10a3 3 0 016 0z' fill='%23ffffff' stroke='%23000000' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E")
+      8 2,
+    pointer !important;
+}
+
+/* Align text to one side, cancelling any justified setting. */
+[data-a11y-align="on"] p,
+[data-a11y-align="on"] li,
+[data-a11y-align="on"] dd,
+[data-a11y-align="on"] blockquote {
+  text-align: start !important;
+}
+
+/*
+ * Levelled settings.
+ *
+ * Text size scales the root font size, so every `rem`-based dimension on the site grows
+ * with it and the layout keeps its proportions instead of overflowing.
+ */
+[data-a11y-text="1"] { font-size: 112.5%; }
+[data-a11y-text="2"] { font-size: 125%; }
+[data-a11y-text="3"] { font-size: 150%; }
+
+[data-a11y-line="1"] body { line-height: 1.7 !important; }
+[data-a11y-line="2"] body { line-height: 2 !important; }
+[data-a11y-line="3"] body { line-height: 2.4 !important; }
+
+[data-a11y-line="1"] p,
+[data-a11y-line="1"] li,
+[data-a11y-line="2"] p,
+[data-a11y-line="2"] li,
+[data-a11y-line="3"] p,
+[data-a11y-line="3"] li {
+  line-height: inherit !important;
+}
+
+[data-a11y-spacing="1"] body { letter-spacing: 0.03em; word-spacing: 0.05em; }
+[data-a11y-spacing="2"] body { letter-spacing: 0.07em; word-spacing: 0.12em; }
+[data-a11y-spacing="3"] body { letter-spacing: 0.12em; word-spacing: 0.2em; }
+
+/*
+ * Headings on this site carry tight negative tracking for display effect. It fights the
+ * spacing setting directly, so it is released whenever spacing is on.
+ */
+[data-a11y-spacing] h1,
+[data-a11y-spacing] h2,
+[data-a11y-spacing] h3 {
+  letter-spacing: normal !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .a11y-trigger,
+  .a11y-toggle,
+  .a11y-toggle-state {
+    transition: none;
+  }
+
+  .a11y-trigger:hover {
+    transform: none;
+  }
+}

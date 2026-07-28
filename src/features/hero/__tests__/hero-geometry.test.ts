@@ -81,9 +81,10 @@ describe("milestones", () => {
     }
   });
 
-  it("links every milestone to an in-page anchor", () => {
+  it("gives every interactive milestone useful dialog content", () => {
     for (const milestone of milestones) {
-      expect(milestone.href.startsWith("#")).toBe(true);
+      expect(milestone.detail.trim().length).toBeGreaterThan(30);
+      expect(milestone.highlights).toHaveLength(3);
     }
   });
 

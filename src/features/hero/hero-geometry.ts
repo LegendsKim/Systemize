@@ -1,5 +1,5 @@
 /**
- * Hero geometry — the single source of truth for the trail and its milestones.
+ * Hero geometry, the single source of truth for the trail and its milestones.
  *
  * Every coordinate is in the intrinsic pixel space of the background plate. Nothing is
  * expressed in screen pixels.
@@ -11,7 +11,7 @@
  * module, the trail and its labels cannot drift apart.
  *
  * This geometry describes the landscape composition only. Portrait viewports do not crop
- * this artwork — they get their own hero built from type and motion, so there is no
+ * this artwork, they get their own hero built from type and motion, so there is no
  * second coordinate set to keep in step.
  */
 
@@ -34,7 +34,7 @@ export interface Plate {
  *
  * Dimensions are the cropped master produced by `scripts/prepare-hero-plates.mjs`. If the
  * artwork is replaced, these two numbers and the path below must be re-measured against
- * it — the script prints the resulting size.
+ * it, the script prints the resulting size.
  */
 export const landscapePlate: Plate = {
   width: 2848,
@@ -45,8 +45,8 @@ export const landscapePlate: Plate = {
   nodeRadius: 26,
   path: [
     // From the isolated mound, across open ground, then up the ridge terrace by terrace,
-    // finishing beside the dashboard — the system the journey delivers.
-    "M 240 735",
+    // finishing beside the dashboard, the system the journey delivers.
+    "M 248 708",
     "C 420 800, 600 900, 760 985",
     "C 850 1030, 950 985, 1035 925",
     "C 985 860, 925 800, 895 720",
@@ -78,8 +78,9 @@ export interface Milestone {
   readonly description: string;
   /** One line of supporting copy, used by the portrait hero. */
   readonly summary: string;
-  /** In-page anchor this milestone navigates to. */
-  readonly href: string;
+  /** Short modal copy shown when the marker is selected. */
+  readonly detail: string;
+  readonly highlights: readonly string[];
   /** Position on the landscape plate. */
   readonly point: Point;
 }
@@ -96,36 +97,44 @@ export const milestones: readonly Milestone[] = [
     id: "discovery",
     marker: "pin",
     label: "אפיון",
-    description: "אפיון — שלב ראשון בתהליך",
-    summary: "ממפים את זרימת העבודה כפי שהיא באמת",
-    href: "#process-discovery",
-    point: { x: 240, y: 735 },
+    description: "אפיון, שלב ראשון בתהליך",
+    summary: "מבינים איך העבודה מתנהלת באמת",
+    detail:
+      "מכירים את העסק, ממפים את הצורך המרכזי ובודקים יחד אם נכון להתקדם לפרויקט של מערכת מלאה.",
+    highlights: ["היכרות עם העסק", "מיפוי הצורך", "בדיקת התאמה"],
+    point: { x: 248, y: 708 },
   },
   {
     id: "planning",
     marker: "node",
     label: "תכנון",
-    description: "תכנון — שלב שני בתהליך",
-    summary: "מסמנים צווארי בקבוק ומתכננים את הפתרון",
-    href: "#process-planning",
+    description: "תכנון, שלב שני בתהליך",
+    summary: "בוחרים מסלול ומאשרים הכול מראש",
+    detail:
+      "באזור האישי מחכים חוזה, שאלון מפורט ומספר אפשרויות ביצוע עם היקף, מחיר ותנאי תשלום ברורים.",
+    highlights: ["חוזה ושאלון", "אפשרויות לבחירה", "אישור ותשלום"],
     point: { x: 1035, y: 925 },
   },
   {
     id: "build",
     marker: "node",
     label: "פיתוח",
-    description: "פיתוח — שלב שלישי בתהליך",
-    summary: "בונים בדיוק את מה שנדרש, בלי עודף",
-    href: "#process-build",
+    description: "פיתוח, שלב שלישי בתהליך",
+    summary: "רואים התקדמות, שינויים ועדכונים",
+    detail:
+      "האזור האישי מתרחב למעקב פרויקט מלא: מה הושלם, מה בעבודה, מה השתנה ואיפה נדרשת החלטה שלכם.",
+    highlights: ["סטטוס פתוח", "יומן שינויים", "הערות ושיחה"],
     point: { x: 1080, y: 512 },
   },
   {
     id: "rollout",
     marker: "node",
     label: "הטמעה",
-    description: "הטמעה — שלב רביעי בתהליך",
-    summary: "מעלים לאוויר ומלווים עד שזה עובד",
-    href: "#process-rollout",
+    description: "הטמעה, שלב רביעי בתהליך",
+    summary: "הופכים את הפתרון לדרך הטבעית לעבוד",
+    detail:
+      "מחברים את המערכת לעבודה היומיומית, מדריכים את הצוות ונשארים אתכם גם אחרי העלייה לאוויר.",
+    highlights: ["מעבר מבוקר", "הדרכת הצוות", "שירות מתמשך"],
     point: { x: 1245, y: 222 },
   },
 ];

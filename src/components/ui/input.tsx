@@ -60,7 +60,7 @@ export function Field({
 /* -------------------------------------------------------------------------- */
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  /** Error state — marks input as aria-invalid. */
+  /** Error state, marks input as aria-invalid. */
   error?: boolean;
   /** ID of the error description element for aria-describedby. */
   errorId?: string;

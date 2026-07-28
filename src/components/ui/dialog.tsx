@@ -1,7 +1,7 @@
 "use client";
 // Required: Dialog uses state, effects, and keyboard events for focus management
 
-import React, { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback, useId } from "react";
 
 interface DialogProps {
   /** Whether the dialog is open. */
@@ -14,6 +14,8 @@ interface DialogProps {
   children: React.ReactNode;
   /** Optional description for aria-describedby. */
   description?: string;
+  /** Additional presentation class for a feature-specific dialog. */
+  className?: string;
 }
 
 /**
@@ -29,6 +31,7 @@ export function Dialog({
   title,
   children,
   description,
+  className = "",
 }: DialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
@@ -78,17 +81,29 @@ export function Dialog({
     };
   }, [handleClose]);
 
-  const titleId = "dialog-title";
-  const descId = description ? "dialog-description" : undefined;
+  const generatedId = useId();
+  const titleId = `${generatedId}-title`;
+  const descId = description ? `${generatedId}-description` : undefined;
 
   return (
     <dialog
       ref={dialogRef}
       aria-labelledby={titleId}
       aria-describedby={descId}
-      className="m-auto w-full max-w-lg rounded-xl border border-border bg-surface-0 p-0 shadow-lg backdrop:bg-black/50"
+      className={[
+        "m-auto w-full max-w-lg rounded-xl border border-border bg-surface-0 p-0 shadow-lg backdrop:bg-black/50",
+        className,
+      ].join(" ")}
     >
       <div className="p-6">
+        <button
+          type="button"
+          className="dialog-close"
+          aria-label="סגירת החלונית"
+          onClick={() => dialogRef.current?.close()}
+        >
+          <span aria-hidden="true">×</span>
+        </button>
         <h2
           id={titleId}
           className="text-lg font-semibold text-text-primary"

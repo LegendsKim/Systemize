@@ -1,0 +1,309 @@
+/*
+ * The two comparison sections.
+ *
+ * They share a stylesheet because they share a content module, but they deliberately do
+ * not share a composition: `workflow-*` is a stack of two-panel steps, `shelf-*` is a
+ * semantic table. Making them look identical would make the second section read as a
+ * repetition of the first.
+ *
+ * Every offset is logical. `overflow-x` on the table wrapper is an axis, not a direction,
+ * and stays correct under RTL.
+ */
+
+/* ==========================================================================
+ * Before / after
+ * ======================================================================= */
+
+.workflow-section {
+  background-color: var(--color-surface-1);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.workflow-inner,
+.shelf-inner {
+  inline-size: 100%;
+  max-inline-size: var(--container-content);
+  margin-inline: auto;
+  padding: var(--spacing-section-y) var(--spacing-page-x);
+}
+
+.workflow-eyebrow,
+.shelf-eyebrow {
+  color: var(--color-primary-focus);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.workflow-intro,
+.shelf-intro {
+  max-inline-size: 48rem;
+}
+
+.workflow-intro h2,
+.shelf-intro h2 {
+  margin-block-start: 1.25rem;
+  font-size: clamp(1.75rem, 4.2vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.workflow-lead {
+  margin-block-start: 1.5rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+.workflow-rows {
+  display: grid;
+  gap: 1rem;
+  margin: clamp(2.5rem, 5vw, 4rem) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * The stage name spans the full width of the row and the two panels sit beneath it, so the
+ * heading is read once and applies to both readings of the step.
+ */
+.workflow-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: oklch(1 0 0 / 0.7);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.workflow-row:hover {
+  border-color: var(--color-primary-soft);
+  box-shadow: 0 1.25rem 3rem oklch(0.24 0.008 240 / 0.07);
+}
+
+.workflow-stage {
+  grid-column: 1 / -1;
+  margin-block-end: 1.5rem;
+  padding-block-end: 1.25rem;
+  border-block-end: 1px solid var(--color-border);
+  font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.workflow-cell {
+  padding-inline: clamp(0.75rem, 1.6vw, 1.5rem);
+}
+
+/* The divider is a border on the inline-start edge of the second panel, which under RTL
+   lands between the two panels exactly as it does under LTR. */
+.workflow-cell-automated {
+  border-inline-start: 1px solid var(--color-border);
+}
+
+.workflow-cell-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.workflow-cell-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  inline-size: 1.375rem;
+  block-size: 1.375rem;
+  border-radius: 50%;
+  background-color: var(--color-surface-2);
+  color: var(--color-text-secondary);
+}
+
+.workflow-cell-automated .workflow-cell-label {
+  color: var(--color-primary-focus);
+}
+
+.workflow-cell-automated .workflow-cell-glyph {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-focus);
+}
+
+.workflow-cell-body {
+  margin-block-start: 0.875rem;
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+.workflow-cell-automated .workflow-cell-body {
+  color: var(--color-text-primary);
+}
+
+@supports (animation-timeline: view()) {
+  .workflow-row {
+    opacity: 0;
+    animation: comparison-in 1ms linear both;
+    animation-timeline: view();
+    animation-range: entry 8% cover 22%;
+  }
+}
+
+@media (max-width: 44rem) {
+  .workflow-row {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 1.5rem;
+  }
+
+  .workflow-cell {
+    padding-inline: 0;
+  }
+
+  /* Stacked, the divider belongs above the second panel rather than beside it. */
+  .workflow-cell-automated {
+    border-inline-start: none;
+    padding-block-start: 1.5rem;
+    border-block-start: 1px solid var(--color-border);
+  }
+}
+
+/* ==========================================================================
+ * Off-the-shelf versus built around you
+ * ======================================================================= */
+
+.shelf-section {
+  background-color: var(--color-surface-0);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.shelf-scroll {
+  margin-block-start: clamp(2.5rem, 5vw, 4rem);
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  background-color: oklch(1 0 0 / 0.7);
+}
+
+.shelf-table {
+  inline-size: 100%;
+  min-inline-size: 46rem;
+  border-collapse: collapse;
+  text-align: start;
+}
+
+.shelf-caption {
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  border-block-end: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: clamp(0.9375rem, 1.5vw, 1.0625rem);
+  line-height: 1.8;
+  text-align: start;
+  text-wrap: pretty;
+}
+
+.shelf-column,
+.shelf-aspect,
+.shelf-cell,
+.shelf-corner {
+  padding: clamp(1rem, 2vw, 1.5rem);
+  vertical-align: top;
+  text-align: start;
+}
+
+.shelf-column {
+  border-block-end: 1px solid var(--color-border-strong);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.shelf-column-shelf {
+  color: var(--color-text-muted);
+}
+
+.shelf-column-bespoke {
+  color: var(--color-primary-focus);
+}
+
+.shelf-corner {
+  inline-size: 14rem;
+  border-block-end: 1px solid var(--color-border-strong);
+}
+
+.shelf-table tbody tr {
+  transition: background-color 0.25s ease;
+}
+
+.shelf-table tbody tr:hover {
+  background-color: var(--color-surface-1);
+}
+
+.shelf-table tbody tr + tr .shelf-aspect,
+.shelf-table tbody tr + tr .shelf-cell {
+  border-block-start: 1px solid var(--color-border);
+}
+
+.shelf-aspect {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.shelf-cell {
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  text-wrap: pretty;
+}
+
+/* The bespoke column is the argument, so it carries the accent edge and the darker text. */
+.shelf-cell-bespoke {
+  border-inline-start: 1px solid var(--color-border);
+  background-color: var(--color-primary-soft);
+  color: var(--color-text-primary);
+}
+
+.shelf-footnote {
+  max-inline-size: 52rem;
+  margin-block-start: 2rem;
+  padding-inline-start: 1.25rem;
+  border-inline-start: 2px solid var(--color-primary);
+  color: var(--color-text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+@keyframes comparison-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workflow-row {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .shelf-table tbody tr {
+    transition: none;
+  }
+}

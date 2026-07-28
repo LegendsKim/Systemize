@@ -9,15 +9,15 @@ import { HeroTrail } from "./HeroTrail";
  *
  * Two compositions from one set of markup:
  *
- *   landscape — the topographic plate, with the trail and its milestones plotted on the
+ *   landscape, the topographic plate, with the trail and its milestones plotted on the
  *               artwork and the copy beside it on the open left
- *   portrait  — no plate at all: the same copy, the same four milestones as a vertical
+ *   portrait , no plate at all: the same copy, the same four milestones as a vertical
  *               track, and the brand's rings drifting behind it
  *
  * A wide panorama squeezed into a tall frame loses the composition that makes it worth
  * showing, and costs a megabyte on the connection where it hurts most. So phones get a
  * hero built from type, vector and motion instead, and the largest element on the page
- * becomes text — it paints almost immediately.
+ * becomes text, it paints almost immediately.
  *
  * Crucially the headline and the milestone links are written once and restyled, not
  * duplicated per orientation. Rendering both compositions would put two `<h1>`s and two
@@ -45,7 +45,7 @@ const HEADLINE = [
  * query in `hero.css`, so the image and the stage geometry appear together.
  *
  * Orientation is part of it deliberately. A 768px-wide portrait tablet satisfies a
- * width-only query, but this artwork is a wide panorama — on a tall screen it would be
+ * width-only query, but this artwork is a wide panorama, on a tall screen it would be
  * reduced to a sliver stranded in the middle of the section.
  */
 const PLATE_MEDIA = "(min-width: 768px) and (min-aspect-ratio: 1/1)";
@@ -62,7 +62,7 @@ const PLATE_QUALITY = 90;
  *
  * This is the `<img>` fallback inside the `<picture>`, and it is what keeps a megabyte of
  * artwork off a phone. `display: none` does not reliably prevent an image from being
- * fetched, but a `<source>` whose media query does not match is never selected — so on a
+ * fetched, but a `<source>` whose media query does not match is never selected, so on a
  * portrait viewport the browser resolves to this instead and downloads 43 bytes.
  */
 const TRANSPARENT_PIXEL =
@@ -100,7 +100,7 @@ export function Hero() {
         <HeroTrail />
       </div>
 
-      {/* Portrait only: the wordmark's rings, drifting behind the copy. */}
+      {/* Portrait only: ambient rings, drifting behind the copy. */}
       <div className="hero-rings" aria-hidden="true">
         <span className="hero-ring hero-ring--1" />
         <span className="hero-ring hero-ring--2" />
@@ -111,14 +111,14 @@ export function Hero() {
         <div className="hero-copy">
           <p className="hero-eyebrow">
             <span className="hero-eyebrow-rule" aria-hidden="true" />
-            מערכות שעובדות בדרך שבה העסק שלך עובד
+            מערכות ניהול בענן, בהתאמה לעסק
           </p>
 
           <h1 id="hero-heading" className="hero-heading">
             {HEADLINE.map((word, index) => (
               <span
                 key={`${index}-${word}`}
-                className="hero-word"
+                className={`hero-word${index >= 8 ? " hero-word--accent" : ""}`}
                 style={{ "--hero-word-delay": `${0.26 + index * 0.055}s` } as CSSProperties}
               >
                 {word}
@@ -127,16 +127,17 @@ export function Hero() {
           </h1>
 
           <p className="hero-lead">
-            מאפיינים את זרימת העבודה, מסירים צווארי בקבוק ובונים מערכת מדויקת — בלי
-            פיצ׳רים מיותרים ובלי פתרונות מדף.
+            <span className="hero-lead-question">
+              מערכת אחת שמרכזת את העבודה, המידע והאנשים בדרך שמתאימה לעסק שלכם.
+            </span>
+            <span className="hero-lead-invitation">
+              מהשיחה הראשונה ועד ההטמעה, אתם רואים בדיוק מה קורה ומה השלב הבא.
+            </span>
           </p>
 
           <div className="hero-actions">
             <a href="#blueprint" className="hero-cta">
-              מתחילים באפיון
-            </a>
-            <a href="#process" className="hero-cta-secondary">
-              לראות איך זה עובד
+              בואו נדבר על המערכת
             </a>
           </div>
         </div>

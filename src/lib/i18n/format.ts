@@ -5,7 +5,7 @@ import { currency, formatLocale } from "./locale";
  *
  * Instances are created once at module scope because constructing an `Intl` formatter is
  * comparatively expensive and these two configurations are the only ones the site uses.
- * This is a fixed, bounded set — not a cache that can grow.
+ * This is a fixed, bounded set, not a cache that can grow.
  *
  * Both formatters are given an explicit locale and, for money, an explicit ISO 4217
  * currency code, as required by AGENTS.md §7. Neither reads ambient locale or timezone,

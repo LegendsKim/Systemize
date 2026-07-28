@@ -1,0 +1,315 @@
+.workspace-section {
+  padding: var(--spacing-section-y) var(--spacing-page-x);
+  border-block: 1px solid var(--color-border);
+  background:
+    linear-gradient(oklch(0.985 0.001 240 / 0.92), oklch(0.965 0.009 190 / 0.95)),
+    radial-gradient(circle at 1px 1px, oklch(0.55 0.098 190 / 0.13) 1px, transparent 1.5px);
+  background-size: auto, 28px 28px;
+}
+
+.workspace-inner {
+  max-inline-size: var(--container-content);
+  margin-inline: auto;
+}
+
+.workspace-intro {
+  max-inline-size: 56rem;
+}
+
+.workspace-kicker,
+.workspace-step,
+.workspace-index {
+  font-family: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+  letter-spacing: 0.08em;
+}
+
+.workspace-kicker {
+  color: var(--color-primary-focus);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.workspace-intro h2 {
+  max-inline-size: 13ch;
+  margin-block-start: 1rem;
+  font-size: clamp(2.5rem, 6vw, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.workspace-intro > p:last-child {
+  max-inline-size: 48rem;
+  margin-block-start: 1.5rem;
+  color: var(--color-text-secondary);
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  line-height: 1.85;
+  text-wrap: pretty;
+}
+
+/*
+ * The two cards are a before/after pair, so they are stretched to a shared height rather
+ * than centred against each other. Centring two cards of different heights reads as a
+ * layout defect — neither edge lines up with anything — while a shared height makes the
+ * pair one object with a divider through it, and the content difference between them stops
+ * being visible as a size difference.
+ */
+.workspace-journey {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 5rem minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(1.25rem, 3vw, 2.5rem);
+  margin-block-start: clamp(3rem, 7vw, 6rem);
+}
+
+/*
+ * A column, so the parts inside can take responsibility for the shared height: the header
+ * stays at the top, the list absorbs the slack, and the closing note sits on the card's
+ * bottom edge in both cards at once.
+ */
+.workspace-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid oklch(0.55 0.098 190 / 0.3);
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  background-color: oklch(0.995 0.002 190 / 0.94);
+  box-shadow: 0 1.5rem 4rem oklch(0.24 0.008 240 / 0.08);
+}
+
+.workspace-card-project {
+  border-color: oklch(0.55 0.098 190 / 0.55);
+  box-shadow: 0 1.75rem 5rem oklch(0.45 0.08 190 / 0.14);
+}
+
+.workspace-card-header {
+  display: flex;
+  flex: none;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-block-end: 1px solid var(--color-border);
+  background-color: oklch(0.97 0.012 190 / 0.7);
+}
+
+.workspace-step {
+  color: var(--color-primary-focus);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.workspace-card-header h3 {
+  margin-block-start: 0.45rem;
+  font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.workspace-state {
+  flex: none;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.workspace-state-active {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+/*
+ * The lists take the slack of the shared height. Distributing it between the rows keeps
+ * the rows evenly spaced instead of leaving one dead gap above the closing note, which is
+ * where a pinned-bottom layout usually shows its seams.
+ */
+.workspace-choice-list,
+.workspace-update-list {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-evenly;
+  margin: 0;
+  padding: clamp(0.75rem, 2vw, 1.25rem);
+  list-style: none;
+}
+
+.workspace-choice-list li,
+.workspace-update-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  padding: 1.15rem 0.75rem;
+  border-block-end: 1px solid var(--color-border);
+}
+
+.workspace-choice-list li:last-child,
+.workspace-update-list li:last-child {
+  border-block-end: 0;
+}
+
+.workspace-index {
+  color: var(--color-primary-focus);
+  font-size: 0.75rem;
+}
+
+.workspace-choice-list h4,
+.workspace-update-list h4 {
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.workspace-choice-list p,
+.workspace-update-list p {
+  margin-block-start: 0.35rem;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  text-wrap: pretty;
+}
+
+.workspace-card-note {
+  margin: 0 clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 3vw, 2rem);
+  padding: 1rem 1.125rem;
+  border-inline-start: 3px solid var(--color-primary);
+  background-color: var(--color-primary-soft);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.workspace-transition {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-primary-focus);
+  font-size: 0.6875rem;
+}
+
+.workspace-transition span {
+  block-size: 1px;
+  flex: 1;
+  background-color: var(--color-primary);
+}
+
+.workspace-transition strong {
+  font-weight: 700;
+}
+
+.workspace-project-overview {
+  margin: clamp(1.25rem, 3vw, 2rem);
+  padding: 1.25rem;
+  border: 1px solid oklch(0.55 0.098 190 / 0.28);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, oklch(0.93 0.03 190 / 0.9), oklch(0.985 0.005 190 / 0.9));
+}
+
+.workspace-project-overview div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.workspace-project-overview span {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.workspace-project-overview strong {
+  color: var(--color-primary-focus);
+  font-size: 1.1rem;
+}
+
+.workspace-project-overview p {
+  margin-block-start: 0.75rem;
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.workspace-update-list {
+  padding-block-start: 0;
+}
+
+.workspace-update-status {
+  align-self: start;
+  min-inline-size: 3.6rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--radius-pill);
+  background-color: var(--color-surface-2);
+  color: var(--color-text-secondary);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.workspace-contact {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0 clamp(1.25rem, 3vw, 2rem) clamp(1.25rem, 3vw, 2rem);
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.workspace-contact span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  inline-size: 2rem;
+  block-size: 2rem;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.workspace-contact p {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 58rem) {
+  .workspace-journey {
+    grid-template-columns: minmax(0, 1fr);
+    max-inline-size: 42rem;
+    margin-inline: auto;
+  }
+
+  .workspace-transition {
+    flex-direction: column;
+    min-block-size: 4rem;
+  }
+
+  .workspace-transition span {
+    inline-size: 1px;
+    block-size: auto;
+  }
+}
+
+@media (max-width: 30rem) {
+  .workspace-intro h2 {
+    font-size: clamp(2.25rem, 12vw, 3.25rem);
+  }
+
+  .workspace-card-header {
+    align-items: center;
+  }
+
+  .workspace-card-header h3 {
+    font-size: 1.25rem;
+  }
+
+  .workspace-project-overview div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}

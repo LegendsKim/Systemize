@@ -3,7 +3,7 @@
   overflow: clip;
   background:
     linear-gradient(oklch(0.985 0.001 240 / 0.92), oklch(0.985 0.001 240 / 0.98)),
-    url("/hero/contour-field.svg") center / cover fixed;
+    url("/hero/contour-field.svg") center / cover;
 }
 
 .process-intro {
@@ -81,7 +81,7 @@
  *
  * `::before` is the unwalked line and `::after` is the turquoise fill that follows the
  * reader down. Because each stage owns one segment and the stages are stacked, the
- * segments read as a single line running the height of the section — so a reader can see
+ * segments read as a single line running the height of the section, so a reader can see
  * how far along the process they are without a progress widget.
  */
 .process-stage-marker {
@@ -154,7 +154,6 @@
   border-radius: var(--radius-xl);
   background-color: oklch(1 0 0 / 0.66);
   box-shadow: 0 1.5rem 4rem oklch(0.24 0.008 240 / 0.06);
-  backdrop-filter: blur(12px);
   transition: box-shadow 0.35s ease, border-color 0.35s ease, transform 0.35s ease;
 }
 
@@ -209,7 +208,7 @@
 /* ---------------------------------------------------------------------------
  * Next-stage link
  *
- * The section can be stepped through deliberately, not only scrolled past — and the last
+ * The section can be stepped through deliberately, not only scrolled past, and the last
  * stage hands off to the lead form rather than dead-ending.
  * ------------------------------------------------------------------------ */
 
@@ -263,8 +262,8 @@
  * Progressive enhancement.
  *
  * Every hidden or partial starting state lives inside this block, never outside it. A
- * browser without scroll-driven animation support gets the finished layout — content
- * visible, trail drawn — rather than content stuck at `opacity: 0` waiting for a timeline
+ * browser without scroll-driven animation support gets the finished layout, content
+ * visible, trail drawn, rather than content stuck at `opacity: 0` waiting for a timeline
  * that will never run.
  */
 @supports (animation-timeline: view()) {
@@ -288,7 +287,7 @@
     /*
      * `cover`-relative, not `entry`/`exit`. Each stage is about as tall as the viewport,
      * and for an element that large the entry and exit phases collapse to almost nothing
-     * — the fill would snap rather than follow the reader. `cover` measures the whole
+     *, the fill would snap rather than follow the reader. `cover` measures the whole
      * traversal, from the stage first appearing to it leaving, which is exactly the span
      * being walked.
      */
@@ -308,7 +307,7 @@
 
   /*
    * The activities check in one after another. The stagger comes from each item's index
-   * shifting the *start of its range* rather than from an animation delay — a
+   * shifting the *start of its range* rather than from an animation delay, a
    * scroll-driven animation has no time axis for a delay to act on.
    */
   .process-stage-details li {

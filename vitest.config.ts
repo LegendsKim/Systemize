@@ -25,6 +25,10 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
+      // `server-only` throws on import outside a React Server environment, which would
+      // make every server module untestable. The boundary it marks is enforced
+      // executably by `npm run check:architecture`, not by this import.
+      "server-only": path.resolve(__dirname, "./src/test/server-only-stub.ts"),
     },
   },
 });

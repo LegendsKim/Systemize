@@ -1,1 +1,1 @@
-export * from "./contact-request.repository";
+export * from "./lead.repository";

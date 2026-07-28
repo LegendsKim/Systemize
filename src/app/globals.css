@@ -2,9 +2,18 @@
 @import "../components/layout/layout.css";
 @import "../features/hero/hero.css";
 @import "../features/process/process.css";
+@import "../features/value/value.css";
+@import "../features/comparison/comparison.css";
+@import "../features/portfolio/portfolio.css";
+@import "../features/founder/founder.css";
+@import "../features/faq/faq.css";
+@import "../features/lead/lead.css";
+@import "../features/legal/legal.css";
+@import "../features/accessibility/accessibility.css";
+@import "../features/cookies/cookies.css";
 
 /*
- * Systemize — Global Styles
+ * Systemize, Global Styles
  *
  * Tailwind CSS v4 uses CSS-first configuration via @theme.
  * All customization happens here, no tailwind.config.js needed.
@@ -24,7 +33,7 @@
     sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
     "Noto Color Emoji";
 
-  /* --- Colors — Paper neutrals, matched to the hero render --- */
+  /* --- Colors, Paper neutrals, matched to the hero render --- */
   --color-surface-0: oklch(0.985 0.001 240);
   --color-surface-1: oklch(0.97 0.002 240);
   --color-surface-2: oklch(0.945 0.003 240);
@@ -33,20 +42,32 @@
   --color-border-strong: oklch(0.72 0.006 240);
   --color-text-primary: oklch(0.24 0.008 240);
   --color-text-secondary: oklch(0.45 0.006 240);
-  /* Dark enough for 4.5:1 on surface-1, which the footer uses at 13px — below the
+  /* Dark enough for 4.5:1 on surface-1, which the footer uses at 13px, below the
      large-text threshold, so the reduced ratio does not apply. */
   --color-text-muted: oklch(0.5 0.006 240);
   --color-text-on-primary: oklch(1 0 0);
 
-  /* --- Colors — Brand turquoise, sampled from the hero trail --- */
-  --color-primary: oklch(0.63 0.098 190);
-  --color-primary-hover: oklch(0.56 0.096 190);
+  /* --- Colors, Brand turquoise, sampled from the hero trail ---
+     `--color-primary` and `--color-primary-hover` are filled surfaces that carry
+     `--color-text-on-primary` (pure white), so each must reach 4.5:1 against white at
+     body size. The lightness values below are the shallowest ones that do:
+     L=0.55 → 4.60:1, L=0.48 → 6.07:1. Hue and chroma are untouched, so the brand colour
+     is the same colour, only seated deeper.
+
+     The hero artwork is NOT affected by these two: the luminous trail has its own
+     `--color-trail` token, which never carries text and is therefore free to stay bright.
+     Do not raise the lightness here to match the trail, that is the change that broke
+     contrast in the first place. */
+  --color-primary: oklch(0.55 0.098 190);
+  --color-primary-hover: oklch(0.48 0.096 190);
+  /* Text on a light surface, not a fill. Its ratio is measured the other way round, which
+     is why it is lighter than `--color-primary-hover` without failing. */
   --color-primary-focus: oklch(0.5 0.09 190);
   --color-primary-soft: oklch(0.93 0.03 190);
   /* Luminous variant used only for the trail and its glow, never for text. */
   --color-trail: oklch(0.72 0.13 189);
 
-  /* --- Colors — Semantic --- */
+  /* --- Colors, Semantic --- */
   --color-success: oklch(0.55 0.15 145);
   --color-warning: oklch(0.6 0.14 65);
   --color-error: oklch(0.55 0.2 25);
@@ -116,7 +137,7 @@ body {
 }
 
 /* ============================================================================
- * Focus Styles — WCAG 2.2 AA compliant
+ * Focus Styles, WCAG 2.2 AA compliant
  * ============================================================================ */
 
 :focus-visible {
@@ -125,7 +146,7 @@ body {
 }
 
 /* ============================================================================
- * Reduced Motion — Respect user preference
+ * Reduced Motion, Respect user preference
  * ============================================================================ */
 
 @media (prefers-reduced-motion: reduce) {
@@ -144,7 +165,7 @@ body {
 }
 
 /* ============================================================================
- * Skip Link — Accessibility
+ * Skip Link, Accessibility
  * ============================================================================ */
 
 .skip-link {

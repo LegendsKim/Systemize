@@ -1,8 +1,15 @@
--- Development seed data for Supabase
--- Do NOT put real user Personally Identifiable Information (PII) here.
--- This file is for local development and testing purposes only.
-
--- Example insert (uncomment to use):
--- INSERT INTO auth.users (id, email, raw_user_meta_data) VALUES ('00000000-0000-0000-0000-000000000001', 'test@example.com', '{"name": "Test User"}');
--- INSERT INTO public.contact_requests (name, email, message, idempotency_key, user_id) 
--- VALUES ('John Doe', 'john@example.com', 'I have a question about the enterprise plan.', 'seed-key-1', '00000000-0000-0000-0000-000000000001');
+-- Development seed data for Supabase.
+-- Do NOT put real Personally Identifiable Information (PII) here.
+-- This file is for local development only.
+--
+-- The site has no authentication, so there are no users to seed. `leads` is left
+-- empty on purpose: the E2E suite writes its own fixture rows through the real
+-- server path, which is also what verifies that path.
+--
+-- Example fixture (uncomment only for manual local inspection):
+-- INSERT INTO public.leads
+--   (full_name, business_name, phone, email, message, idempotency_key, request_id)
+-- VALUES
+--   ('בדיקה מקומית', 'עסק לדוגמה', '050-0000000', 'local@example.test',
+--    'שורת בדיקה מקומית בלבד, ללא מידע אישי אמיתי.',
+--    'seed-key-000000000001', 'seed-request');

@@ -1,5 +1,33 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { a11yRestoreScript } from "@/features/accessibility/a11y-settings";
+
+/**
+ * The accessibility restore script is allowed by hash rather than by the per-request
+ * nonce.
+ *
+ * A nonce attribute rendered into the React tree cannot survive hydration: once the CSP
+ * is applied the browser hides the value, so `getAttribute("nonce")` returns an empty
+ * string and React reports an attribute mismatch on every load. The script is a build-time
+ * constant, so a hash source is both stable and strictly narrower than a nonce.
+ *
+ * Computed once per runtime instance; the digest is the same for every request.
+ */
+let a11yRestoreScriptHash: string | undefined;
+
+async function getA11yRestoreScriptHash(): Promise<string> {
+  if (!a11yRestoreScriptHash) {
+    const digest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(a11yRestoreScript)
+    );
+    a11yRestoreScriptHash = btoa(
+      String.fromCharCode(...new Uint8Array(digest))
+    );
+  }
+
+  return a11yRestoreScriptHash;
+}
 
 /**
  * Proxy for security headers and request processing.
@@ -7,17 +35,18 @@ import type { NextRequest } from "next/server";
  * Applied to all routes. Security headers are set here rather than
  * next.config.ts for dynamic CSP nonce support.
  */
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const nonce = crypto.randomUUID().replaceAll("-", "");
+  const scriptHash = await getA11yRestoreScriptHash();
   const isDevelopment = process.env.NODE_ENV !== "production";
 
   // --- Security Headers ---
 
-  // Content Security Policy — production-ready foundation
+  // Content Security Policy, production-ready foundation
   // Client projects expand as needed for analytics, CDNs, and embeds.
   const csp = [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDevelopment ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}' 'sha256-${scriptHash}' 'strict-dynamic'${isDevelopment ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",

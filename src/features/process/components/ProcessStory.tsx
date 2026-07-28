@@ -6,10 +6,10 @@ import { processStages } from "../process-content";
  *
  * The section continues the hero's trail rather than restating it: the rule down the
  * marker column is the same line, and it fills as each stage passes. That gives a reader
- * a sense of position — how far along the process they are — without a progress widget.
+ * a sense of position, how far along the process they are, without a progress widget.
  *
- * Every stage ends with a link to the next, so the section can be walked deliberately
- * instead of only scrolled past, and the last one hands off to the lead form.
+ * The first three stages end with a link to the next, so the section can be walked
+ * deliberately instead of only scrolled past. The final stage closes the sequence.
  *
  * A Server Component. All of the motion is CSS scroll-driven animation behind a
  * `@supports` guard, so nothing here reaches the client bundle and an unsupporting
@@ -19,11 +19,12 @@ export function ProcessStory() {
   return (
     <section id="process" className="process-story" aria-labelledby="process-heading">
       <header className="process-intro">
-        <p className="process-kicker">איך אנחנו עובדים</p>
-        <h2 id="process-heading">מתהליך עמום למערכת שעובדת</h2>
+        <p className="process-kicker">איך זה עובד</p>
+        <h2 id="process-heading">מהשיחה הראשונה ועד מערכת שעובדת בעסק.</h2>
         <p>
-          ארבעה שלבים, קו אחד ברור: להבין את העסק, לתכנן סביבו, לבנות במדויק
-          ולהישאר עד שהמערכת נטמעת בעבודה.
+          לא מקבלים הצעת מחיר מעורפלת ונעלמים לחודשים. מתחילים בהיכרות, עוברים
+          לבחירה מסודרת באזור האישי, ובונים את המערכת בשקיפות עד שהצוות עובד בה
+          בפועל.
         </p>
       </header>
 
@@ -67,31 +68,29 @@ export function ProcessStory() {
                 >
                   <span>התוצר</span>
                   <p>{stage.outcome}</p>
-                  <a
-                    className="process-stage-next"
-                    href={next ? `#${next.id}` : "#blueprint"}
-                    aria-label={
-                      next
-                        ? `לשלב הבא: ${next.title}`
-                        : "סיימנו את התהליך — מתחילים באפיון"
-                    }
-                  >
-                    <span>{next ? `לשלב הבא · ${next.title}` : "מתחילים באפיון"}</span>
-                    <svg
-                      viewBox="0 0 16 16"
-                      width="15"
-                      height="15"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.6"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                      focusable="false"
+                  {next && (
+                    <a
+                      className="process-stage-next"
+                      href={`#${next.id}`}
+                      aria-label={`לשלב הבא: ${next.title}`}
                     >
-                      <path d="M8 2.5v11M3.5 9l4.5 4.5L12.5 9" />
-                    </svg>
-                  </a>
+                      <span>{`לשלב הבא · ${next.title}`}</span>
+                      <svg
+                        viewBox="0 0 16 16"
+                        width="15"
+                        height="15"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        aria-hidden="true"
+                        focusable="false"
+                      >
+                        <path d="M8 2.5v11M3.5 9l4.5 4.5L12.5 9" />
+                      </svg>
+                    </a>
+                  )}
                 </aside>
               </article>
             </li>
