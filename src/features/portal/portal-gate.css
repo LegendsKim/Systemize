@@ -330,76 +330,158 @@
 }
 
 /* A browser-only install reminder. It stays outside the gate's flow so a phone keeps
-   the one-screen login layout, and it disappears completely in standalone mode. */
+   the one-screen login layout, and it disappears completely in standalone mode.
+
+   It is a card rather than a bar: an offer the visitor may take or leave, sitting on the
+   paper the rest of the gate is made of. The reveal is delayed in the component, so the
+   entrance animation below is the first thing seen of it, not a repaint of something that
+   was already there. */
 .login-pwa-install {
+  --install-tint: color-mix(in oklch, var(--color-primary-soft) 45%, white);
+  /* Its own copy of the gate's shadow tint. `--gate-shadow` lives on `.auth-gate`, and
+     this card is a sibling of it, not a descendant, so inheriting it is not an option —
+     referencing it here would silently drop the whole `box-shadow` declaration. */
+  --install-shadow: color-mix(in oklch, var(--color-text-primary) 18%, transparent);
   position: fixed;
   z-index: 70;
-  inset-block-end: max(0.75rem, env(safe-area-inset-bottom));
+  inset-block-end: max(0.9rem, env(safe-area-inset-bottom));
   inset-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  inline-size: min(32rem, calc(100% - 1.5rem));
+  inline-size: min(30rem, 94%);
   margin-inline: auto;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 0.85rem;
+  gap: 0.8rem;
+  padding: 1rem 1.05rem 1.05rem;
   color: var(--color-text-primary);
-  border: 1px solid color-mix(in oklch, var(--color-primary) 24%, var(--color-border));
-  border-radius: 1rem;
-  background: color-mix(in oklch, var(--color-surface-0) 96%, transparent);
+  border: 1px solid color-mix(in oklch, var(--color-primary) 16%, var(--color-border));
+  border-radius: 1.35rem;
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in oklch, var(--color-surface-0) 94%, transparent),
+      color-mix(in oklch, var(--install-tint) 92%, transparent)
+    );
   box-shadow:
     0 0 0 1px color-mix(in oklch, white 70%, transparent),
-    0 1rem 2.5rem -1.1rem var(--gate-shadow);
+    0 0.15rem 0.5rem -0.25rem color-mix(in oklch, var(--install-shadow) 55%, transparent),
+    0 1.5rem 3rem -1.2rem var(--install-shadow);
   backdrop-filter: blur(1rem);
+  animation: login-pwa-install-rise 460ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* A brand hairline along the top edge, faded at both ends so it reads as light catching
+   the card rather than as a border someone forgot to close. */
+.login-pwa-install::before {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 20%;
+  block-size: 1.5px;
+  content: "";
+  border-radius: var(--radius-pill);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklch, var(--color-primary) 60%, transparent),
+    transparent
+  );
+}
+
+@keyframes login-pwa-install-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1.4rem) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.login-pwa-install-head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 0.7rem;
 }
 
 .login-pwa-install-icon {
   display: grid;
-  inline-size: 2.5rem;
-  block-size: 2.5rem;
+  inline-size: 2.6rem;
+  block-size: 2.6rem;
   place-items: center;
-  color: var(--color-text-on-primary);
-  font-size: 1.4rem;
-  font-weight: 700;
-  border-radius: 0.8rem;
-  background: var(--color-primary);
+  color: var(--color-primary-focus);
+  border: 1px solid color-mix(in oklch, var(--color-primary) 20%, transparent);
+  border-radius: 0.95rem;
+  background: linear-gradient(160deg, white, var(--color-primary-soft));
+}
+
+.login-pwa-install-icon svg {
+  inline-size: 1.4rem;
+  block-size: 1.4rem;
 }
 
 .login-pwa-install-copy {
   display: grid;
   min-inline-size: 0;
-  gap: 0.1rem;
+  gap: 0.2rem;
+  padding-block-start: 0.1rem;
 }
 
 .login-pwa-install-copy strong {
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   line-height: 1.35;
+  letter-spacing: -0.01em;
 }
 
 .login-pwa-install-copy p {
   margin: 0;
   color: var(--color-text-secondary);
-  font-size: 0.75rem;
-  line-height: 1.45;
+  font-size: 0.78rem;
+  line-height: 1.5;
 }
 
-.login-pwa-install-copy .login-pwa-install-instruction {
+.login-pwa-install-instruction {
+  margin: 0;
+  padding: 0.55rem 0.7rem;
   color: var(--color-text-primary);
+  font-size: 0.76rem;
   font-weight: 600;
+  line-height: 1.5;
+  border-radius: 0.8rem;
+  background: color-mix(in oklch, white 72%, var(--color-primary-soft));
+}
+
+.login-pwa-install-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .login-pwa-install-action {
-  min-block-size: 2.75rem;
-  padding-inline: 0.9rem;
+  flex: 1 1 12rem;
+  min-block-size: 2.85rem;
+  padding-inline: 1.1rem;
   color: var(--color-text-on-primary);
   font: inherit;
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   font-weight: 700;
-  white-space: nowrap;
   border: 0;
   border-radius: var(--radius-pill);
   background: var(--color-primary);
+  box-shadow: 0 0.6rem 1.2rem -0.75rem color-mix(in oklch, var(--color-primary) 80%, transparent);
   cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease;
+}
+
+.login-pwa-install-action:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.login-pwa-install-action:active:not(:disabled) {
+  transform: translateY(1px);
 }
 
 .login-pwa-install-action:disabled {
@@ -407,38 +489,80 @@
   opacity: 0.72;
 }
 
+.login-pwa-install-later {
+  min-block-size: 2.85rem;
+  padding-inline: 0.95rem;
+  color: var(--color-text-secondary);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.login-pwa-install-later:hover {
+  color: var(--color-text-primary);
+  background: color-mix(in oklch, var(--color-surface-2) 70%, transparent);
+}
+
+.login-pwa-install-close {
+  display: grid;
+  inline-size: 2rem;
+  block-size: 2rem;
+  place-items: center;
+  padding: 0;
+  margin-block-start: -0.2rem;
+  margin-inline-end: -0.25rem;
+  color: var(--color-text-muted);
+  font: inherit;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.login-pwa-install-close svg {
+  inline-size: 0.85rem;
+  block-size: 0.85rem;
+}
+
+.login-pwa-install-close:hover {
+  color: var(--color-text-primary);
+  background: color-mix(in oklch, var(--color-surface-2) 80%, transparent);
+}
+
 .login-pwa-install-action:focus-visible,
+.login-pwa-install-later:focus-visible,
 .login-pwa-install-close:focus-visible {
   outline: 3px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
 
-.login-pwa-install-close {
-  position: absolute;
-  inset-block-start: -0.6rem;
-  inset-inline-end: -0.35rem;
-  display: grid;
-  inline-size: 2.75rem;
-  block-size: 2.75rem;
-  place-items: center;
-  padding: 0;
-  color: var(--color-text-secondary);
-  font: inherit;
-  font-size: 1.25rem;
-  border: 1px solid var(--color-border);
-  border-radius: 50%;
-  background: var(--color-surface-0);
-  cursor: pointer;
-}
-
 @media (max-width: 34rem) {
   .login-pwa-install {
-    grid-template-columns: auto minmax(0, 1fr);
-    gap: 0.55rem 0.7rem;
+    inline-size: 92%;
+    gap: 0.7rem;
+    padding: 0.9rem 0.95rem 1rem;
   }
 
-  .login-pwa-install-action {
-    grid-column: 1 / -1;
+  .login-pwa-install-copy p {
+    font-size: 0.76rem;
+  }
+
+  .login-pwa-install-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* The stack turns the main axis vertical, where `flex: 1 1 12rem` would read as a
+     twelve-rem-tall button. Each control goes back to its own height. */
+  .login-pwa-install-action,
+  .login-pwa-install-later {
+    flex: 0 0 auto;
     inline-size: 100%;
   }
 }

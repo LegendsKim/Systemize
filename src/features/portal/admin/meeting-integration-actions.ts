@@ -11,6 +11,18 @@ export async function retryMeetingIntegrations(): Promise<void> {
   let notice = "meeting-integrations-failed";
   try {
     const result = await dispatchMeetingIntegrations(5);
+    console.info(
+      JSON.stringify({
+        level: "info",
+        message: "meeting_integration_manual_retry",
+        claimed: result.claimed,
+        delivered: result.delivered,
+        retried: result.retried,
+        attention: result.attention,
+        configured: result.configured,
+        calendarConnected: result.calendarConnected,
+      })
+    );
     if (!result.configured) {
       notice = "meeting-providers-not-configured";
     } else if (!result.calendarConnected) {
@@ -24,7 +36,18 @@ export async function retryMeetingIntegrations(): Promise<void> {
     } else {
       notice = "meeting-integrations-no-work";
     }
-  } catch {
+  } catch (error: unknown) {
+    const safeError =
+      error instanceof Error && /^[a-z0-9_:.-]{1,160}$/i.test(error.message)
+        ? error.message
+        : "unknown";
+    console.error(
+      JSON.stringify({
+        level: "error",
+        message: "meeting_integration_manual_retry_failed",
+        error: safeError,
+      })
+    );
     notice = "meeting-integrations-failed";
   }
 
