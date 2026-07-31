@@ -65,6 +65,44 @@ test("/app resolves the current server session instead of a cached role", async 
   }
 });
 
+test("an owner opening a client portal URL is redirected to the admin console", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await authenticatedPortalContext(
+    browser,
+    portalE2EUsers.owner,
+    baseURL ?? "http://127.0.0.1:3000"
+  );
+  try {
+    const page = await context.newPage();
+    await page.goto("/portal/actions");
+    await expect(page).toHaveURL(/\/admin$/);
+    await expect(page.locator(".admin-app")).toBeVisible();
+  } finally {
+    await context.close();
+  }
+});
+
+test("a client cannot open the admin console or its nested routes", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await authenticatedPortalContext(
+    browser,
+    portalE2EUsers.clientB,
+    baseURL ?? "http://127.0.0.1:3000"
+  );
+  try {
+    const page = await context.newPage();
+    await page.goto("/admin/templates");
+    await expect(page).toHaveURL(/\/portal$/);
+    await expect(page.locator(".admin-app")).toHaveCount(0);
+  } finally {
+    await context.close();
+  }
+});
+
 test("the worker never stores authenticated HTML, RSC or API responses", async ({
   browser,
   baseURL,

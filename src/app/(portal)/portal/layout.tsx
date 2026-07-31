@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requirePortalIdentity } from "@/features/portal/auth/session";
 import { PortalNav } from "@/features/portal/components/PortalNav";
 import { PwaRegistration } from "@/features/portal/pwa/PwaRegistration";
@@ -20,6 +21,9 @@ export default async function PortalLayout({
   children: React.ReactNode;
 }) {
   const identity = await requirePortalIdentity();
+  if (identity.appRole === "systemize_owner") {
+    redirect("/admin");
+  }
 
   return (
     <div className="portal-shell">

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { invitationCookieName } from "@/features/portal/auth/constants";
+import { canResumeClientSession } from "@/features/portal/auth/returning-client";
 import {
   isAllowedGmailAddress,
   normalizeGmailAddress,
@@ -139,6 +140,49 @@ export async function GET(request: Request): Promise<NextResponse> {
     }
 
     return redirectWithClearedInvitation("/admin");
+  }
+
+  /*
+   * An invitation proves the first admission; it is not a reusable login credential.
+   * Returning clients are admitted from durable account state instead: the verified
+   * Google address must still match their profile and they must still have an active
+   * project membership. Revoking that membership therefore closes future sessions even
+   * if the person previously accepted an invitation.
+   */
+  const { data: existingProfile, error: profileLookupError } = await admin
+    .from("profiles")
+    .select("email,app_role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profileLookupError) {
+    await supabase.auth.signOut();
+    return failed("profile_lookup");
+  }
+
+  if (existingProfile?.app_role === "client") {
+    const { count: activeMemberships, error: membershipLookupError } =
+      await admin
+        .from("project_memberships")
+        .select("project_id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .eq("status", "active");
+
+    if (membershipLookupError) {
+      await supabase.auth.signOut();
+      return failed("membership_lookup");
+    }
+
+    if (
+      canResumeClientSession({
+        profileEmail: existingProfile.email,
+        appRole: existingProfile.app_role,
+        hasActiveMembership: (activeMemberships ?? 0) > 0,
+        verifiedEmail: email,
+      })
+    ) {
+      return redirectWithClearedInvitation("/portal");
+    }
   }
 
   if (!rawInvitationToken || !isInvitationToken(rawInvitationToken)) {
