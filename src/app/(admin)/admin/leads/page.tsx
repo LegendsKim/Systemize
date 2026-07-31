@@ -2,6 +2,7 @@ import {
   buildTelHref,
   buildWhatsAppHref,
 } from "@/features/portal/admin/lead-contact";
+import { requireSystemizeOwner } from "@/features/portal/auth/session";
 import { formatPortalDateTime } from "@/features/portal/workflow/format";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { listLeadsForOwner } from "@/server/repositories/lead.repository";
@@ -15,6 +16,7 @@ const whatsAppGlyph =
   "M4.5 19.5 5.6 16a7.2 7.2 0 1 1 2.9 2.9L4.5 19.5Zm5-8.9c0 3 3 4.9 3.4 4.9.7 0 1.6-.6 1.8-1.2.1-.3 0-.5-.2-.6l-1.4-.7c-.2-.1-.4 0-.6.2l-.4.5c-.8-.3-1.6-1.1-1.9-1.9l.5-.4c.2-.2.2-.4.2-.6l-.7-1.4c-.1-.2-.3-.3-.6-.2-.6.2-1.1 1-1.1 1.4Z";
 
 export default async function AdminLeadsPage() {
+  await requireSystemizeOwner();
   const supabase = await createServerSupabaseClient();
   const leads = await listLeadsForOwner(supabase);
 

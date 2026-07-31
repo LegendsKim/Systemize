@@ -1,7 +1,10 @@
 import { randomUUID } from "node:crypto";
 import { CompanyProjectForm } from "@/features/portal/admin/CompanyProjectForm";
+import { requireSystemizeOwner } from "@/features/portal/auth/session";
 
-export default function CompaniesPage() {
+export default async function CompaniesPage() {
+  await requireSystemizeOwner();
+
   return (
     <main id="main-content" className="admin-page">
       <div className="admin-page-head">

@@ -10,6 +10,7 @@ import {
 import { InternalNotesForm } from "@/features/portal/admin/InternalNotesForm";
 import { ProjectDetailsForm } from "@/features/portal/admin/ProjectDetailsForm";
 import { ProjectInvitationForm } from "@/features/portal/admin/ProjectInvitationForm";
+import { requireSystemizeOwner } from "@/features/portal/auth/session";
 import {
   canReissueInvitation,
   canRevokeInvitation,
@@ -113,6 +114,7 @@ export default async function AdminProjectPage({
   params,
   searchParams,
 }: AdminProjectPageProps) {
+  await requireSystemizeOwner();
   const [{ projectId }, query] = await Promise.all([params, searchParams]);
   const supabase = await createServerSupabaseClient();
   const { data: project, error } = await supabase

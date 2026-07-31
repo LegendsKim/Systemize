@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { requireSystemizeOwner } from "@/features/portal/auth/session";
 import { projectStageLabels } from "@/features/portal/project-stage";
 import { derivePortalActionsForProjects } from "@/features/portal/workflow/action-inputs";
 import { countRequiredActions } from "@/features/portal/workflow/pending-actions";
@@ -26,6 +27,7 @@ interface AdminHomePageProps {
 }
 
 export default async function AdminHomePage({ searchParams }: AdminHomePageProps) {
+  await requireSystemizeOwner();
   const query = await searchParams;
   const supabase = await createServerSupabaseClient();
   const projects = await listOwnerProjects(supabase);

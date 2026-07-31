@@ -1,4 +1,8 @@
-export default function TemplatesPage() {
+import { requireSystemizeOwner } from "@/features/portal/auth/session";
+
+export default async function TemplatesPage() {
+  await requireSystemizeOwner();
+
   return (
     <main id="main-content" className="admin-page">
       <div className="admin-page-head">
