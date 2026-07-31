@@ -246,8 +246,8 @@ export default async function ProjectPage({
             </p>
             {bookedMeetingIntegration?.status === "ready" && (
               <p>
-                הזימון נשלח ל־Gmail וכולל את קישור ה־Zoom ותזכורות יום לפני
-                ושעה לפני הפגישה.
+                הזימון נשלח ל־Gmail וכולל את קישור ה־Zoom. לאחר הוספתו ליומן,
+                התזכורות יפעלו לפי הגדרות Google Calendar שלך.
               </p>
             )}
           </div>

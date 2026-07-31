@@ -35,7 +35,9 @@ owner, and stores the offline refresh token in a private table accessible only t
 service-role RPCs.
 
 The event requests an email reminder one day before and a popup reminder one hour
-before. Attendees also retain their own Google Calendar notification preferences.
+before for the authenticated owner. Google Calendar reminders are private to each user,
+so an attendee receives the invitation but keeps their own Calendar reminder settings;
+the product must not claim that organizer reminder overrides are forced onto attendees.
 
 ## Reliability and privacy
 

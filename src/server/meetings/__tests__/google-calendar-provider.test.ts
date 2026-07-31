@@ -56,7 +56,7 @@ describe("Google Calendar meeting provisioning", () => {
     );
   });
 
-  it("creates one invite with Zoom, attendee, date and reminders", async () => {
+  it("creates one invite with Zoom, attendee, date and organizer reminders", async () => {
     const fetchMock = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(
