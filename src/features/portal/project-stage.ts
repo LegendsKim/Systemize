@@ -17,3 +17,12 @@ export const projectStageLabels: Record<ProjectStage, string> = {
   completed: "הושלם",
   cancelled: "בוטל",
 };
+
+/** Client-facing wording avoids exposing internal sales-pipeline terminology. */
+export const clientProjectStageLabels: Record<ProjectStage, string> = {
+  ...projectStageLabels,
+  lead: "שלב היכרות ראשוני",
+  discovery_offer_awaiting_client: "הצעת אפיון ממתינה לאישור שלך",
+  proposal_and_contract_awaiting_client: "הצעה וחוזה ממתינים לאישור שלך",
+  client_review: "הבדיקה שלך",
+};

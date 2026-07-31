@@ -3,7 +3,7 @@ import { requirePortalIdentity } from "@/features/portal/auth/session";
 import { PortalArrival } from "@/features/portal/components/PortalArrival";
 import { PortalOnboarding } from "@/features/portal/components/PortalOnboarding";
 import { portalStageGuidance } from "@/features/portal/onboarding";
-import { projectStageLabels } from "@/features/portal/project-stage";
+import { clientProjectStageLabels } from "@/features/portal/project-stage";
 import { derivePortalActionsForProjects } from "@/features/portal/workflow/action-inputs";
 import { actionsFor } from "@/features/portal/workflow/pending-actions";
 import { getPublicEnv } from "@/lib/env/client";
@@ -181,7 +181,9 @@ export default async function PortalHomePage({
               </div>
               <div>
                 <h2>{project.name}</h2>
-                <p className="portal-stage-label">{projectStageLabels[project.stage]}</p>
+                <p className="portal-stage-label">
+                  {clientProjectStageLabels[project.stage]}
+                </p>
               </div>
               <div className="portal-next-step">
                 <span>מה קורה עכשיו</span>

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { projectStageLabels } from "@/features/portal/project-stage";
+import { clientProjectStageLabels } from "@/features/portal/project-stage";
 import {
   bookMeetingSlot,
 } from "@/features/portal/workflow/actions";
@@ -88,7 +88,9 @@ export default async function ProjectPage({
 
       <section className="workflow-client-hero" aria-labelledby="project-title">
         <div>
-          <p className="portal-eyebrow">{projectStageLabels[project.stage]}</p>
+          <p className="portal-eyebrow">
+            {clientProjectStageLabels[project.stage]}
+          </p>
           <h1 id="project-title">{project.name}</h1>
           <p>
             כאן מרוכז כל מה שצריך כדי לעבור מהיכרות ראשונית לתכנית עבודה
