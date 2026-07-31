@@ -12,7 +12,7 @@ export default defineConfig({
     ? [["html", { open: "never" }], ["github"]]
     : [["html", { open: "on-failure" }]],
   snapshotPathTemplate:
-    "{testDir}/{testFilePath}-snapshots/{arg}-{projectName}{ext}",
+    "{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-{platform}{ext}",
 
   use: {
     baseURL,
