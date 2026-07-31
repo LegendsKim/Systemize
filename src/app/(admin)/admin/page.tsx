@@ -179,7 +179,8 @@ export default async function AdminHomePage({ searchParams }: AdminHomePageProps
           >
             {calendarConnection.connected ? "רענון חיבור Calendar" : "חיבור Calendar"}
           </a>
-          {calendarConnection.connected && pendingMeetingIntegrations > 0 && (
+          {calendarConnection.connected &&
+            pendingMeetingIntegrations + attentionMeetingIntegrations > 0 && (
             <form action={retryMeetingIntegrations}>
               <button type="submit" className="admin-button">
                 יצירת Zoom וזימון עכשיו
