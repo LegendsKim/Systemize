@@ -873,6 +873,10 @@ export interface Database {
           granted_scopes: string[];
         }[];
       };
+      requeue_meeting_integrations: {
+        Args: Record<string, never>;
+        Returns: number;
+      };
       create_document_draft: {
         Args: {
           p_document_id: string;

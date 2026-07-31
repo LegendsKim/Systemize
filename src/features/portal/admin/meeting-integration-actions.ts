@@ -4,12 +4,14 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireSystemizeOwner } from "@/features/portal/auth/session";
 import { dispatchMeetingIntegrations } from "@/server/meetings/meeting-dispatcher";
+import { requeueUnfinishedMeetingIntegrations } from "@/server/repositories/meeting-integration.repository";
 
 export async function retryMeetingIntegrations(): Promise<void> {
   await requireSystemizeOwner();
 
   let notice = "meeting-integrations-failed";
   try {
+    const requeued = await requeueUnfinishedMeetingIntegrations();
     const result = await dispatchMeetingIntegrations(5);
     console.info(
       JSON.stringify({
@@ -21,6 +23,7 @@ export async function retryMeetingIntegrations(): Promise<void> {
         attention: result.attention,
         configured: result.configured,
         calendarConnected: result.calendarConnected,
+        requeued,
       })
     );
     if (!result.configured) {

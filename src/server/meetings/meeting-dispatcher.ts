@@ -23,8 +23,18 @@ export interface MeetingDispatchSummary {
 export async function dispatchMeetingIntegrations(
   limit = 10
 ): Promise<MeetingDispatchSummary> {
-  const zoomCredentials = getZoomServerCredentials();
-  const googleCredentials = getGoogleCalendarClientCredentials();
+  let zoomCredentials;
+  let googleCredentials;
+  try {
+    zoomCredentials = getZoomServerCredentials();
+  } catch {
+    throw new Error("zoom_configuration_invalid");
+  }
+  try {
+    googleCredentials = getGoogleCalendarClientCredentials();
+  } catch {
+    throw new Error("google_calendar_configuration_invalid");
+  }
   if (!zoomCredentials || !googleCredentials) {
     return {
       claimed: 0,
@@ -36,14 +46,19 @@ export async function dispatchMeetingIntegrations(
     };
   }
 
-  const admin = getAdminSupabaseClient();
+  let admin;
+  try {
+    admin = getAdminSupabaseClient();
+  } catch {
+    throw new Error("meeting_admin_client_unavailable");
+  }
   const { data: connections, error: connectionError } = await admin.rpc(
     "get_google_calendar_connection"
   );
   if (connectionError) {
     throw new Error(`calendar_connection_load_failed:${connectionError.code ?? "unknown"}`);
   }
-  const connection = connections[0];
+  const connection = connections?.[0];
   if (!connection) {
     return {
       claimed: 0,
@@ -67,7 +82,8 @@ export async function dispatchMeetingIntegrations(
   let retried = 0;
   let attention = 0;
 
-  for (const job of jobs) {
+  const claimedJobs = jobs ?? [];
+  for (const job of claimedJobs) {
     try {
       let zoomMeetingId = job.zoom_meeting_id;
       let zoomJoinUrl = job.zoom_join_url;
@@ -150,7 +166,7 @@ export async function dispatchMeetingIntegrations(
   }
 
   return {
-    claimed: jobs.length,
+    claimed: claimedJobs.length,
     delivered,
     retried,
     attention,

@@ -115,6 +115,22 @@ SELECT is(
   'service role can claim the due meeting job once'
 );
 
+SELECT is(
+  public.requeue_meeting_integrations(),
+  1,
+  'an explicit owner retry requeues the existing booked meeting'
+);
+
+SELECT ok(
+  EXISTS (
+    SELECT 1
+    FROM public.meeting_integrations
+    WHERE meeting_slot_id = 'e7000000-0000-4000-8000-000000000015'
+      AND status = 'pending'
+  ),
+  'manual retry returns unfinished integration state to pending'
+);
+
 SELECT throws_ok(
   $$SELECT public.record_meeting_zoom(
     'e7000000-0000-4000-8000-000000000015',
@@ -143,6 +159,15 @@ SELECT function_privs_are(
   'service_role',
   ARRAY['EXECUTE'],
   'only service_role can read the calendar credential'
+);
+
+SELECT function_privs_are(
+  'public',
+  'requeue_meeting_integrations',
+  ARRAY[]::text[],
+  'service_role',
+  ARRAY['EXECUTE'],
+  'only service_role can manually requeue meeting integration work'
 );
 
 SELECT * FROM finish();
