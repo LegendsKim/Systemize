@@ -45,7 +45,9 @@ for (const path of ["/login", `/invite/${invitationToken}`]) {
     expect(title).toContain("Systemize");
     expect(description).toBeTruthy();
     expect(imageUrl).toBeTruthy();
-    expect(new URL(imageUrl ?? "").pathname).toBe("/portal-share-card.png");
+    expect(new URL(imageUrl ?? "").pathname).toBe(
+      "/portal-share-card-v2.png"
+    );
 
     const html = await page.content();
     expect(html).not.toContain("projectId");

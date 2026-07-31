@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { siteName } from "@/lib/site-config";
 
-export const portalShareImagePath = "/portal-share-card.png";
+export const portalShareImagePath = "/portal-share-card-v2.png";
 
 export const portalShareImageDescriptor = {
   url: portalShareImagePath,

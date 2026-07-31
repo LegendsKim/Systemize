@@ -38,7 +38,7 @@ function isSafeStaticAsset(request, url) {
       url.pathname.startsWith("/cookies/") ||
       url.pathname === "/icon.svg" ||
       url.pathname === "/systemize-share-card.png" ||
-      url.pathname === "/portal-share-card.png"
+      url.pathname === "/portal-share-card-v2.png"
     )
   );
 }

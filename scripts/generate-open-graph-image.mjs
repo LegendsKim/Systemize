@@ -5,7 +5,7 @@ import sharp from "sharp";
 
 const root = process.cwd();
 const outputPath = join(root, "public", "systemize-share-card.png");
-const portalOutputPath = join(root, "public", "portal-share-card.png");
+const portalOutputPath = join(root, "public", "portal-share-card-v2.png");
 
 function dataUri(buffer, mimeType) {
   return `data:${mimeType};base64,${buffer.toString("base64")}`;
