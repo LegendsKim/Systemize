@@ -34,7 +34,10 @@ export async function GET(): Promise<Response> {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/api/integrations/google/callback",
-    maxAge: 10 * 60,
+    // The first connection may include Google's unverified-app explanation and account
+    // selection. Thirty minutes remains a short-lived CSRF nonce while avoiding a race
+    // against a careful operator reading those screens.
+    maxAge: 30 * 60,
   });
   return Response.redirect(authorizationUrl, 303);
 }

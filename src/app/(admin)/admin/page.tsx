@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { retryMeetingIntegrations } from "@/features/portal/admin/meeting-integration-actions";
 import { requireSystemizeOwner } from "@/features/portal/auth/session";
 import { projectStageLabels } from "@/features/portal/project-stage";
 import { derivePortalActionsForProjects } from "@/features/portal/workflow/action-inputs";
@@ -7,6 +8,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { listOwnerProjects } from "@/server/repositories/portal.repository";
 import { listProjectWorkflows } from "@/server/repositories/workflow.repository";
 import { listProjectDocuments } from "@/server/repositories/document.repository";
+import { getGoogleCalendarConnectionStatus } from "@/server/repositories/meeting-integration.repository";
 
 const integrationNotices: Record<string, string> = {
   "google-calendar-connected":
@@ -20,6 +22,18 @@ const integrationNotices: Record<string, string> = {
   "google-calendar-store-failed":
     "ההרשאה התקבלה אך לא נשמרה. אפשר לנסות שוב.",
   "google-calendar-forbidden": "רק חשבון הבעלים יכול לחבר את היומן.",
+  "meeting-integrations-ready":
+    "הפגישה הוכנה בהצלחה: קישור Zoom ואירוע Google Calendar זמינים כעת.",
+  "meeting-integrations-retrying":
+    "הספק החיצוני ביקש להמתין. המערכת תנסה שוב אוטומטית.",
+  "meeting-integrations-attention":
+    "יצירת Zoom או Calendar נכשלה ודורשת בדיקת הגדרות.",
+  "meeting-integrations-failed":
+    "לא ניתן היה להפעיל את תור הפגישות כרגע. אפשר לנסות שוב.",
+  "meeting-integrations-no-work": "אין כרגע פגישות שממתינות ליצירת קישורים.",
+  "meeting-providers-not-configured":
+    "חסרים משתני סביבה של Zoom או Google Calendar בייצור.",
+  "google-calendar-connect-required": "יש לחבר את Google Calendar לפני יצירת הזימונים.",
 };
 
 interface AdminHomePageProps {
@@ -30,7 +44,10 @@ export default async function AdminHomePage({ searchParams }: AdminHomePageProps
   await requireSystemizeOwner();
   const query = await searchParams;
   const supabase = await createServerSupabaseClient();
-  const projects = await listOwnerProjects(supabase);
+  const [projects, calendarConnection] = await Promise.all([
+    listOwnerProjects(supabase),
+    getGoogleCalendarConnectionStatus(),
+  ]);
   const projectIds = projects.map((project) => project.id);
   const [workflows, documents] = await Promise.all([
     listProjectWorkflows(supabase, projectIds),
@@ -52,6 +69,21 @@ export default async function AdminHomePage({ searchParams }: AdminHomePageProps
   const waitingOnClients = countRequiredActions(actions, "client");
   const upcomingMeetings = [...workflows.values()].filter((workflow) =>
     workflow.meetingSlots.some((slot) => slot.status === "booked")
+  ).length;
+  const meetingIntegrations = [...workflows.values()].flatMap(
+    (workflow) => workflow.meetingIntegrations
+  );
+  const readyMeetingIntegrations = meetingIntegrations.filter(
+    (integration) => integration.status === "ready"
+  ).length;
+  const pendingMeetingIntegrations = meetingIntegrations.filter(
+    (integration) =>
+      integration.status === "pending" ||
+      integration.status === "provisioning" ||
+      integration.status === "retry"
+  ).length;
+  const attentionMeetingIntegrations = meetingIntegrations.filter(
+    (integration) => integration.status === "attention"
   ).length;
 
   /*
@@ -108,15 +140,46 @@ export default async function AdminHomePage({ searchParams }: AdminHomePageProps
         </p>
       )}
 
-      <p>
-        <a
-          href="/api/integrations/google/connect"
-          className="admin-button"
-          data-variant="secondary"
-        >
-          חיבור או רענון Google Calendar
-        </a>
-      </p>
+      <section
+        className="admin-integration-status"
+        data-status={calendarConnection.connected ? "connected" : "disconnected"}
+        aria-labelledby="calendar-status-title"
+      >
+        <div>
+          <p className="admin-eyebrow">חיבורי פגישות</p>
+          <h2 id="calendar-status-title">
+            {calendarConnection.connected
+              ? "Google Calendar מחובר"
+              : "Google Calendar אינו מחובר"}
+          </h2>
+          <p>
+            {calendarConnection.connected
+              ? `החיבור ל־${calendarConnection.connectedEmail} שמור במסד ואינו תלוי בלשונית הפתוחה.`
+              : "יש לחבר את חשבון הבעלים כדי לשלוח זימונים ללקוחות."}
+          </p>
+          <p className="admin-integration-counts">
+            <span>מוכנות: {readyMeetingIntegrations}</span>
+            <span>ממתינות: {pendingMeetingIntegrations}</span>
+            <span>דורשות בדיקה: {attentionMeetingIntegrations}</span>
+          </p>
+        </div>
+        <div className="admin-integration-actions">
+          <a
+            href="/api/integrations/google/connect"
+            className="admin-button"
+            data-variant="secondary"
+          >
+            {calendarConnection.connected ? "רענון חיבור Calendar" : "חיבור Calendar"}
+          </a>
+          {calendarConnection.connected && pendingMeetingIntegrations > 0 && (
+            <form action={retryMeetingIntegrations}>
+              <button type="submit" className="admin-button">
+                יצירת Zoom וזימון עכשיו
+              </button>
+            </form>
+          )}
+        </div>
+      </section>
 
       <section className="admin-stats" aria-label="מדדי תפעול">
         {metrics.map((metric) => (

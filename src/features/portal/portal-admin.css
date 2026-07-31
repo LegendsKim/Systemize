@@ -333,6 +333,66 @@
   margin-block-start: clamp(1.5rem, 3vw, 2.25rem);
 }
 
+.admin-integration-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block-start: 1.25rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--admin-line);
+  border-radius: var(--admin-radius);
+  background: var(--color-surface-0);
+  box-shadow: var(--admin-shadow-sm);
+}
+
+.admin-integration-status[data-status="connected"] {
+  border-color: color-mix(in oklch, var(--color-primary) 55%, var(--admin-line));
+  background: color-mix(in oklch, var(--color-primary) 7%, var(--color-surface-0));
+}
+
+.admin-integration-status h2,
+.admin-integration-status p {
+  margin: 0;
+}
+
+.admin-integration-status h2 {
+  margin-block: 0.2rem 0.35rem;
+  font-size: 1rem;
+}
+
+.admin-integration-status > div:first-child {
+  min-inline-size: min(100%, 18rem);
+  flex: 1 1 24rem;
+}
+
+.admin-integration-counts,
+.admin-integration-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.admin-integration-counts {
+  margin-block-start: 0.65rem !important;
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.admin-integration-counts span:not(:last-child)::after {
+  content: "·";
+  margin-inline-start: 0.6rem;
+}
+
+.admin-integration-actions {
+  align-items: center;
+}
+
+.admin-integration-actions form {
+  margin: 0;
+}
+
 .admin-section-head {
   display: flex;
   flex-wrap: wrap;
