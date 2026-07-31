@@ -19,6 +19,11 @@ const tokenSchema = z.object({
   access_token: z.string().min(20).max(4096),
 });
 
+const zoomErrorSchema = z.object({
+  code: z.union([z.number().int(), z.string().max(80)]).optional(),
+  error: z.string().max(80).optional(),
+});
+
 const meetingSchema = z.object({
   id: z.union([z.string().min(1), z.number().safe()]),
   join_url: zoomUrl,
@@ -45,6 +50,30 @@ function markerFor(slotId: string): string {
   return `systemize-slot:${slotId}`;
 }
 
+async function zoomResponseError(
+  stage: "token" | "list" | "create",
+  response: Response
+): Promise<MeetingProviderError> {
+  const classified = classifyProviderStatus("zoom", response);
+  const payload: unknown = await response.json().catch(() => null);
+  const parsed = zoomErrorSchema.safeParse(payload);
+  if (!parsed.success) return classified;
+
+  const providerCode = parsed.data.code ?? parsed.data.error;
+  const normalized = String(providerCode ?? "")
+    .trim()
+    .toLowerCase()
+    .replaceAll(/[^a-z0-9_-]/g, "_")
+    .slice(0, 48);
+  if (!normalized) return classified;
+
+  return new MeetingProviderError(
+    classified.category,
+    `zoom_${stage}_${normalized}`,
+    classified.retryAfterSeconds
+  );
+}
+
 async function getAccessToken(
   credentials: ZoomServerCredentials
 ): Promise<string> {
@@ -64,7 +93,7 @@ async function getAccessToken(
     },
     body,
   });
-  if (!response.ok) throw classifyProviderStatus("zoom", response);
+  if (!response.ok) throw await zoomResponseError("token", response);
   const parsed = tokenSchema.safeParse(await response.json());
   if (!parsed.success) {
     throw new MeetingProviderError("permanent", "zoom_token_response_invalid");
@@ -89,7 +118,7 @@ async function findExistingMeeting(
       method: "GET",
       headers: { Authorization: `Bearer ${accessToken}` },
     });
-    if (!response.ok) throw classifyProviderStatus("zoom", response);
+    if (!response.ok) throw await zoomResponseError("list", response);
     const parsed = meetingListSchema.safeParse(await response.json());
     if (!parsed.success) {
       throw new MeetingProviderError("permanent", "zoom_list_response_invalid");
@@ -160,7 +189,7 @@ export async function ensureZoomMeeting(
       }),
     }
   );
-  if (!response.ok) throw classifyProviderStatus("zoom", response);
+  if (!response.ok) throw await zoomResponseError("create", response);
   const parsed = meetingSchema.safeParse(await response.json());
   if (!parsed.success) {
     throw new MeetingProviderError("permanent", "zoom_create_response_invalid");

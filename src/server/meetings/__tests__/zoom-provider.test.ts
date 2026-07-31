@@ -78,4 +78,39 @@ describe("Zoom meeting provisioning", () => {
     expect(result.meetingId).toBe("987654321");
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
+
+  it("keeps only Zoom's safe token error code", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn<typeof fetch>().mockResolvedValueOnce(
+        Response.json(
+          { error: "invalid_client", reason: "must never be persisted" },
+          { status: 400 }
+        )
+      )
+    );
+
+    await expect(ensureZoomMeeting(input, credentials)).rejects.toThrow(
+      "zoom_token_invalid_client"
+    );
+  });
+
+  it("keeps only Zoom's numeric API error code", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi
+        .fn<typeof fetch>()
+        .mockResolvedValueOnce(Response.json({ access_token: "a".repeat(40) }))
+        .mockResolvedValueOnce(
+          Response.json(
+            { code: 1001, message: "user details must never be persisted" },
+            { status: 400 }
+          )
+        )
+    );
+
+    await expect(ensureZoomMeeting(input, credentials)).rejects.toThrow(
+      "zoom_list_1001"
+    );
+  });
 });
