@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { getCronSecret } from "@/lib/env/server";
 import { dispatchPushOutbox } from "@/server/push/push-dispatcher";
 import { dispatchMeetingIntegrations } from "@/server/meetings/meeting-dispatcher";
+import { monitorSystemHealth } from "@/server/system-health/system-health-monitor";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -23,11 +24,20 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   try {
-    const [push, meetings] = await Promise.all([
-      dispatchPushOutbox(25),
-      dispatchMeetingIntegrations(10),
-    ]);
-    return Response.json({ push, meetings }, { headers });
+    const meetings = await dispatchMeetingIntegrations(10);
+    const health = await monitorSystemHealth();
+    const push = await dispatchPushOutbox(25);
+    return Response.json(
+      {
+        push,
+        meetings,
+        health: {
+          failed: health.failed.length,
+          recovered: health.recovered.length,
+        },
+      },
+      { headers }
+    );
   } catch {
     return Response.json({ error: "dispatch_failed" }, { status: 500, headers });
   }

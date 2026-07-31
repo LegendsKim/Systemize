@@ -72,4 +72,18 @@ describe("buildSafePushPayload", () => {
       }).href
     ).toBe("/app");
   });
+
+  it("uses explicit PII-free copy for an infrastructure failure", () => {
+    expect(
+      buildSafePushPayload({
+        kind: "system_health_failed",
+        href: "/admin/settings",
+        notificationId: "11111111-2222-4333-8444-555555555555",
+      })
+    ).toMatchObject({
+      title: "תקלה במערכות SYSTEMIZE",
+      body: "זוהתה תקלה שדורשת בדיקה בהגדרות הניהול.",
+      href: "/admin/settings",
+    });
+  });
 });

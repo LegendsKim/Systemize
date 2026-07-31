@@ -26,7 +26,7 @@ function sameState(expected: string, actual: string): boolean {
 
 function redirectWithNotice(notice: string): Response {
   return Response.redirect(
-    new URL(`/admin?notice=${encodeURIComponent(notice)}`, siteUrl),
+    new URL(`/admin/settings?notice=${encodeURIComponent(notice)}`, siteUrl),
     303
   );
 }

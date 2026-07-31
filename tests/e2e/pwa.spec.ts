@@ -126,6 +126,35 @@ test("an owner opening a client portal URL is redirected to the admin console", 
   }
 });
 
+test("admin settings consolidate health, integrations, notifications and Push", async ({
+  browser,
+  baseURL,
+}) => {
+  const context = await authenticatedPortalContext(
+    browser,
+    portalE2EUsers.owner,
+    baseURL ?? "http://127.0.0.1:3000"
+  );
+  try {
+    const page = await context.newPage();
+    await page.goto("/admin/settings");
+    await expect(page).toHaveURL(/\/admin\/settings$/);
+    await expect(page.locator(".admin-system-health")).toBeVisible();
+    await expect(page.locator(".admin-integration-status")).toBeVisible();
+    await expect(page.locator("#settings-notifications-title")).toBeVisible();
+    await expect(page.locator('a[href="/admin/settings"]')).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
+    await expect(page.locator('a[href="/admin/notifications"]')).toHaveCount(0);
+
+    await page.goto("/admin/notifications");
+    await expect(page).toHaveURL(/\/admin\/settings$/);
+  } finally {
+    await context.close();
+  }
+});
+
 test("a client cannot open the admin console or its nested routes", async ({
   browser,
   baseURL,

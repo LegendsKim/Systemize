@@ -138,6 +138,30 @@ async function findExistingMeeting(
   return null;
 }
 
+/** Read-only provider probe used by the owner health monitor. */
+export async function probeZoomConnection(
+  credentials = getZoomServerCredentials()
+): Promise<void> {
+  if (!credentials) {
+    throw new MeetingProviderError("configuration", "zoom_not_configured");
+  }
+  const accessToken = await getAccessToken(credentials);
+  const url = new URL(
+    `https://api.zoom.us/v2/users/${encodeURIComponent(credentials.hostUserId)}/meetings`
+  );
+  url.searchParams.set("type", "scheduled");
+  url.searchParams.set("page_size", "1");
+  const response = await providerFetch("zoom", url.toString(), {
+    method: "GET",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!response.ok) throw await zoomResponseError("list", response);
+  const parsed = meetingListSchema.safeParse(await response.json());
+  if (!parsed.success) {
+    throw new MeetingProviderError("permanent", "zoom_list_response_invalid");
+  }
+}
+
 export async function ensureZoomMeeting(
   input: ZoomMeetingInput,
   credentials = getZoomServerCredentials()

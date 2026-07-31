@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireSystemizeOwner } from "@/features/portal/auth/session";
 import { dispatchMeetingIntegrations } from "@/server/meetings/meeting-dispatcher";
+import { schedulePushOutboxDrain } from "@/server/push/schedule";
 import { requeueUnfinishedMeetingIntegrations } from "@/server/repositories/meeting-integration.repository";
+import { monitorSystemHealth } from "@/server/system-health/system-health-monitor";
 
 export async function retryMeetingIntegrations(): Promise<void> {
   await requireSystemizeOwner();
@@ -13,6 +15,8 @@ export async function retryMeetingIntegrations(): Promise<void> {
   try {
     const requeued = await requeueUnfinishedMeetingIntegrations();
     const result = await dispatchMeetingIntegrations(5);
+    await monitorSystemHealth();
+    schedulePushOutboxDrain();
     console.info(
       JSON.stringify({
         level: "info",
@@ -61,6 +65,7 @@ export async function retryMeetingIntegrations(): Promise<void> {
   }
 
   revalidatePath("/admin");
+  revalidatePath("/admin/settings");
   revalidatePath("/portal");
-  redirect(`/admin?notice=${notice}`);
+  redirect(`/admin/settings?notice=${notice}`);
 }

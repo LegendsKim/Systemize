@@ -90,6 +90,7 @@ Components use logical layout properties even while Hebrew is the sole locale.
 
 - `/admin`
 - `/admin/notifications`
+- `/admin/settings`
 - `/admin/companies`
 - `/admin/companies/[companyId]`
 - `/admin/projects/[projectId]`

@@ -104,6 +104,7 @@ describe("Google Calendar OAuth callback", () => {
     expect(response.headers.get("location")).toContain(
       "notice=google-calendar-connected"
     );
+    expect(response.headers.get("location")).toContain("/admin/settings?");
     expect(mocks.rpc).toHaveBeenCalledWith(
       "store_google_calendar_connection",
       expect.objectContaining({

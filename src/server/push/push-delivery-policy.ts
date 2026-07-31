@@ -89,6 +89,22 @@ export function buildSafePushPayload(input: {
   readonly href: string;
   readonly notificationId: string;
 }): SafePushPayload {
+  if (input.kind === "system_health_failed") {
+    return {
+      title: "תקלה במערכות SYSTEMIZE",
+      body: "זוהתה תקלה שדורשת בדיקה בהגדרות הניהול.",
+      href: safeNotificationHref(input.href),
+      tag: input.notificationId.replaceAll("-", "").slice(0, 64),
+    };
+  }
+  if (input.kind === "system_health_recovered") {
+    return {
+      title: "מערכות SYSTEMIZE חזרו לפעול",
+      body: "החיבורים שנכשלו עברו בדיקה וכעת פועלים כרגיל.",
+      href: safeNotificationHref(input.href),
+      tag: input.notificationId.replaceAll("-", "").slice(0, 64),
+    };
+  }
   const actionRequired =
     input.kind.includes("requested") ||
     input.kind.includes("changes") ||

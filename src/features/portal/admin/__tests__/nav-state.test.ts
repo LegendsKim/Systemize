@@ -9,7 +9,7 @@ describe("isCurrentAdminRoute", () => {
     // startsWith test would highlight the overview on all four pages at once.
     for (const path of [
       "/admin/companies",
-      "/admin/notifications",
+      "/admin/settings",
       "/admin/templates",
       "/admin/projects/abc",
     ]) {
@@ -34,7 +34,7 @@ describe("isCurrentAdminRoute", () => {
     const destinations = [
       "/admin",
       "/admin/companies",
-      "/admin/notifications",
+      "/admin/settings",
       "/admin/templates",
     ];
 

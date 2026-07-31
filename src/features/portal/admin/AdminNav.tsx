@@ -22,8 +22,8 @@ const icons = {
   leads:
     "M4 7.5A1.5 1.5 0 0 1 5.5 6h13A1.5 1.5 0 0 1 20 7.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 16.5v-9Zm0.6-0.7 7.4 5.6 7.4-5.6",
   companies: "M4 20V7l7-3v16M11 20h9V10l-9-3M7.5 10.5v.01M7.5 14v.01M15 13v.01M15 16.5v.01",
-  notifications:
-    "M12 4a5 5 0 0 0-5 5v3.5L5.5 15h13L17 12.5V9a5 5 0 0 0-5-5Zm-2 14a2 2 0 0 0 4 0",
+  settings:
+    "M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Zm7.2 3.5 1.3 1-.9 2.2-1.7-.2a7 7 0 0 1-1.3 1.3l.2 1.7-2.2.9-1-1.3a7 7 0 0 1-1.8 0l-1 1.3-2.2-.9.2-1.7A7 7 0 0 1 7.5 15l-1.7.2-.9-2.2 1.3-1a7 7 0 0 1 0-1.8l-1.3-1 .9-2.2 1.7.2a7 7 0 0 1 1.3-1.3l-.2-1.7 2.2-.9 1 1.3a7 7 0 0 1 1.8 0l1-1.3 2.2.9-.2 1.7a7 7 0 0 1 1.3 1.3l1.7-.2.9 2.2-1.3 1a7 7 0 0 1 0 1.8Z",
   templates:
     "M14 4H7a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8l-4-4Zm0 0v4h4M9 13h6M9 16.5h4",
 } as const;
@@ -56,7 +56,7 @@ const navGroups: readonly {
   {
     label: "מערכת",
     items: [
-      { href: "/admin/notifications", label: "התראות", icon: "notifications" },
+      { href: "/admin/settings", label: "הגדרות", icon: "settings" },
       { href: "/admin/templates", label: "תבניות", icon: "templates" },
     ],
   },
@@ -89,7 +89,7 @@ export function AdminNav({ unreadCount }: AdminNavProps) {
                 />
               </svg>
               {item.label}
-              {item.icon === "notifications" && unreadCount > 0 && (
+              {item.icon === "settings" && unreadCount > 0 && (
                 <span className="admin-nav-count">
                   {unreadCount > 9 ? "9+" : unreadCount}
                   <span className="admin-sr-only"> התראות שלא נקראו</span>
