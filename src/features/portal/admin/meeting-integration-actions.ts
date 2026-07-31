@@ -51,7 +51,13 @@ export async function retryMeetingIntegrations(): Promise<void> {
         error: safeError,
       })
     );
-    notice = "meeting-integrations-failed";
+    notice =
+      error instanceof Error &&
+      /^zoom_(account_id|client_id|client_secret|host_user_id)_(missing|too_long)$/.test(
+        error.message
+      )
+        ? error.message
+        : "meeting-integrations-failed";
   }
 
   revalidatePath("/admin");

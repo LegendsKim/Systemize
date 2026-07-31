@@ -127,25 +127,17 @@ export interface ZoomServerCredentials {
 
 export function getZoomServerCredentials(): ZoomServerCredentials | null {
   const env = getServerEnv();
-  const values = [
-    env.ZOOM_ACCOUNT_ID,
-    env.ZOOM_CLIENT_ID,
-    env.ZOOM_CLIENT_SECRET,
-    env.ZOOM_HOST_USER_ID,
-  ];
+  const fields = [
+    ["zoom_account_id", env.ZOOM_ACCOUNT_ID, 200],
+    ["zoom_client_id", env.ZOOM_CLIENT_ID, 300],
+    ["zoom_client_secret", env.ZOOM_CLIENT_SECRET, 500],
+    ["zoom_host_user_id", env.ZOOM_HOST_USER_ID, 320],
+  ] as const;
+  const values = fields.map(([, value]) => value);
   if (values.every((value) => !value)) return null;
-  if (values.some((value) => !value)) {
-    throw new Error(
-      "ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET and ZOOM_HOST_USER_ID must be configured together."
-    );
-  }
-  if (
-    env.ZOOM_ACCOUNT_ID!.length > 200 ||
-    env.ZOOM_CLIENT_ID!.length > 300 ||
-    env.ZOOM_CLIENT_SECRET!.length > 500 ||
-    env.ZOOM_HOST_USER_ID!.length > 320
-  ) {
-    throw new Error("Zoom credentials exceed their allowed length.");
+  for (const [name, value, maxLength] of fields) {
+    if (!value) throw new Error(`${name}_missing`);
+    if (value.length > maxLength) throw new Error(`${name}_too_long`);
   }
   return {
     accountId: env.ZOOM_ACCOUNT_ID!,

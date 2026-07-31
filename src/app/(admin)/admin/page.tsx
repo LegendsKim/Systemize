@@ -34,6 +34,14 @@ const integrationNotices: Record<string, string> = {
   "meeting-providers-not-configured":
     "חסרים משתני סביבה של Zoom או Google Calendar בייצור.",
   "google-calendar-connect-required": "יש לחבר את Google Calendar לפני יצירת הזימונים.",
+  zoom_account_id_missing: "הערך ZOOM_ACCOUNT_ID חסר ב־Vercel.",
+  zoom_client_id_missing: "הערך ZOOM_CLIENT_ID חסר ב־Vercel.",
+  zoom_client_secret_missing: "הערך ZOOM_CLIENT_SECRET חסר ב־Vercel.",
+  zoom_host_user_id_missing: "הערך ZOOM_HOST_USER_ID חסר ב־Vercel.",
+  zoom_account_id_too_long: "הערך ZOOM_ACCOUNT_ID ב־Vercel ארוך מהצפוי.",
+  zoom_client_id_too_long: "הערך ZOOM_CLIENT_ID ב־Vercel ארוך מהצפוי.",
+  zoom_client_secret_too_long: "הערך ZOOM_CLIENT_SECRET ב־Vercel ארוך מהצפוי.",
+  zoom_host_user_id_too_long: "הערך ZOOM_HOST_USER_ID ב־Vercel ארוך מהצפוי.",
 };
 
 interface AdminHomePageProps {

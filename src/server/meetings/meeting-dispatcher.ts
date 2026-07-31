@@ -27,8 +27,15 @@ export async function dispatchMeetingIntegrations(
   let googleCredentials;
   try {
     zoomCredentials = getZoomServerCredentials();
-  } catch {
-    throw new Error("zoom_configuration_invalid");
+  } catch (error: unknown) {
+    const safeCode =
+      error instanceof Error &&
+      /^zoom_(account_id|client_id|client_secret|host_user_id)_(missing|too_long)$/.test(
+        error.message
+      )
+        ? error.message
+        : "zoom_configuration_invalid";
+    throw new Error(safeCode);
   }
   try {
     googleCredentials = getGoogleCalendarClientCredentials();
