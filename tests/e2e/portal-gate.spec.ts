@@ -29,6 +29,10 @@ test.describe("the sign-in gate", () => {
 
   test("closes on Escape and leaves the page scrollable", async ({ page }) => {
     await page.goto("/login");
+    // The splash is present in the server HTML before React attaches its keyboard
+    // handler. Its focused skip control is the observable signal that hydration and
+    // keyboard handling are ready.
+    await expect(page.getByRole("button", { name: "דילוג" })).toBeFocused();
     await page.keyboard.press("Escape");
 
     await expect(

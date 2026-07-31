@@ -13,6 +13,14 @@ test.describe("Cookie preferences", () => {
     await expect(panel).toBeVisible({ timeout: 20_000 });
 
     async function expectBottomAnchored(): Promise<void> {
+      // Visibility can be reported while the entrance transform is still running.
+      // Measure the settled layout box, not an animation frame whose scale changes the
+      // apparent distance from the viewport edge.
+      await panel.evaluate(async (element) => {
+        await Promise.all(
+          element.getAnimations().map((animation) => animation.finished)
+        );
+      });
       // Browser engines can report fractional CSS pixels on a scaled mobile viewport.
       const subpixelTolerance = 1.5;
       const box = await panel.boundingBox();
