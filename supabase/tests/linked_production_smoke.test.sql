@@ -1,6 +1,6 @@
 BEGIN;
 SET LOCAL search_path = public, extensions;
-SELECT plan(14);
+SELECT plan(17);
 
 SELECT has_table(
   'public',
@@ -99,6 +99,31 @@ SELECT ok(
       AND indexname = 'push_outbox_due_idx'
   ),
   'production has the due-work outbox index'
+);
+
+SELECT has_function(
+  'public',
+  'before_user_created_invite_only',
+  ARRAY['jsonb'],
+  'production has the invite-only Auth admission hook'
+);
+
+SELECT ok(
+  has_function_privilege(
+    'supabase_auth_admin',
+    'public.before_user_created_invite_only(jsonb)',
+    'EXECUTE'
+  ),
+  'Supabase Auth can execute the invite-only hook'
+);
+
+SELECT ok(
+  NOT has_function_privilege(
+    'anon',
+    'public.before_user_created_invite_only(jsonb)',
+    'EXECUTE'
+  ),
+  'the invite-only hook is not exposed through the anonymous API'
 );
 
 SELECT * FROM finish();

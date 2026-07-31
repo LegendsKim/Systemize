@@ -22,6 +22,11 @@ const invitationToken = 'A'.repeat(43);
 test.describe('Gate visual regression', () => {
   test('login snapshot', async ({ page }) => {
     await openGate(page, '/login');
+    await expect(
+      page.getByRole('complementary', {
+        name: 'SYSTEMIZE עובדת טוב יותר כאפליקציה',
+      }),
+    ).toBeVisible();
     await expect(page).toHaveScreenshot('gate-login.png', {
       fullPage: true,
       maxDiffPixelRatio: 0.01,

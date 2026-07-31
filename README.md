@@ -43,6 +43,10 @@ Set `SYSTEMIZE_OWNER_GMAIL` to the exact Gmail account used by the initial SYSTE
 owner. Google OAuth is configured in the Supabase dashboard; its client secret must not
 be placed in this repository.
 
+New Google identities are invite-only at the Auth boundary. After applying migration
+`00016`, enable `public.before_user_created_invite_only` under Supabase Authentication →
+Hooks → Before User Created. Existing Auth users are never deleted by this migration.
+
 HTTPS is required to exercise installation and Web Push outside `localhost`. Generate a
 VAPID key pair with `npm run pwa:keys`, then set
 `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, and a random

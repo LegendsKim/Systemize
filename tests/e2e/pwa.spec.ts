@@ -36,6 +36,48 @@ test("manifest and install assets expose the server-routed app entry", async ({
   }
 });
 
+test("the browser login reminder invokes the native PWA install prompt", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByRole("button", { name: "דילוג" }).click();
+
+  await page.evaluate(() => {
+    const browserWindow = window as Window & { pwaPromptCalls?: number };
+    const installEvent = new Event("beforeinstallprompt", {
+      cancelable: true,
+    });
+    Object.defineProperties(installEvent, {
+      prompt: {
+        value: () => {
+          browserWindow.pwaPromptCalls =
+            (browserWindow.pwaPromptCalls ?? 0) + 1;
+          return Promise.resolve();
+        },
+      },
+      userChoice: {
+        value: Promise.resolve({ outcome: "accepted", platform: "web" }),
+      },
+    });
+    window.dispatchEvent(installEvent);
+  });
+
+  const reminder = page.getByRole("complementary", {
+    name: "SYSTEMIZE עובדת טוב יותר כאפליקציה",
+  });
+  await expect(reminder).toBeVisible();
+  await reminder.getByRole("button", { name: "התקנת האפליקציה" }).click();
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          (window as Window & { pwaPromptCalls?: number }).pwaPromptCalls ?? 0
+      )
+    )
+    .toBe(1);
+  await expect(reminder).toHaveCount(0);
+});
+
 test("/app resolves the current server session instead of a cached role", async ({
   browser,
   baseURL,

@@ -6,6 +6,8 @@ import {
   AuthTrustBadges,
 } from "@/features/portal/auth/components/AuthGate";
 import { GoogleSignInButton } from "@/features/portal/auth/components/GoogleSignInButton";
+import { LoginPwaInstallPrompt } from "@/features/portal/pwa/LoginPwaInstallPrompt";
+import { PwaRegistration } from "@/features/portal/pwa/PwaRegistration";
 import { portalShareMetadata } from "@/lib/seo/portal-share-metadata";
 
 export const metadata = portalShareMetadata({
@@ -39,36 +41,40 @@ const signals = [
 
 export default function LoginPage() {
   return (
-    <AuthGate
-      labelledBy="login-title"
-      aside={
-        <>
-          <p className="auth-eyebrow">שקט, סדר ושקיפות</p>
-          <h2>תמיד לדעת מה קורה בפרויקט</h2>
-          <AuthSignalList items={signals} />
-          <p className="auth-panel-footnote">
-            כל שינוי בפרויקט מתעדכן כאן אוטומטית. אין דוח שבועי להמתין לו.
-          </p>
-        </>
-      }
-    >
-      <AuthGateMark />
-      <p className="auth-eyebrow">האזור האישי</p>
-      <h1 id="login-title">כל הפרויקט שלך, במקום אחד ברור</h1>
-      <p className="auth-gate-lede">
-        כניסה מאובטחת לאזור האישי שבו מחכים לך מצב הפרויקט, מסמכים, החלטות
-        והפעולות הבאות.
-      </p>
-      <form action={beginGoogleSignIn} className="auth-gate-form">
-        <GoogleSignInButton label="המשך עם Google" />
-      </form>
-      <AuthTrustBadges
-        items={["ללא סיסמאות", "בהזמנה בלבד", "חיבור מוצפן"]}
-      />
-      <p className="auth-gate-note">
-        הכניסה זמינה רק לחשבון Gmail שהוזמן מראש. SYSTEMIZE לעולם לא מקבלת את
-        סיסמת Google שלך.
-      </p>
-    </AuthGate>
+    <>
+      <PwaRegistration />
+      <AuthGate
+        labelledBy="login-title"
+        aside={
+          <>
+            <p className="auth-eyebrow">שקט, סדר ושקיפות</p>
+            <h2>תמיד לדעת מה קורה בפרויקט</h2>
+            <AuthSignalList items={signals} />
+            <p className="auth-panel-footnote">
+              כל שינוי בפרויקט מתעדכן כאן אוטומטית. אין דוח שבועי להמתין לו.
+            </p>
+          </>
+        }
+      >
+        <AuthGateMark />
+        <p className="auth-eyebrow">האזור האישי</p>
+        <h1 id="login-title">כל הפרויקט שלך, במקום אחד ברור</h1>
+        <p className="auth-gate-lede">
+          כניסה מאובטחת לאזור האישי שבו מחכים לך מצב הפרויקט, מסמכים, החלטות
+          והפעולות הבאות.
+        </p>
+        <form action={beginGoogleSignIn} className="auth-gate-form">
+          <GoogleSignInButton label="המשך עם Google" />
+        </form>
+        <AuthTrustBadges
+          items={["ללא סיסמאות", "בהזמנה בלבד", "חיבור מוצפן"]}
+        />
+        <p className="auth-gate-note">
+          הכניסה זמינה רק לחשבון Gmail שהוזמן מראש. SYSTEMIZE לעולם לא מקבלת את
+          סיסמת Google שלך.
+        </p>
+      </AuthGate>
+      <LoginPwaInstallPrompt />
+    </>
   );
 }
