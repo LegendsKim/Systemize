@@ -54,6 +54,11 @@ export default async function ProjectPage({
   const bookedMeeting = workflow.meetingSlots.find(
     (slot) => slot.status === "booked"
   );
+  const bookedMeetingIntegration = bookedMeeting
+    ? workflow.meetingIntegrations.find(
+        (integration) => integration.meeting_slot_id === bookedMeeting.id
+      ) ?? null
+    : null;
   const completedMeeting = workflow.meetingSlots.find(
     (slot) => slot.status === "completed"
   );
@@ -239,8 +244,28 @@ export default async function ProjectPage({
               אין צורך להכין מצגת. נגיע עם השאלות שעולות מהמסמך ונשתמש בזמן
               כדי לדייק החלטות.
             </p>
+            {bookedMeetingIntegration?.status === "ready" && (
+              <p>
+                הזימון נשלח ל־Gmail וכולל את קישור ה־Zoom ותזכורות יום לפני
+                ושעה לפני הפגישה.
+              </p>
+            )}
           </div>
-          <span className="portal-status-chip">משוריין עבורך</span>
+          {bookedMeetingIntegration?.status === "ready" &&
+          bookedMeetingIntegration.zoom_join_url ? (
+            <a
+              href={bookedMeetingIntegration.zoom_join_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="portal-primary-action"
+            >
+              הצטרפות ל־Zoom
+            </a>
+          ) : (
+            <span className="portal-status-chip" role="status">
+              מכינים את קישור ה־Zoom
+            </span>
+          )}
         </section>
       ) : completedMeeting && !publishedSummary ? (
         <section className="workflow-primary-card workflow-primary-card-waiting">

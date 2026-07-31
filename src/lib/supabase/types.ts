@@ -30,6 +30,12 @@ export type MeetingSlotStatus =
   | "booked"
   | "cancelled"
   | "completed";
+export type MeetingIntegrationStatus =
+  | "pending"
+  | "provisioning"
+  | "retry"
+  | "ready"
+  | "attention";
 export type PaymentRequestKind =
   | "discovery"
   | "initial_deposit"
@@ -189,6 +195,20 @@ type MeetingSlotRow = {
   booked_at: string | null;
   created_by: string;
   created_at: string;
+};
+
+type MeetingIntegrationRow = {
+  meeting_slot_id: string;
+  project_id: string;
+  status: MeetingIntegrationStatus;
+  zoom_meeting_id: string | null;
+  zoom_join_url: string | null;
+  google_event_id: string | null;
+  google_event_url: string | null;
+  calendar_invite_sent_at: string | null;
+  last_error_code: string | null;
+  created_at: string;
+  updated_at: string;
 };
 
 type PaymentRequestRow = {
@@ -452,6 +472,34 @@ export interface Database {
           Pick<
             MeetingSlotRow,
             "status" | "booked_by" | "booked_at"
+          >
+        >;
+        Relationships: [];
+      };
+      meeting_integrations: {
+        Row: MeetingIntegrationRow;
+        Insert: Pick<MeetingIntegrationRow, "meeting_slot_id" | "project_id"> & {
+          status?: MeetingIntegrationStatus;
+          zoom_meeting_id?: string | null;
+          zoom_join_url?: string | null;
+          google_event_id?: string | null;
+          google_event_url?: string | null;
+          calendar_invite_sent_at?: string | null;
+          last_error_code?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<
+          Pick<
+            MeetingIntegrationRow,
+            | "status"
+            | "zoom_meeting_id"
+            | "zoom_join_url"
+            | "google_event_id"
+            | "google_event_url"
+            | "calendar_invite_sent_at"
+            | "last_error_code"
+            | "updated_at"
           >
         >;
         Relationships: [];
@@ -775,6 +823,56 @@ export interface Database {
         };
         Returns: undefined;
       };
+      claim_meeting_integration_batch: {
+        Args: { p_limit: number };
+        Returns: {
+          meeting_slot_id: string;
+          project_id: string;
+          starts_at: string;
+          ends_at: string;
+          client_email: string;
+          attempts: number;
+          zoom_meeting_id: string | null;
+          zoom_join_url: string | null;
+          google_event_id: string | null;
+        }[];
+      };
+      record_meeting_zoom: {
+        Args: {
+          p_meeting_slot_id: string;
+          p_zoom_meeting_id: string;
+          p_zoom_join_url: string;
+        };
+        Returns: undefined;
+      };
+      settle_meeting_integration: {
+        Args: {
+          p_meeting_slot_id: string;
+          p_outcome: string;
+          p_google_event_id: string | null;
+          p_google_event_url: string | null;
+          p_error_code: string | null;
+          p_retry_after_seconds?: number | null;
+        };
+        Returns: undefined;
+      };
+      store_google_calendar_connection: {
+        Args: {
+          p_refresh_token: string;
+          p_connected_by: string;
+          p_connected_email: string;
+          p_granted_scopes: string[];
+        };
+        Returns: undefined;
+      };
+      get_google_calendar_connection: {
+        Args: Record<string, never>;
+        Returns: {
+          refresh_token: string;
+          connected_email: string;
+          granted_scopes: string[];
+        }[];
+      };
       create_document_draft: {
         Args: {
           p_document_id: string;
@@ -803,6 +901,7 @@ export interface Database {
       project_stage: ProjectStage;
       intake_status: IntakeStatus;
       meeting_slot_status: MeetingSlotStatus;
+      meeting_integration_status: MeetingIntegrationStatus;
       payment_request_kind: PaymentRequestKind;
       payment_request_status: PaymentRequestStatus;
       project_document_kind: ProjectDocumentKind;

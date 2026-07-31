@@ -1,9 +1,10 @@
 import { timingSafeEqual } from "node:crypto";
 import { getCronSecret } from "@/lib/env/server";
 import { dispatchPushOutbox } from "@/server/push/push-dispatcher";
+import { dispatchMeetingIntegrations } from "@/server/meetings/meeting-dispatcher";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 30;
+export const maxDuration = 60;
 
 function authorized(request: Request, secret: string): boolean {
   const expected = Buffer.from(`Bearer ${secret}`);
@@ -22,8 +23,11 @@ export async function GET(request: Request): Promise<Response> {
   }
 
   try {
-    const summary = await dispatchPushOutbox(25);
-    return Response.json(summary, { headers });
+    const [push, meetings] = await Promise.all([
+      dispatchPushOutbox(25),
+      dispatchMeetingIntegrations(10),
+    ]);
+    return Response.json({ push, meetings }, { headers });
   } catch {
     return Response.json({ error: "dispatch_failed" }, { status: 500, headers });
   }

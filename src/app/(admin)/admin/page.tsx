@@ -7,7 +7,26 @@ import { listOwnerProjects } from "@/server/repositories/portal.repository";
 import { listProjectWorkflows } from "@/server/repositories/workflow.repository";
 import { listProjectDocuments } from "@/server/repositories/document.repository";
 
-export default async function AdminHomePage() {
+const integrationNotices: Record<string, string> = {
+  "google-calendar-connected":
+    "Google Calendar חובר בהצלחה. זימוני הפגישות יישלחו אוטומטית.",
+  "google-calendar-account-mismatch":
+    "יש לחבר את אותו חשבון Gmail שמוגדר כבעלים של SYSTEMIZE.",
+  "google-calendar-state-invalid":
+    "בקשת החיבור פגה או אינה תקינה. אפשר להתחיל את החיבור מחדש.",
+  "google-calendar-connect-failed":
+    "חיבור Google Calendar לא הושלם. אפשר לנסות שוב.",
+  "google-calendar-store-failed":
+    "ההרשאה התקבלה אך לא נשמרה. אפשר לנסות שוב.",
+  "google-calendar-forbidden": "רק חשבון הבעלים יכול לחבר את היומן.",
+};
+
+interface AdminHomePageProps {
+  readonly searchParams: Promise<{ notice?: string }>;
+}
+
+export default async function AdminHomePage({ searchParams }: AdminHomePageProps) {
+  const query = await searchParams;
   const supabase = await createServerSupabaseClient();
   const projects = await listOwnerProjects(supabase);
   const projectIds = projects.map((project) => project.id);
@@ -80,6 +99,22 @@ export default async function AdminHomePage() {
           יצירת לקוח ופרויקט
         </Link>
       </div>
+
+      {query.notice && integrationNotices[query.notice] && (
+        <p className="workflow-notice" role="status">
+          {integrationNotices[query.notice]}
+        </p>
+      )}
+
+      <p>
+        <a
+          href="/api/integrations/google/connect"
+          className="admin-button"
+          data-variant="secondary"
+        >
+          חיבור או רענון Google Calendar
+        </a>
+      </p>
 
       <section className="admin-stats" aria-label="מדדי תפעול">
         {metrics.map((metric) => (

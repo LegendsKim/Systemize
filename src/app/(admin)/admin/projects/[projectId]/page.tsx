@@ -164,6 +164,11 @@ export default async function AdminProjectPage({
   const bookedMeeting = workflow.meetingSlots.find(
     (slot) => slot.status === "booked"
   );
+  const bookedMeetingIntegration = bookedMeeting
+    ? workflow.meetingIntegrations.find(
+        (integration) => integration.meeting_slot_id === bookedMeeting.id
+      ) ?? null
+    : null;
   const completedMeeting = workflow.meetingSlots.find(
     (slot) => slot.status === "completed"
   );
@@ -578,6 +583,27 @@ export default async function AdminProjectPage({
                   </span>
                 </li>
               </ul>
+              {bookedMeetingIntegration?.status === "ready" &&
+              bookedMeetingIntegration.zoom_join_url ? (
+                <p>
+                  <a
+                    href={bookedMeetingIntegration.zoom_join_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="admin-button"
+                  >
+                    פתיחת פגישת Zoom
+                  </a>
+                </p>
+              ) : (
+                <p>
+                  קישור ה־Zoom והזימון ביומן עדיין בהכנה. אם היומן טרם חובר,
+                  אפשר לבצע חיבור מאובטח כאן:{" "}
+                  <a href="/api/integrations/google/connect">
+                    חיבור Google Calendar
+                  </a>
+                </p>
+              )}
               <form action={completeProjectMeeting} className="admin-form-actions">
                 <input type="hidden" name="projectId" value={project.id} />
                 <input type="hidden" name="slotId" value={bookedMeeting.id} />

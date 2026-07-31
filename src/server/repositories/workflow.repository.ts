@@ -6,6 +6,8 @@ type ClientIntake =
   Database["public"]["Tables"]["client_intakes"]["Row"];
 type MeetingSlot =
   Database["public"]["Tables"]["meeting_slots"]["Row"];
+type MeetingIntegration =
+  Database["public"]["Tables"]["meeting_integrations"]["Row"];
 type PaymentRequest =
   Database["public"]["Tables"]["payment_requests"]["Row"];
 type Notification =
@@ -39,12 +41,14 @@ export interface CompanyPersonSummary {
 export interface ProjectWorkflowSnapshot {
   readonly intake: ClientIntake | null;
   readonly meetingSlots: readonly MeetingSlot[];
+  readonly meetingIntegrations: readonly MeetingIntegration[];
   readonly payments: readonly PaymentRequest[];
 }
 
 const emptyWorkflow: ProjectWorkflowSnapshot = {
   intake: null,
   meetingSlots: [],
+  meetingIntegrations: [],
   payments: [],
 };
 
@@ -52,7 +56,7 @@ export async function getProjectWorkflow(
   supabase: SupabaseClient<Database>,
   projectId: string
 ): Promise<ProjectWorkflowSnapshot> {
-  const [intakeResult, slotsResult, paymentsResult] = await Promise.all([
+  const [intakeResult, slotsResult, integrationsResult, paymentsResult] = await Promise.all([
     supabase
       .from("client_intakes")
       .select("*")
@@ -64,19 +68,29 @@ export async function getProjectWorkflow(
       .eq("project_id", projectId)
       .order("starts_at", { ascending: true }),
     supabase
+      .from("meeting_integrations")
+      .select("*")
+      .eq("project_id", projectId),
+    supabase
       .from("payment_requests")
       .select("*")
       .eq("project_id", projectId)
       .order("created_at", { ascending: false }),
   ]);
 
-  if (intakeResult.error || slotsResult.error || paymentsResult.error) {
+  if (
+    intakeResult.error ||
+    slotsResult.error ||
+    integrationsResult.error ||
+    paymentsResult.error
+  ) {
     throw new Error("Unable to load project workflow");
   }
 
   return {
     intake: intakeResult.data,
     meetingSlots: slotsResult.data,
+    meetingIntegrations: integrationsResult.data,
     payments: paymentsResult.data,
   };
 }
@@ -98,13 +112,14 @@ export async function listProjectWorkflows(
   }
 
   const ids = [...projectIds];
-  const [intakesResult, slotsResult, paymentsResult] = await Promise.all([
+  const [intakesResult, slotsResult, integrationsResult, paymentsResult] = await Promise.all([
     supabase.from("client_intakes").select("*").in("project_id", ids),
     supabase
       .from("meeting_slots")
       .select("*")
       .in("project_id", ids)
       .order("starts_at", { ascending: true }),
+    supabase.from("meeting_integrations").select("*").in("project_id", ids),
     supabase
       .from("payment_requests")
       .select("*")
@@ -112,7 +127,12 @@ export async function listProjectWorkflows(
       .order("created_at", { ascending: false }),
   ]);
 
-  if (intakesResult.error || slotsResult.error || paymentsResult.error) {
+  if (
+    intakesResult.error ||
+    slotsResult.error ||
+    integrationsResult.error ||
+    paymentsResult.error
+  ) {
     throw new Error("Unable to load project workflows");
   }
 
@@ -120,12 +140,18 @@ export async function listProjectWorkflows(
     ids.map((id) => [id, emptyWorkflow])
   );
   const slotsByProject = new Map<string, MeetingSlot[]>();
+  const integrationsByProject = new Map<string, MeetingIntegration[]>();
   const paymentsByProject = new Map<string, PaymentRequest[]>();
 
   for (const slot of slotsResult.data) {
     const bucket = slotsByProject.get(slot.project_id) ?? [];
     bucket.push(slot);
     slotsByProject.set(slot.project_id, bucket);
+  }
+  for (const integration of integrationsResult.data) {
+    const bucket = integrationsByProject.get(integration.project_id) ?? [];
+    bucket.push(integration);
+    integrationsByProject.set(integration.project_id, bucket);
   }
   for (const payment of paymentsResult.data) {
     const bucket = paymentsByProject.get(payment.project_id) ?? [];
@@ -141,6 +167,7 @@ export async function listProjectWorkflows(
     workflows.set(id, {
       intake: intakes.get(id) ?? null,
       meetingSlots: slotsByProject.get(id) ?? [],
+      meetingIntegrations: integrationsByProject.get(id) ?? [],
       payments: paymentsByProject.get(id) ?? [],
     });
   }

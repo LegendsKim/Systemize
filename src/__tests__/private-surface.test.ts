@@ -11,6 +11,8 @@ describe("isPrivateSurface", () => {
       "/portal/actions",
       "/portal/projects/2f9c1f28-0000-4000-8000-000000000000/discovery",
       "/api/documents/2f9c1f28-0000-4000-8000-000000000000/pdf",
+      "/api/integrations/google/connect",
+      "/api/integrations/google/callback",
       "/login",
       "/invite/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "/auth/callback",

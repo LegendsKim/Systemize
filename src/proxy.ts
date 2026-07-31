@@ -43,6 +43,7 @@ export const privateSurfacePrefixes = [
   "/auth",
   "/app",
   "/api/documents",
+  "/api/integrations",
   "/api/push",
 ] as const;
 

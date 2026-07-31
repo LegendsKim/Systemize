@@ -20,6 +20,12 @@ const serverSchema = z.object({
   VAPID_PRIVATE_KEY: optionalCredential,
   VAPID_SUBJECT: optionalCredential,
   CRON_SECRET: optionalCredential,
+  ZOOM_ACCOUNT_ID: optionalCredential,
+  ZOOM_CLIENT_ID: optionalCredential,
+  ZOOM_CLIENT_SECRET: optionalCredential,
+  ZOOM_HOST_USER_ID: optionalCredential,
+  GOOGLE_CALENDAR_CLIENT_ID: optionalCredential,
+  GOOGLE_CALENDAR_CLIENT_SECRET: optionalCredential,
 });
 
 type ServerEnv = z.infer<typeof serverSchema>;
@@ -110,6 +116,72 @@ export function getCronSecret(): string | null {
     throw new Error("CRON_SECRET must contain at least 16 characters.");
   }
   return secret;
+}
+
+export interface ZoomServerCredentials {
+  readonly accountId: string;
+  readonly clientId: string;
+  readonly clientSecret: string;
+  readonly hostUserId: string;
+}
+
+export function getZoomServerCredentials(): ZoomServerCredentials | null {
+  const env = getServerEnv();
+  const values = [
+    env.ZOOM_ACCOUNT_ID,
+    env.ZOOM_CLIENT_ID,
+    env.ZOOM_CLIENT_SECRET,
+    env.ZOOM_HOST_USER_ID,
+  ];
+  if (values.every((value) => !value)) return null;
+  if (values.some((value) => !value)) {
+    throw new Error(
+      "ZOOM_ACCOUNT_ID, ZOOM_CLIENT_ID, ZOOM_CLIENT_SECRET and ZOOM_HOST_USER_ID must be configured together."
+    );
+  }
+  if (
+    env.ZOOM_ACCOUNT_ID!.length > 200 ||
+    env.ZOOM_CLIENT_ID!.length > 300 ||
+    env.ZOOM_CLIENT_SECRET!.length > 500 ||
+    env.ZOOM_HOST_USER_ID!.length > 320
+  ) {
+    throw new Error("Zoom credentials exceed their allowed length.");
+  }
+  return {
+    accountId: env.ZOOM_ACCOUNT_ID!,
+    clientId: env.ZOOM_CLIENT_ID!,
+    clientSecret: env.ZOOM_CLIENT_SECRET!,
+    hostUserId: env.ZOOM_HOST_USER_ID!,
+  };
+}
+
+export interface GoogleCalendarClientCredentials {
+  readonly clientId: string;
+  readonly clientSecret: string;
+}
+
+export function getGoogleCalendarClientCredentials(): GoogleCalendarClientCredentials | null {
+  const env = getServerEnv();
+  const values = [
+    env.GOOGLE_CALENDAR_CLIENT_ID,
+    env.GOOGLE_CALENDAR_CLIENT_SECRET,
+  ];
+  if (values.every((value) => !value)) return null;
+  if (values.some((value) => !value)) {
+    throw new Error(
+      "GOOGLE_CALENDAR_CLIENT_ID and GOOGLE_CALENDAR_CLIENT_SECRET must be configured together."
+    );
+  }
+  if (
+    env.GOOGLE_CALENDAR_CLIENT_ID!.length > 500 ||
+    env.GOOGLE_CALENDAR_CLIENT_SECRET!.length > 500
+  ) {
+    throw new Error("Google Calendar credentials exceed their allowed length.");
+  }
+  return {
+    clientId: env.GOOGLE_CALENDAR_CLIENT_ID!,
+    clientSecret: env.GOOGLE_CALENDAR_CLIENT_SECRET!,
+  };
 }
 
 /** Test-only: clears the memoized environment so a test can vary process.env. */

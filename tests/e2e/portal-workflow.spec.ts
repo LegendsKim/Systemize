@@ -144,6 +144,9 @@ test.describe.serial("authenticated client journey", () => {
         .getByRole("button")
         .click();
       await expect(clientPage).toHaveURL(/notice=meeting-booked/);
+      await expect(
+        clientPage.getByText("מכינים את קישור ה־Zoom")
+      ).toBeVisible();
 
       await ownerPage.goto(
         `/admin/projects/${portalE2EProjects.clientA}`

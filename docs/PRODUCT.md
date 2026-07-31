@@ -148,7 +148,9 @@ document:
 6. Approval creates a notification for the client and unlocks owner-published meeting
    slots.
 5. The client may reserve one available slot. Booking is atomic and advances the
-   project to `intro_call_scheduled`.
+   project to `intro_call_scheduled`. The saved booking then provisions one Zoom
+   meeting and one Google Calendar invitation through a durable outbox. The client sees
+   the date immediately and receives the join link when both providers are ready.
 6. After the owner records the meeting as completed, the owner creates and publishes an
    immutable initial-summary version for the client.
 7. Only after that version is published may the owner publish a secure external payment
@@ -483,6 +485,8 @@ Authenticated routes are non-indexable and excluded from the sitemap.
   summary PDF is generated on demand from its immutable database version.
 - **Vercel:** application hosting and server runtime.
 - **Web Push provider contract:** best-effort delivery only.
+- **Zoom and Google Calendar:** server-only meeting providers. Provider failure never
+  rolls back a booked slot, and only the participant Zoom URL becomes client-visible.
 - **Telegram:** existing public-lead notification only.
 
 ## 16. Security and privacy

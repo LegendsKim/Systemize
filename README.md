@@ -49,6 +49,13 @@ VAPID key pair with `npm run pwa:keys`, then set
 `CRON_SECRET` of at least 16 characters in every deployed environment. Keep the private
 key and cron secret server-only.
 
+Automatic meeting provisioning requires Zoom Server-to-Server OAuth variables
+(`ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET`, `ZOOM_HOST_USER_ID`) and a
+Google Calendar web OAuth client (`GOOGLE_CALENDAR_CLIENT_ID`,
+`GOOGLE_CALENDAR_CLIENT_SECRET`). After deployment, the SYSTEMIZE owner grants the
+narrow calendar scope once at `/api/integrations/google/connect`; the offline token is
+kept in the private Supabase credential store, never in the browser.
+
 No production credentials are required for static checks or the production build.
 Authenticated portal journeys and RLS tests require a running local or hosted Supabase
 project.

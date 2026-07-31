@@ -26,6 +26,7 @@ import type {
   WorkflowFieldErrors,
 } from "./action-state";
 import { schedulePushOutboxDrain } from "@/server/push/schedule";
+import { scheduleMeetingIntegrationDrain } from "@/server/meetings/schedule";
 
 function errorState(
   message: string,
@@ -237,7 +238,10 @@ export async function bookMeetingSlot(formData: FormData): Promise<void> {
     p_idempotency_key: parsed.data.idempotencyKey,
   });
 
-  if (!error) schedulePushOutboxDrain();
+  if (!error) {
+    schedulePushOutboxDrain();
+    scheduleMeetingIntegrationDrain();
+  }
   revalidatePath(`/portal/projects/${parsed.data.projectId}`);
   revalidatePath(`/admin/projects/${parsed.data.projectId}`);
   redirect(
