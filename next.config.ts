@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
   outputFileTracingRoot: process.cwd(),
+  outputFileTracingIncludes: {
+    "/api/documents/*/pdf": [
+      "./src/assets/fonts/*.ttf",
+    ],
+  },
 
   // Restrict remote image patterns — add approved domains as needed
   images: {

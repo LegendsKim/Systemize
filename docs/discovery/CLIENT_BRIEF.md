@@ -82,8 +82,10 @@ Consequences recorded from these answers:
   required when the key is added — selection is driven by environment configuration.
 - Supabase work is developed against the local Supabase CLI stack. No production
   credentials are required for build or tests.
-- Portfolio entries are clearly marked as placeholder content and are centralised in a
-  single content module so they can be replaced without touching layout code.
+- Portfolio entries were initially centralised as placeholders. On 2026-07-30 the owner
+  supplied the real project set — AthleteTrack, FinQuest and Guesto — and approved
+  presenting AthleteTrack as client work and the other two as personal projects, with
+  current home-page screenshots.
 
 ---
 
@@ -108,7 +110,85 @@ this file or anywhere in this repository.
 2. **Lead PII retention and deletion policy.** How long lead records are kept, who may
    access them, and how a deletion request is honoured. Required before production.
    `OPEN — owner and decision date required`.
-3. **Real portfolio content.** Project descriptions, screenshots, and any permitted
-   client names or metrics. Required before public launch.
+3. **Portfolio refinement.** The initial real product descriptions and screenshots are
+   approved for local implementation. Final copy can be refined before deployment; no
+   client names, testimonials or performance metrics are currently used.
 4. **Legal page content ownership.** Who authors the privacy, terms, and accessibility
    statement text. The routes will ship with clearly marked placeholder copy.
+
+---
+
+## Portal expansion brief — 2026-07-28 to 2026-07-29
+
+The decision owner expanded SYSTEMIZE from a marketing site into a connected customer
+delivery platform. The marketing site remains part of the same product.
+
+### Owner requirements preserved from the conversation
+
+> אני רוצה לבנות אזור אישי ללקוחות מצד אחד, אבל מצד שני בשבילי ובשביל הצוות העתידי שלי.
+
+> לאחר מכן, אני שולח לו לווצאפ קוד עם טוקן שיצרתי במערכת בצד שלי.
+
+The owner clarified that this should behave as a single-use invitation link like the
+existing CoachSync flow. Each partner receives a separate project invitation.
+
+> אני חושב שאימות נעשה רק דרך GMAIL
+
+The owner later clarified that the MVP should accept only addresses ending in
+`@gmail.com`, not custom-domain Google Workspace accounts.
+
+> אם הוא מאשר ומשלם את התשלום, אנחנו עוברים לשלב הבא, שלב של התכנון והאפיון המלא.
+
+> אם הוא מחליט ללכת על משהו, אנחנו סוגרים עסקה, הוא משלם לי נגיד 50% מהסכום שקבענו,
+> אני מתחיל לעבוד והוא מקבל התראות מהאפלקיציה.
+
+> אישור = תשלום
+
+For the manual-payment MVP, signing records agreement and the SYSTEMIZE owner records
+payment. Payment is the authoritative event that activates commercial approval and the
+next lifecycle transition.
+
+> כל פעם שיש התקדמות, פיטצ'ר שסיימתי, או כל דבר כזה או אחר, אני יעדכן אותו ויכתוב
+> במערכת מה עודכן, מה השתנה בעקבות העדכון וכו'
+
+> בלחיצת כפתור אנחנו נעתיק PROMPT מדויק שיכריח את הAI שאנחנו עובדים איתו לתת לנו
+> תשובה מדוייקת שהאלגוריתם יודע לפענח מראש
+
+The MVP does not call an AI provider. It copies a versioned prompt, accepts pasted
+structured JSON, validates it deterministically, shows an editable preview, and publishes
+only after an explicit owner action.
+
+> בהתחלה המערכת לא תשלח הודעות אלא המערכת תהיה אתר PWA ולקוחות יורידו את האתר ויקבלו
+> התראות לפלאפון
+
+> כל אירוע חשוב מצד הלקוח או ממני, אנחנו נתריע אחד לשני.
+
+The durable notification center is authoritative. Web Push is best-effort and follows
+successful event persistence.
+
+> אני רוצה חתימה וחוזה כמו שיש לנו בCoacSync רק עם עיצוב ווייב של Systemize
+
+CoachSync is the behavioral reference for declarations, drawn signature, immutable
+evidence, hashing, and proof PDF. SYSTEMIZE uses its own document model and visual
+language.
+
+### Confirmed product decisions
+
+| Decision | Owner answer |
+|---|---|
+| Product surfaces | Build the internal and client surfaces together because their integration improves process accuracy. |
+| Company model | Multiple contacts and multiple client owners; architecture supports multiple projects per company. |
+| Internal team | Marlen is the only internal user in the MVP; future staff remain structurally possible. |
+| Authentication | Google OAuth restricted to verified `@gmail.com` addresses. |
+| Client access | Separate single-use invitation for every project participant. |
+| Contract | CoachSync-style signature flow with SYSTEMIZE branding. |
+| Commercial approval | Payment is the authoritative approval event. |
+| Payments | Manual in the MVP; automatic payment integration later. |
+| Notifications | In-app and PWA push for every important opposite-party event. |
+| AI processing | External AI, copied prompt, pasted deterministic structured output, owner preview and publication. |
+| Brand | Existing SYSTEMIZE mark and lockup; formal design-system standardization required. |
+| First document | No existing copy; create a stable default template and refine it iteratively. |
+| Product name | SYSTEMIZE PORTAL. |
+
+No credentials, OAuth secrets, push keys, payment data, contract signatures, or real
+customer records belong in this brief.

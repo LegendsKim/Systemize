@@ -32,6 +32,12 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
     {
+      name: "responsive-webkit",
+      testDir: "./tests/e2e",
+      testMatch: "responsive-mobile.spec.ts",
+      use: { ...devices["iPhone 14"] },
+    },
+    {
       name: "visual",
       testDir: "./tests/visual",
       use: { ...devices["Desktop Chrome"] },
@@ -51,10 +57,12 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: "npm run build && npm run start",
-    url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: process.env.PLAYWRIGHT_BASE_URL
+    ? undefined
+    : {
+      command: "npm run build && npm run start",
+      url: baseURL,
+      reuseExistingServer: !process.env.CI && process.env.PORTAL_E2E !== "1",
+      timeout: 120_000,
+      },
 });

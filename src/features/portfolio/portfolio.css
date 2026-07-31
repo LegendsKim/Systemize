@@ -1,223 +1,686 @@
-/*
- * Portfolio cards.
- *
- * A flat grid of equals, the section argues breadth, so nothing here promotes one card
- * above another. The placeholder notice is styled to be read, not to be dismissed.
- */
-
-.portfolio-section {
-  background-color: var(--color-surface-1);
-  border-block-start: 1px solid var(--color-border);
+.projects-page,
+.project-detail {
+  --project-accent: var(--color-primary);
+  --project-accent-soft: var(--color-primary-soft);
+  position: relative;
+  isolation: isolate;
+  min-block-size: 100vh;
+  padding-block-start: clamp(7rem, 12vw, 10rem);
+  overflow: clip;
+  background:
+    radial-gradient(circle at center top, oklch(0.95 0.035 190 / 0.78), transparent 30rem),
+    var(--color-surface-0);
 }
 
-.portfolio-inner {
+.projects-page::before,
+.project-detail::before {
+  content: "";
+  position: absolute;
+  inset-block-start: -14rem;
+  inset-inline: 0;
+  z-index: -1;
+  block-size: 42rem;
+  opacity: 0.36;
+  background:
+    repeating-radial-gradient(
+      ellipse at center top,
+      transparent 0 2.7rem,
+      oklch(0.73 0.015 210 / 0.25) 2.75rem 2.82rem
+    );
+  mask-image: linear-gradient(to bottom, black, transparent 82%);
+  pointer-events: none;
+}
+
+.project-detail-guesto {
+  --project-accent: oklch(0.53 0.085 45);
+  --project-accent-soft: oklch(0.94 0.025 55);
+}
+
+.project-detail-athletetrack {
+  --project-accent: oklch(0.55 0.09 78);
+  --project-accent-soft: oklch(0.93 0.025 80);
+}
+
+.projects-inner,
+.project-detail-inner {
   inline-size: 100%;
   max-inline-size: var(--container-content);
   margin-inline: auto;
-  padding: var(--spacing-section-y) var(--spacing-page-x);
+  padding-inline: var(--spacing-page-x);
+  padding-block-end: var(--spacing-section-y);
 }
 
-.portfolio-eyebrow {
-  color: var(--color-primary-focus);
-  font-size: 0.8125rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+.projects-intro {
+  max-inline-size: 53rem;
 }
 
-.portfolio-intro {
-  max-inline-size: 52rem;
+.portfolio-eyebrow,
+.projects-cta-eyebrow,
+.project-contact-eyebrow {
+  color: var(--project-accent);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
 }
 
-.portfolio-intro h2 {
-  margin-block-start: 1.25rem;
-  font-size: clamp(1.75rem, 4.2vw, 3.25rem);
+.projects-intro h1,
+.project-hero h1 {
+  margin-block-start: 1rem;
+  font-size: clamp(2.65rem, 7vw, 5.8rem);
   font-weight: 600;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
   text-wrap: balance;
 }
 
-.portfolio-lead {
+.projects-lead,
+.project-description {
+  max-inline-size: 44rem;
   margin-block-start: 1.5rem;
   color: var(--color-text-secondary);
-  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  font-size: clamp(1.05rem, 1.7vw, 1.22rem);
   line-height: 1.8;
   text-wrap: pretty;
 }
 
-/* Visible for as long as any entry is illustrative. A disclosure only a screen reader
-   hears is not a disclosure. */
-.portfolio-notice {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
-  max-inline-size: 56rem;
-  margin-block-start: 2.5rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-lg);
-  background-color: var(--color-surface-0);
-  color: var(--color-text-secondary);
-  font-size: 0.875rem;
-  line-height: 1.7;
-  text-wrap: pretty;
-}
-
-.portfolio-notice-glyph {
-  display: inline-flex;
-  flex: none;
-  margin-block-start: 0.2em;
-  color: var(--color-primary-focus);
-}
+/* --------------------------------------------------------------------------
+ * Projects gallery
+ * ----------------------------------------------------------------------- */
 
 .portfolio-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
-  gap: clamp(1rem, 2vw, 1.5rem);
-  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.15rem, 2.4vw, 2rem);
+  margin: clamp(3.5rem, 8vw, 7rem) 0 0;
   padding: 0;
   list-style: none;
 }
 
 .portfolio-card {
-  display: flex;
-  padding: clamp(1.5rem, 3vw, 2rem);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-xl);
-  background-color: oklch(1 0 0 / 0.75);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  min-inline-size: 0;
 }
 
-.portfolio-card:hover {
-  border-color: var(--color-primary-soft);
-  box-shadow: 0 1.5rem 3.5rem oklch(0.24 0.008 240 / 0.08);
-  transform: translateY(-3px);
-}
-
-.portfolio-card > article {
+.portfolio-card-link {
   display: flex;
   flex-direction: column;
-  inline-size: 100%;
+  block-size: 100%;
+  overflow: hidden;
+  border: 1px solid oklch(0.84 0.008 220 / 0.88);
+  border-radius: clamp(1.15rem, 2vw, 1.75rem);
+  background: oklch(0.995 0.002 210 / 0.88);
+  color: inherit;
+  text-decoration: none;
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / 0.85) inset,
+    0 1.5rem 4rem oklch(0.25 0.01 220 / 0.08);
+  transition:
+    border-color 220ms ease,
+    transform 220ms ease,
+    box-shadow 220ms ease;
 }
 
-.portfolio-sector {
-  color: var(--color-primary-focus);
-  font-size: 0.75rem;
+.portfolio-card-link:hover {
+  border-color: var(--color-primary-soft);
+  transform: translateY(-0.45rem);
+  box-shadow:
+    0 1px 0 oklch(1 0 0 / 0.9) inset,
+    0 2.4rem 6rem oklch(0.25 0.01 220 / 0.15);
+}
+
+.portfolio-image-frame {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+  margin: 0.55rem;
+  border-radius: calc(clamp(1.15rem, 2vw, 1.75rem) - 0.35rem);
+  background: var(--color-surface-2);
+}
+
+.portfolio-image-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, oklch(0.16 0.01 220 / 0.28), transparent 45%);
+  pointer-events: none;
+}
+
+.portfolio-image {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  transition: transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.portfolio-card-link:hover .portfolio-image {
+  transform: scale(1.035);
+}
+
+.portfolio-card-index,
+.portfolio-type-badge {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.8rem;
+  border: 1px solid oklch(1 0 0 / 0.35);
+  border-radius: var(--radius-pill);
+  backdrop-filter: blur(10px);
+}
+
+.portfolio-card-index {
+  inset-inline-end: 0.85rem;
+  padding-inline: 0.7rem;
+  background: oklch(0.2 0.01 220 / 0.7);
+  color: white;
+  font-family: var(--font-space-grotesk), "Space Grotesk", ui-sans-serif, system-ui,
+    sans-serif;
+  font-size: 0.7rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
+}
+
+.portfolio-type-badge {
+  inset-inline-start: 0.85rem;
+  padding-inline: 0.85rem;
+  background: oklch(0.99 0.003 210 / 0.86);
+  color: var(--color-text-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.portfolio-card-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-block-size: 14.5rem;
+  padding: clamp(1.35rem, 2.6vw, 2rem);
 }
 
 .portfolio-card-title {
-  margin-block-start: 0.75rem;
-  font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+  font-family: var(--font-space-grotesk), "Space Grotesk", ui-sans-serif, system-ui,
+    sans-serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
   font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.025em;
+}
+
+.portfolio-card-summary {
+  margin-block-start: 1rem;
+  color: var(--color-text-secondary);
+  font-size: 0.96rem;
+  line-height: 1.72;
+}
+
+.portfolio-card-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block-start: auto;
+  padding-block-start: 1.5rem;
+  color: var(--color-text-primary);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.portfolio-card-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.35rem;
+  block-size: 2.35rem;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: var(--color-text-on-primary);
+  font-size: 1.05rem;
+  transition: transform 200ms ease, background 200ms ease;
+}
+
+.portfolio-card-link:hover .portfolio-card-arrow {
+  background: var(--color-primary-hover);
+  transform: translateX(-0.2rem);
+}
+
+/* --------------------------------------------------------------------------
+ * Shared CTA
+ * ----------------------------------------------------------------------- */
+
+.projects-cta,
+.project-contact {
+  position: relative;
+  overflow: hidden;
+  margin-block-start: clamp(5rem, 10vw, 9rem);
+  padding: clamp(2rem, 5vw, 4.5rem);
+  border-radius: clamp(1.5rem, 3vw, 2.5rem);
+  background:
+    radial-gradient(circle at 18% 15%, oklch(0.55 0.1 190 / 0.3), transparent 20rem),
+    oklch(0.22 0.012 225);
+  color: white;
+  box-shadow: 0 2rem 6rem oklch(0.18 0.015 220 / 0.2);
+}
+
+.projects-cta::after,
+.project-contact::after {
+  content: "";
+  position: absolute;
+  inset-block-end: -8rem;
+  inset-inline-end: -4rem;
+  inline-size: 20rem;
+  block-size: 20rem;
+  border: 1px solid oklch(1 0 0 / 0.08);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 2.5rem oklch(1 0 0 / 0.035),
+    0 0 0 5rem oklch(1 0 0 / 0.025);
+  pointer-events: none;
+}
+
+.projects-cta {
+  max-inline-size: 70rem;
+}
+
+.projects-cta h2,
+.project-contact h2 {
+  position: relative;
+  z-index: 1;
+  max-inline-size: 50rem;
+  margin-block-start: 0.85rem;
+  font-size: clamp(1.8rem, 4.5vw, 3.6rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
   text-wrap: balance;
 }
 
-.portfolio-detail {
-  margin-block: 1.5rem 0;
+.projects-cta > p:not(.projects-cta-eyebrow),
+.project-contact > div > p:not(.project-contact-eyebrow) {
+  position: relative;
+  z-index: 1;
+  max-inline-size: 42rem;
+  margin-block-start: 1.25rem;
+  color: oklch(0.84 0.01 220);
+  line-height: 1.75;
 }
 
-.portfolio-detail dt {
+.projects-cta-link,
+.project-contact-primary,
+.project-contact-secondary,
+.project-live-link,
+.project-secondary-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  min-block-size: 3.1rem;
+  padding-inline: 1.4rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.9rem;
+  font-weight: 750;
+  text-decoration: none;
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.projects-cta-link {
+  position: relative;
+  z-index: 1;
+  margin-block-start: 2rem;
+  background: white;
+  color: var(--color-text-primary);
+}
+
+.projects-cta-link:hover,
+.project-contact-primary:hover {
+  transform: translateY(-0.15rem);
+}
+
+/* --------------------------------------------------------------------------
+ * Project detail hero
+ * ----------------------------------------------------------------------- */
+
+.project-back-link {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 2.75rem;
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  text-underline-offset: 0.3em;
+}
+
+.project-back-link::before {
+  content: "→";
+  margin-inline-end: 0.5rem;
+}
+
+.project-hero {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.72fr) minmax(0, 1.28fr);
+  align-items: center;
+  gap: clamp(3rem, 6vw, 6rem);
+  margin-block-start: clamp(2rem, 5vw, 4rem);
+}
+
+.project-hero-copy {
+  min-inline-size: 0;
+}
+
+.project-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.project-status {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 1.85rem;
+  padding-inline: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: oklch(1 0 0 / 0.65);
   color: var(--color-text-muted);
-  font-size: 0.6875rem;
-  font-weight: 700;
+  font-size: 0.72rem;
+  font-weight: 650;
+}
+
+.project-hero h1 {
+  font-family: var(--font-space-grotesk), "Space Grotesk", ui-sans-serif, system-ui,
+    sans-serif;
+}
+
+.project-detail-athletetrack .project-hero h1 {
+  font-size: clamp(2.65rem, 5vw, 4.55rem);
+  letter-spacing: -0.045em;
+}
+
+.project-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-block-start: 2rem;
+}
+
+.project-live-link {
+  background: var(--project-accent);
+  color: white;
+  box-shadow: 0 0.8rem 2rem color-mix(in oklch, var(--project-accent) 24%, transparent);
+}
+
+.project-live-link:hover {
+  transform: translateY(-0.15rem);
+  filter: brightness(0.92);
+}
+
+.project-secondary-link {
+  border: 1px solid var(--color-border-strong);
+  background: oklch(1 0 0 / 0.58);
+  color: var(--color-text-primary);
+}
+
+.project-secondary-link:hover {
+  border-color: var(--project-accent);
+  background: white;
+}
+
+.project-hero-figure {
+  margin: 0;
+}
+
+.project-hero-image {
+  position: relative;
+  overflow: hidden;
+  padding: 0.45rem;
+  border: 1px solid oklch(0.84 0.008 220 / 0.85);
+  border-radius: clamp(1.25rem, 3vw, 2.25rem);
+  background: oklch(1 0 0 / 0.72);
+  box-shadow:
+    0 1px 0 white inset,
+    0 2.4rem 7rem oklch(0.22 0.012 220 / 0.17);
+  transform: rotate(-0.7deg);
+}
+
+.project-hero-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 1px oklch(1 0 0 / 0.55) inset;
+  pointer-events: none;
+}
+
+.project-hero-image img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: calc(clamp(1.25rem, 3vw, 2.25rem) - 0.45rem);
+}
+
+.project-hero-figure figcaption {
+  margin-block-start: 0.9rem;
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+ * Origin and narrative
+ * ----------------------------------------------------------------------- */
+
+.project-origin {
+  display: grid;
+  grid-template-columns: minmax(8rem, 0.22fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: start;
+  margin-block-start: clamp(4rem, 8vw, 7rem);
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  border: 1px solid color-mix(in oklch, var(--project-accent) 22%, var(--color-border));
+  border-radius: clamp(1.25rem, 3vw, 2rem);
+  background:
+    linear-gradient(
+      125deg,
+      color-mix(in oklch, var(--project-accent-soft) 75%, white),
+      oklch(1 0 0 / 0.72)
+    );
+}
+
+.project-origin-label {
+  color: var(--project-accent);
+  font-size: 0.75rem;
+  font-weight: 800;
   letter-spacing: 0.08em;
 }
 
-.portfolio-detail dt + dd {
-  margin-block: 0.5rem 1.25rem;
-  margin-inline: 0;
-  color: var(--color-text-secondary);
-  font-size: 0.9375rem;
-  line-height: 1.75;
+.project-origin h2 {
+  max-inline-size: 52rem;
+  font-size: clamp(1.35rem, 2.4vw, 2.05rem);
+  font-weight: 550;
+  line-height: 1.45;
+  letter-spacing: -0.025em;
   text-wrap: pretty;
 }
 
-.portfolio-outcomes {
+.project-story {
   display: grid;
-  gap: 0.625rem;
-  margin: 0.25rem 0 0;
-  padding-block-start: 1.25rem;
-  padding-inline: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1rem, 2.4vw, 1.75rem);
+  margin-block-start: clamp(2rem, 5vw, 4rem);
+}
+
+.project-story-card {
+  min-inline-size: 0;
+  padding: clamp(1.5rem, 3vw, 2.4rem);
+  border: 1px solid var(--color-border);
+  border-radius: clamp(1.15rem, 2.5vw, 1.75rem);
+  background: oklch(1 0 0 / 0.68);
+  box-shadow: 0 1rem 3rem oklch(0.25 0.01 220 / 0.055);
+}
+
+.project-story-card-featured {
+  border-color: color-mix(in oklch, var(--project-accent) 24%, var(--color-border));
+  background:
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--project-accent-soft) 55%, white),
+      oklch(1 0 0 / 0.76)
+    );
+}
+
+.project-section-number {
+  color: var(--project-accent);
+  font-family: var(--font-space-grotesk), "Space Grotesk", ui-sans-serif, system-ui,
+    sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.project-story h2 {
+  margin-block-start: 0.9rem;
+  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  font-weight: 650;
+}
+
+.project-story section > p:last-of-type {
+  margin-block-start: 1rem;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  text-wrap: pretty;
+}
+
+.project-story ul {
+  display: grid;
+  gap: 0.78rem;
+  margin-block: 1.5rem 0;
+  padding: 0;
   list-style: none;
-  border-block-start: 1px solid var(--color-border);
 }
 
-.portfolio-outcomes li {
+.project-story li {
   position: relative;
-  padding-inline-start: 1.375rem;
-  font-size: 0.9375rem;
-  line-height: 1.6;
+  padding-inline-start: 1.25rem;
+  color: var(--color-text-secondary);
+  line-height: 1.62;
 }
 
-.portfolio-outcomes li::before {
+.project-story li::before {
   content: "";
   position: absolute;
-  inset-block-start: 0.6em;
+  inset-block-start: 0.65em;
   inset-inline-start: 0;
-  inline-size: 0.4375rem;
-  block-size: 0.4375rem;
+  inline-size: 0.42rem;
+  block-size: 0.42rem;
   border-radius: 50%;
-  background-color: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-soft);
+  background: var(--project-accent);
+  box-shadow: 0 0 0 0.22rem var(--project-accent-soft);
 }
 
-/* Pushed to the foot of the card so the chips line up across a row whatever the length of
-   the prose above them. */
-.portfolio-capabilities {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: auto 0 0;
-  padding-block-start: 1.5rem;
-  padding-inline: 0;
-  list-style: none;
+.project-contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: clamp(2rem, 5vw, 5rem);
 }
 
-.portfolio-capabilities li {
-  padding-inline: 0.75rem;
-  padding-block: 0.3125rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-pill);
-  background-color: var(--color-surface-1);
-  color: var(--color-text-secondary);
-  font-size: 0.75rem;
-  font-weight: 500;
+.project-contact-eyebrow {
+  color: oklch(0.79 0.11 188);
 }
 
-@supports (animation-timeline: view()) {
-  .portfolio-card {
-    opacity: 0;
-    animation: portfolio-card-in 1ms linear both;
-    animation-timeline: view();
-    animation-range: entry 10% cover 24%;
+.project-contact-actions {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 0.75rem;
+  min-inline-size: min(100%, 14rem);
+}
+
+.project-contact-primary {
+  background: white;
+  color: var(--color-text-primary);
+}
+
+.project-contact-secondary {
+  border: 1px solid oklch(1 0 0 / 0.24);
+  color: white;
+}
+
+.project-contact-secondary:hover {
+  border-color: oklch(1 0 0 / 0.55);
+  background: oklch(1 0 0 / 0.08);
+}
+
+@media (max-width: 64rem) {
+  .project-hero,
+  .project-origin,
+  .project-contact {
+    grid-template-columns: 1fr;
+  }
+
+  .project-hero-copy {
+    max-inline-size: 48rem;
+  }
+
+  .project-hero-figure {
+    order: 2;
+  }
+
+  .project-story {
+    grid-template-columns: 1fr;
+  }
+
+  .project-contact-actions {
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 
-@keyframes portfolio-card-in {
-  from {
-    opacity: 0;
-    transform: translateY(1.25rem);
+@media (max-width: 40rem) {
+  .portfolio-grid {
+    grid-template-columns: 1fr;
   }
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .portfolio-card-copy {
+    min-block-size: 12.5rem;
+  }
+
+  .project-hero-actions,
+  .project-contact-actions {
+    display: grid;
+  }
+
+  .project-live-link,
+  .project-secondary-link,
+  .project-contact-primary,
+  .project-contact-secondary {
+    inline-size: 100%;
+  }
+}
+
+@media (min-width: 40rem) and (max-width: 64rem) {
+  .portfolio-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .portfolio-card {
-    animation: none;
-    opacity: 1;
-    transform: none;
+  .portfolio-card-link,
+  .portfolio-image,
+  .portfolio-card-arrow,
+  .projects-cta-link,
+  .project-contact-primary,
+  .project-live-link,
+  .project-secondary-link {
     transition: none;
   }
 
-  .portfolio-card:hover {
+  .portfolio-card-link:hover,
+  .portfolio-card-link:hover .portfolio-image,
+  .portfolio-card-link:hover .portfolio-card-arrow,
+  .projects-cta-link:hover,
+  .project-contact-primary:hover,
+  .project-live-link:hover {
     transform: none;
   }
 }

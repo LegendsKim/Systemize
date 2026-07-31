@@ -9,6 +9,7 @@
 -- ============================================================================
 
 BEGIN;
+SET LOCAL search_path = public, extensions;
 SELECT plan(17);
 
 -- ---------------------------------------------------------------------------
@@ -52,17 +53,18 @@ SELECT ok(
 SELECT is(
   (SELECT count(*) FROM pg_policies
    WHERE schemaname = 'public' AND tablename = 'leads'),
-  0::bigint,
-  'leads has no policies at all, which denies every RLS-subject role by default'
+  1::bigint,
+  'leads has exactly one owner-read policy'
 );
 
 SELECT is(
   (SELECT count(*) FROM information_schema.role_table_grants
    WHERE table_schema = 'public'
      AND table_name = 'leads'
-     AND grantee IN ('anon', 'authenticated', 'PUBLIC')),
-  0::bigint,
-  'neither anon nor authenticated holds any grant on leads'
+     AND grantee = 'authenticated'
+     AND privilege_type = 'SELECT'),
+  1::bigint,
+  'authenticated may select, while RLS limits rows to the SYSTEMIZE owner'
 );
 
 -- Scoped to the roles the application can actually authenticate as. The table owner
@@ -125,11 +127,10 @@ RESET ROLE;
 
 SET LOCAL ROLE authenticated;
 
-SELECT throws_ok(
-  $$SELECT id FROM public.leads$$,
-  '42501',
-  'permission denied for table leads',
-  'authenticated cannot select from leads either'
+SELECT is(
+  (SELECT count(*) FROM public.leads),
+  0::bigint,
+  'an authenticated non-owner cannot enumerate leads'
 );
 
 RESET ROLE;

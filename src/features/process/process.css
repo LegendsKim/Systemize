@@ -391,6 +391,11 @@
 }
 
 @media (max-width: 30rem) {
+  .process-intro {
+    min-block-size: auto;
+    padding-block: 3.5rem 4.5rem;
+  }
+
   .process-stage {
     min-block-size: auto;
     padding-block: 6rem;

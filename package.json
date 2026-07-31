@@ -2,13 +2,14 @@
   "name": "systemize-site",
   "version": "0.1.0",
   "private": true,
-  "description": "Systemize marketing and lead-generation site. Hebrew, RTL, Next.js App Router with Supabase.",
+  "description": "SYSTEMIZE marketing site and authenticated client delivery portal. Hebrew, RTL, Next.js App Router with Supabase.",
   "license": "UNLICENSED",
   "engines": {
     "node": ">=22.0.0"
   },
   "scripts": {
     "dev": "next dev",
+    "dev:https": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -16,15 +17,20 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test --project=e2e",
+    "test:e2e:portal": "node scripts/run-portal-e2e.mjs",
     "test:a11y": "playwright test --project=a11y",
     "test:visual": "playwright test --project=visual --project=visual-mobile --project=visual-rtl",
     "brand:generate": "tsx scripts/generate-brand-assets.ts",
+    "brand:og": "node scripts/generate-open-graph-image.mjs",
+    "pwa:keys": "web-push generate-vapid-keys --json",
     "test:db": "supabase db reset && supabase test db",
     "check:architecture": "tsx scripts/check-architecture.ts",
+    "check:vercel-config": "config compile",
     "check:dependencies": "npm audit --audit-level=high",
-    "check": "npm run lint && npm run typecheck && npm run test && npm run check:architecture && npm run check:dependencies"
+    "check": "npm run lint && npm run typecheck && npm run test && npm run check:architecture && npm run check:vercel-config && npm run check:dependencies"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.5.1",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
     "@tailwindcss/postcss": "^4.3.3",
@@ -33,6 +39,7 @@
     "react-dom": "^19.2.8",
     "server-only": "^0.0.1",
     "tailwindcss": "^4.3.3",
+    "web-push": "^3.6.7",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -45,8 +52,10 @@
     "@types/node": "^26.1.1",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
+    "@types/web-push": "^3.6.4",
     "@typescript-eslint/eslint-plugin": "^8.65.0",
     "@typescript-eslint/parser": "^8.65.0",
+    "@vercel/config": "^0.5.5",
     "@vitejs/plugin-react": "^6.0.4",
     "eslint": "^10.8.0",
     "eslint-plugin-react-hooks": "^7.1.1",
@@ -59,6 +68,7 @@
   },
   "overrides": {
     "postcss": "8.5.23",
-    "sharp": "0.35.3"
+    "sharp": "0.35.3",
+    "path-to-regexp": "6.3.0"
   }
 }

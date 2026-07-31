@@ -56,7 +56,7 @@ export function SiteFooter({ year }: SiteFooterProps) {
           <ul className="site-footer-links">
             {navigation.map((item) => (
               <li key={item.href}>
-                <Link href={`/${item.href}`} className="site-footer-link">
+                <Link href={item.href} className="site-footer-link">
                   {item.label}
                 </Link>
               </li>

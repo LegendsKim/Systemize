@@ -114,7 +114,15 @@ test.describe('Accessibility', () => {
    * they share one renderer — a regression in it would otherwise be caught on whichever
    * route happened to be listed.
    */
-  for (const path of ['/privacy', '/terms', '/accessibility']) {
+  for (const path of [
+    '/privacy',
+    '/terms',
+    '/accessibility',
+    '/projects',
+    '/projects/athletetrack',
+    '/projects/finquest',
+    '/projects/guesto',
+  ]) {
     test(`${path} has no a11y violations`, async ({ page }) => {
       await page.goto(path);
       const results = await new AxeBuilder({ page })

@@ -18,8 +18,8 @@ import { siteName, siteTagline } from "@/lib/site-config";
  * in the root layout resolves it against `siteUrl`, and no host is written down.
  */
 
-/** Route Next.js serves the generated card from. Matches `src/app/opengraph-image.tsx`. */
-export const openGraphImagePath = "/opengraph-image";
+/** Route Next.js serves the generated card from. Matches `src/app/opengraph-image.png`. */
+export const openGraphImagePath = "/opengraph-image.png";
 
 export const openGraphImageSize = { width: 1200, height: 630 } as const;
 

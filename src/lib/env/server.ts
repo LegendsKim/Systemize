@@ -16,6 +16,10 @@ const serverSchema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
   TELEGRAM_BOT_TOKEN: optionalCredential,
   TELEGRAM_CHAT_ID: optionalCredential,
+  SYSTEMIZE_OWNER_GMAIL: optionalCredential,
+  VAPID_PRIVATE_KEY: optionalCredential,
+  VAPID_SUBJECT: optionalCredential,
+  CRON_SECRET: optionalCredential,
 });
 
 type ServerEnv = z.infer<typeof serverSchema>;
@@ -59,6 +63,53 @@ export function getTelegramCredentials(): TelegramCredentials | null {
     return null;
   }
   return { botToken: env.TELEGRAM_BOT_TOKEN, chatId: env.TELEGRAM_CHAT_ID };
+}
+
+export function getSystemizeOwnerGmail(): string {
+  // Trimmed before validating. This value is pasted into a hosting dashboard by hand, and
+  // a trailing space there would otherwise fail the pattern and take the whole sign-in
+  // callback down with a thrown error rather than a message anyone can act on.
+  const value = getServerEnv().SYSTEMIZE_OWNER_GMAIL?.trim().toLowerCase();
+  if (!value || !/^[^@\s]+@gmail\.com$/.test(value)) {
+    throw new Error(
+      "SYSTEMIZE_OWNER_GMAIL must contain the owner's gmail.com address."
+    );
+  }
+  return value;
+}
+
+export interface WebPushServerCredentials {
+  readonly privateKey: string;
+  readonly subject: string;
+}
+
+export function getWebPushServerCredentials(): WebPushServerCredentials | null {
+  const env = getServerEnv();
+  const configured = [env.VAPID_PRIVATE_KEY, env.VAPID_SUBJECT];
+  if (configured.every((value) => !value)) {
+    return null;
+  }
+  if (!env.VAPID_PRIVATE_KEY || !env.VAPID_SUBJECT) {
+    throw new Error(
+      "VAPID_PRIVATE_KEY and VAPID_SUBJECT must be configured together."
+    );
+  }
+  if (!/^(mailto:|https:\/\/)/.test(env.VAPID_SUBJECT)) {
+    throw new Error("VAPID_SUBJECT must be a mailto: or https:// URI.");
+  }
+  return {
+    privateKey: env.VAPID_PRIVATE_KEY,
+    subject: env.VAPID_SUBJECT,
+  };
+}
+
+export function getCronSecret(): string | null {
+  const secret = getServerEnv().CRON_SECRET;
+  if (!secret) return null;
+  if (secret.length < 16) {
+    throw new Error("CRON_SECRET must contain at least 16 characters.");
+  }
+  return secret;
 }
 
 /** Test-only: clears the memoized environment so a test can vary process.env. */

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { SystemizeMark } from "@/components/brand/SystemizeMark";
-import { navigation, siteName } from "@/lib/site-config";
+import { primaryNavigation, siteName } from "@/lib/site-config";
 
 /**
  * Site header.
@@ -15,7 +15,7 @@ export function SiteHeader() {
       <div className="site-header-inner">
         <nav aria-label="ניווט ראשי" className="site-nav">
           <ul className="site-nav-list">
-            {navigation.map((item) => (
+            {primaryNavigation.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} className="site-nav-link">
                   {item.label}
