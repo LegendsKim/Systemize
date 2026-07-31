@@ -1,6 +1,6 @@
 BEGIN;
 SET LOCAL search_path = public, extensions;
-SELECT plan(8);
+SELECT plan(14);
 
 SELECT has_table(
   'public',
@@ -46,6 +46,48 @@ SELECT has_function(
   'settle_push_delivery',
   ARRAY['uuid', 'text', 'text'],
   'production has the push settlement RPC'
+);
+
+SELECT has_column(
+  'public',
+  'profiles',
+  'portal_onboarded_at',
+  'production has the portal onboarding marker'
+);
+
+SELECT has_column(
+  'public',
+  'client_intakes',
+  'client_reply',
+  'production has client replies to review notes'
+);
+
+SELECT has_function(
+  'public',
+  'save_client_intake',
+  ARRAY['uuid', 'jsonb', 'smallint', 'boolean', 'uuid', 'text'],
+  'production has the dialogue-aware intake save RPC'
+);
+
+SELECT has_function(
+  'public',
+  'autosave_client_intake',
+  ARRAY['uuid', 'jsonb', 'smallint', 'text'],
+  'production has the intake autosave RPC'
+);
+
+SELECT has_function(
+  'public',
+  'complete_portal_onboarding',
+  ARRAY[]::text[],
+  'production has the onboarding completion RPC'
+);
+
+SELECT has_function(
+  'public',
+  'project_push_readiness',
+  ARRAY['uuid'],
+  'production has the owner push-readiness RPC'
 );
 
 SELECT ok(
