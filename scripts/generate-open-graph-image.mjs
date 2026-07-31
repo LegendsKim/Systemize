@@ -1,13 +1,26 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "@playwright/test";
+import sharp from "sharp";
 
 const root = process.cwd();
-const outputPath = join(root, "src", "app", "opengraph-image.png");
+const outputPath = join(root, "public", "systemize-share-card.png");
 const portalOutputPath = join(root, "public", "portal-share-card.png");
 
 function dataUri(buffer, mimeType) {
   return `data:${mimeType};base64,${buffer.toString("base64")}`;
+}
+
+async function saveCrawlerCard(page, path) {
+  const screenshot = await page.screenshot({ type: "png" });
+  await sharp(screenshot)
+    .png({
+      palette: true,
+      quality: 90,
+      compressionLevel: 9,
+      effort: 10,
+    })
+    .toFile(path);
 }
 
 const [hero, mark, mediumFont, boldFont] = await Promise.all([
@@ -201,7 +214,7 @@ try {
     </html>
   `);
 
-  await page.screenshot({ path: outputPath, type: "png" });
+  await saveCrawlerCard(page, outputPath);
   console.log(`Generated ${outputPath}`);
 
   await page.locator(".eyebrow").evaluate((element) => {
@@ -221,7 +234,7 @@ try {
     element.textContent = "כניסה מאובטחת באמצעות Google";
   });
 
-  await page.screenshot({ path: portalOutputPath, type: "png" });
+  await saveCrawlerCard(page, portalOutputPath);
   console.log(`Generated ${portalOutputPath}`);
 } finally {
   await browser.close();

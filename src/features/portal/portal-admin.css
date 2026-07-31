@@ -1090,6 +1090,7 @@ a.admin-stat:focus-visible {
   display: grid;
   gap: 0.6rem;
   margin: 0;
+  min-inline-size: 0;
 }
 
 .admin-intake dt {
@@ -1098,10 +1099,50 @@ a.admin-stat:focus-visible {
   font-weight: 600;
 }
 
+/*
+ * A client's answer is arbitrary text, and some of it arrives as one unbroken run of
+ * characters with no space to break at. Without an explicit break rule such a word sets
+ * the panel's minimum width from its own length, overflows the card and lands on top of
+ * the panel beside it — which is exactly how a long answer used to cover "פגישת היכרות".
+ * `pre-wrap` keeps the line breaks the client actually typed; `anywhere` handles the run
+ * that has none.
+ */
 .admin-intake dd {
   margin: 0.1rem 0 0;
+  min-inline-size: 0;
   font-size: 0.88rem;
   line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Grid and flex children default to a content-sized minimum. Long text needs the floor. */
+.admin-panel,
+.admin-intake dl > div,
+.admin-workspace-grid > * {
+  min-inline-size: 0;
+}
+
+.admin-client-reply {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 34%, var(--admin-line));
+  border-radius: var(--admin-radius-sm);
+  background: var(--color-primary-soft);
+}
+
+.admin-client-reply strong {
+  font-size: 0.82rem;
+}
+
+.admin-client-reply p {
+  margin: 0;
+  min-inline-size: 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .admin-list {

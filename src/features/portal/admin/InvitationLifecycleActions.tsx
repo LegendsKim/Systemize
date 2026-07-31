@@ -2,6 +2,7 @@
 // This leaf uses action state to reveal a replacement invitation link exactly once.
 
 import { useActionState } from "react";
+import { buildInvitationWhatsAppHref } from "@/features/portal/invitations/share-message";
 import { initialAdminActionState } from "./action-state";
 import {
   reissueProjectInvitation,
@@ -10,7 +11,10 @@ import {
 
 interface InvitationLifecycleActionsProps {
   readonly projectId: string;
+  readonly projectName: string;
   readonly invitationId: string;
+  readonly recipientName: string;
+  readonly recipientPhone: string;
   readonly replacementInvitationId: string;
   readonly invitationToken: string;
   readonly revokeIdempotencyKey: string;
@@ -21,7 +25,10 @@ interface InvitationLifecycleActionsProps {
 
 export function InvitationLifecycleActions({
   projectId,
+  projectName,
   invitationId,
+  recipientName,
+  recipientPhone,
   replacementInvitationId,
   invitationToken,
   revokeIdempotencyKey,
@@ -33,6 +40,15 @@ export function InvitationLifecycleActions({
     reissueProjectInvitation,
     initialAdminActionState
   );
+
+  const whatsAppHref = reissueState.shareUrl
+    ? buildInvitationWhatsAppHref({
+        fullName: recipientName,
+        phone: recipientPhone,
+        projectName,
+        shareUrl: reissueState.shareUrl,
+      })
+    : null;
 
   return (
     <div className="admin-invitation-actions">
@@ -103,6 +119,16 @@ export function InvitationLifecycleActions({
             value={reissueState.shareUrl}
             onFocus={(event) => event.currentTarget.select()}
           />
+          {whatsAppHref && (
+            <a
+              href={whatsAppHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="portal-primary-action"
+            >
+              פתיחת צ׳אט עם הלקוח והדבקת ההזמנה
+            </a>
+          )}
         </div>
       )}
     </div>

@@ -8,6 +8,8 @@ export interface PortalIdentity {
   readonly email: string;
   readonly fullName: string;
   readonly appRole: PortalAppRole;
+  /** `null` while the one-time orientation is still owed. */
+  readonly onboardedAt: string | null;
 }
 
 export async function getPortalIdentity(): Promise<PortalIdentity | null> {
@@ -22,7 +24,7 @@ export async function getPortalIdentity(): Promise<PortalIdentity | null> {
 
   const { data: profile, error } = await supabase
     .from("profiles")
-    .select("id,email,full_name,app_role")
+    .select("id,email,full_name,app_role,portal_onboarded_at")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -35,6 +37,7 @@ export async function getPortalIdentity(): Promise<PortalIdentity | null> {
     email: profile.email,
     fullName: profile.full_name,
     appRole: profile.app_role,
+    onboardedAt: profile.portal_onboarded_at,
   };
 }
 

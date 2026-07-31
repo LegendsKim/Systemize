@@ -127,6 +127,7 @@ export default async function AdminProjectPage({
 
   const [
     { data: company },
+    { data: pushReadiness },
     workflow,
     events,
     invitations,
@@ -139,6 +140,7 @@ export default async function AdminProjectPage({
       .select("name")
       .eq("id", project.company_id)
       .maybeSingle(),
+    supabase.rpc("project_push_readiness", { p_project_id: projectId }),
     getProjectWorkflow(supabase, projectId),
     listProjectEvents(supabase, projectId),
     listProjectInvitations(supabase, projectId),
@@ -172,6 +174,12 @@ export default async function AdminProjectPage({
     documents.find((document) => document.kind === "introductory_summary") ??
     null;
   const notice = query.notice ? noticeCopy[query.notice] : undefined;
+  /*
+   * Counts only, and only for the owner. It answers the question that used to have no
+   * answer from this side of the product — "did the client ever turn push on?" — without
+   * putting anyone's device endpoints on this screen.
+   */
+  const pushReach = pushReadiness?.[0] ?? { members: 0, members_with_push: 0 };
 
   /*
    * The stepper is derived here rather than inline in the markup, so the four states are
@@ -286,6 +294,19 @@ export default async function AdminProjectPage({
             </div>
             <span className="admin-chip">{companyPeople.length} אנשי קשר</span>
           </div>
+
+          {pushReach.members > 0 && (
+            <p
+              className="admin-notice"
+              data-tone={pushReach.members_with_push === 0 ? "attention" : undefined}
+              role="status"
+            >
+              {pushReach.members_with_push === 0
+                ? "אף אחד מהמשתמשים בפרויקט לא הפעיל התראות במכשיר. עדכונים יופיעו להם באזור האישי בלבד, בלי התראה בנייד."
+                : `${pushReach.members_with_push} מתוך ${pushReach.members} משתמשים בפרויקט מקבלים התראות בנייד.`}
+            </p>
+          )}
+
           {companyPeople.length === 0 ? (
             <p>אנשי קשר יופיעו לאחר יצירת ההזמנה הראשונה.</p>
           ) : (
@@ -363,7 +384,10 @@ export default async function AdminProjectPage({
                     {(allowReissue || allowRevoke) && (
                       <InvitationLifecycleActions
                         projectId={project.id}
+                        projectName={project.name}
                         invitationId={item.id}
+                        recipientName={item.fullName}
+                        recipientPhone={item.phone}
                         replacementInvitationId={randomUUID()}
                         invitationToken={replacement?.token ?? ""}
                         revokeIdempotencyKey={randomUUID()}
@@ -386,6 +410,7 @@ export default async function AdminProjectPage({
             </summary>
             <ProjectInvitationForm
               projectId={project.id}
+              projectName={project.name}
               invitationId={randomUUID()}
               invitationToken={invitation.token}
               idempotencyKey={randomUUID()}
@@ -460,6 +485,13 @@ export default async function AdminProjectPage({
             <p>לאחר שהלקוח ייכנס, המסמך יופיע באזור האישי שלו.</p>
           ) : answers ? (
             <>
+              {workflow.intake.client_reply && (
+                <div className="admin-client-reply">
+                  <strong>תגובת הלקוח להערה האחרונה</strong>
+                  <p>{workflow.intake.client_reply}</p>
+                </div>
+              )}
+
               <div className="admin-intake">
                 {intakeSections.map((section) => (
                   <details key={section.title}>

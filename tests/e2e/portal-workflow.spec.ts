@@ -26,6 +26,22 @@ test.describe.serial("authenticated client journey", () => {
       const ownerPage = await ownerContext.newPage();
       const clientPage = await clientContext.newPage();
 
+      /*
+       * A client who has never been here is shown the orientation instead of the
+       * dashboard, exactly once. Everything after this line depends on it being behind
+       * us, which makes it the right place to prove it can be finished.
+       */
+      await clientPage.goto("/portal");
+      const orientation = clientPage.getByRole("button", {
+        name: "הבנתי, קדימה לאזור האישי",
+      });
+      if (await orientation.isVisible()) {
+        await orientation.click();
+      }
+      await expect(
+        clientPage.getByRole("heading", { name: /טוב לראות אותך/ })
+      ).toBeVisible();
+
       await clientPage.goto(
         `/portal/projects/${portalE2EProjects.clientA}`
       );
@@ -66,8 +82,46 @@ test.describe.serial("authenticated client journey", () => {
         .click();
       await expect(clientPage).toHaveURL(/notice=intake-submitted/);
 
+      /*
+       * The correction round trip. A change request has to reach the screen the client
+       * actually opens, arrive with a note they can answer where they are reading it, and
+       * come back as a submission the owner can see the answer to.
+       */
       await ownerPage.goto(
         `/admin/projects/${portalE2EProjects.clientA}`
+      );
+      await ownerPage
+        .locator('textarea[name="reviewNote"]')
+        .fill("חסר לנו מי מקבל את ההחלטה בפועל.");
+      await ownerPage
+        .locator('button[name="decision"][value="request_changes"]')
+        .click();
+      await expect(ownerPage).toHaveURL(/notice=review-saved/);
+
+      await clientPage.goto("/portal");
+      await expect(
+        clientPage.getByRole("heading", { name: /ממתינ(ה|ות) לך/ })
+      ).toBeVisible();
+
+      await clientPage.goto(
+        `/portal/projects/${portalE2EProjects.clientA}/discovery`
+      );
+      await expect(
+        clientPage.getByText("חסר לנו מי מקבל את ההחלטה בפועל.")
+      ).toBeVisible();
+      await clientPage
+        .locator("#intake-client-reply")
+        .fill("המנכ״ל מחליט ומנהלת התפעול מאשרת.");
+      await clientPage
+        .locator('.intake-review button[name="intent"][value="submit"]')
+        .click();
+      await expect(clientPage).toHaveURL(/notice=intake-submitted/);
+
+      await ownerPage.goto(
+        `/admin/projects/${portalE2EProjects.clientA}`
+      );
+      await expect(ownerPage.locator(".admin-client-reply")).toContainText(
+        "מנהלת התפעול"
       );
       await ownerPage
         .locator('button[name="decision"][value="approve"]')

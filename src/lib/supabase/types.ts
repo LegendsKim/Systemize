@@ -75,6 +75,7 @@ type ProfileRow = {
   email: string;
   full_name: string;
   app_role: PortalAppRole;
+  portal_onboarded_at: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -170,6 +171,7 @@ type ClientIntakeRow = {
   answers: Json;
   current_step: number;
   review_note: string | null;
+  client_reply: string | null;
   submitted_at: string | null;
   reviewed_at: string | null;
   reviewed_by: string | null;
@@ -275,11 +277,19 @@ export interface Database {
         Row: ProfileRow;
         Insert: Pick<ProfileRow, "id" | "email" | "full_name"> & {
           app_role?: PortalAppRole;
+          portal_onboarded_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
         Update: Partial<
-          Pick<ProfileRow, "email" | "full_name" | "app_role" | "updated_at">
+          Pick<
+            ProfileRow,
+            | "email"
+            | "full_name"
+            | "app_role"
+            | "portal_onboarded_at"
+            | "updated_at"
+          >
         >;
         Relationships: [];
       };
@@ -403,6 +413,7 @@ export interface Database {
           answers?: Json;
           current_step?: number;
           review_note?: string | null;
+          client_reply?: string | null;
           submitted_at?: string | null;
           reviewed_at?: string | null;
           reviewed_by?: string | null;
@@ -416,6 +427,7 @@ export interface Database {
             | "answers"
             | "current_step"
             | "review_note"
+            | "client_reply"
             | "submitted_at"
             | "reviewed_at"
             | "reviewed_by"
@@ -668,8 +680,26 @@ export interface Database {
           p_current_step: number;
           p_submit: boolean;
           p_idempotency_key: string;
+          p_client_reply: string | null;
         };
         Returns: Json;
+      };
+      autosave_client_intake: {
+        Args: {
+          p_project_id: string;
+          p_answers: Json;
+          p_current_step: number;
+          p_client_reply: string | null;
+        };
+        Returns: string;
+      };
+      complete_portal_onboarding: {
+        Args: Record<string, never>;
+        Returns: string | null;
+      };
+      project_push_readiness: {
+        Args: { p_project_id: string };
+        Returns: { members: number; members_with_push: number }[];
       };
       review_client_intake: {
         Args: {

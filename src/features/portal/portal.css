@@ -452,6 +452,125 @@
   line-height: 1.65;
 }
 
+/*
+ * The one-time orientation. It owns the screen instead of sitting above the dashboard,
+ * so sizing is in relative units throughout and the whole thing reflows to a phone
+ * without a fixed pixel anywhere.
+ */
+.portal-onboarding {
+  display: grid;
+  gap: 1.75rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid var(--color-border);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 88% 8%, color-mix(in oklch, var(--color-primary) 13%, transparent), transparent 18rem),
+    var(--color-surface-0);
+}
+
+.portal-onboarding-intro {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.portal-onboarding-intro h1 {
+  margin: 0;
+}
+
+.portal-onboarding-intro p {
+  max-inline-size: 46ch;
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.portal-onboarding-steps {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-onboarding-steps li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  padding: 1.1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface-1);
+}
+
+.portal-onboarding-steps li > span {
+  color: var(--color-primary-hover);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.portal-onboarding-steps strong {
+  display: block;
+  margin-block-end: 0.25rem;
+}
+
+.portal-onboarding-steps p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.portal-onboarding-pointers h2,
+
+.portal-onboarding-push h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.portal-onboarding-pointers dl {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.portal-onboarding-pointers dt {
+  font-weight: 700;
+}
+
+.portal-onboarding-pointers dd {
+  margin: 0.15rem 0 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.portal-onboarding-push {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.2rem;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 30%, var(--color-border));
+  border-radius: 1rem;
+  background: var(--color-primary-soft);
+}
+
+.portal-onboarding-push p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.portal-onboarding-push .portal-secondary-button {
+  justify-self: start;
+}
+
+.portal-onboarding > .portal-primary-action {
+  justify-self: start;
+}
+
+.portal-home-actions {
+  margin-block-start: 2rem;
+}
+
 .portal-project-hero {
   display: grid;
   gap: 1.5rem;
@@ -636,21 +755,15 @@
 }
 
 /*
- * "פעולות" is the prominent destination by product decision, but prominence is not the
- * same thing as *being here*. It used to carry the filled primary treatment permanently,
- * which meant the bar showed the same highlight on all five screens — indistinguishable
- * from having no current-page state at all. Prominence is now a soft tint; the filled
- * treatment belongs to whichever tab the route actually is.
+ * Exactly one tab is ever highlighted: the one whose route is open.
+ *
+ * "פעולות" used to carry a standing tint on top of that, on the theory that it is the
+ * most important destination. On screen it read as a second current-page marker, so two
+ * tabs looked selected at once and the real one stopped meaning anything. Prominence, if
+ * it is wanted, belongs in the content — not in a bar whose entire job is to say where
+ * you are.
  */
-.portal-mobile-nav .portal-mobile-nav-primary {
-  color: var(--color-primary-hover);
-  font-weight: 700;
-  background: var(--color-primary-soft);
-}
-
-.portal-mobile-nav a[aria-current="page"],
-
-.portal-mobile-nav .portal-mobile-nav-primary[aria-current="page"] {
+.portal-mobile-nav a[aria-current="page"] {
   color: var(--color-text-on-primary);
   font-weight: 700;
   background: var(--color-primary);
@@ -1319,10 +1432,82 @@
   font-weight: 750;
 }
 
-.intake-field em {
-  color: var(--color-primary-hover);
-  font-size: 0.75rem;
-  font-style: normal;
+/*
+ * A required field is marked with an asterisk rather than the word "נדרש". The word read
+ * as an instruction inside the question and made every mandatory row longer than the
+ * question itself; the mark carries the same meaning at a glance, and the screen-reader
+ * text next to it carries it for anyone who cannot see the colour or the glyph.
+ */
+.intake-required {
+  color: var(--color-error);
+  font-size: 1.05em;
+  font-weight: 700;
+}
+
+.portal-visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.intake-counter {
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.intake-counter[data-tone="short"] {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.intake-counter[data-tone="near-limit"] {
+  color: #8a5a10;
+  font-weight: 600;
+}
+
+.intake-autosave {
+  min-block-size: 1.2rem;
+  margin: 0.75rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.intake-review {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.intake-review > .portal-primary-action {
+  justify-self: start;
+}
+
+.intake-reply {
+  display: grid;
+  gap: 0.2rem;
+  margin-block-start: 0.4rem;
+  font-weight: 700;
+}
+
+.intake-reply small {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.intake-review textarea {
+  inline-size: 100%;
+  resize: vertical;
+  padding: 0.85rem 1rem;
+  color: var(--color-text-primary);
+  font: inherit;
+  line-height: 1.65;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.9rem;
+  background: var(--color-surface-0);
 }
 
 .intake-field small {

@@ -28,7 +28,7 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
       .maybeSingle(),
     supabase
       .from("client_intakes")
-      .select("status,answers,current_step,review_note")
+      .select("status,answers,current_step,review_note,client_reply,updated_at")
       .eq("project_id", projectId)
       .maybeSingle(),
   ]);
@@ -50,9 +50,11 @@ export default async function DiscoveryPage({ params }: DiscoveryPageProps) {
         initialAnswers={
           intake ? parseIntakeAnswers(intake.answers) : emptyIntakeAnswers()
         }
+        initialClientReply={intake?.client_reply ?? ""}
         initialStep={intake?.current_step ?? 1}
         status={intake?.status ?? "draft"}
         reviewNote={intake?.review_note ?? null}
+        serverSavedAt={intake?.updated_at ?? null}
         idempotencyKey={randomUUID()}
       />
     </main>

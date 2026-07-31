@@ -74,7 +74,16 @@ describe("portal navigation", () => {
     ]);
   });
 
-  it("marks exactly one destination as the prominent one", () => {
-    expect(portalNavItems.filter((item) => item.primary)).toHaveLength(1);
+  /*
+   * The bar carries no standing emphasis of its own. A permanently tinted "פעולות" read
+   * as a second selected tab next to the real one, so the only highlight left is
+   * aria-current — and that one is decided by the route.
+   */
+  it("gives no destination a highlight that outlives the route", () => {
+    expect(
+      portalNavItems.filter(
+        (item) => "primary" in (item as unknown as Record<string, unknown>)
+      )
+    ).toHaveLength(0);
   });
 });

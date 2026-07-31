@@ -7,6 +7,19 @@ import {
 
 const answerSchema = z.string().trim().max(5000, "התשובה ארוכה מדי.");
 
+/**
+ * The floor for a required answer, in characters.
+ *
+ * Low on purpose: it exists to stop "כן" and an accidental empty submit, not to force
+ * anyone to write an essay. The same number drives the counter under every field, so the
+ * client is told the target before they hit send rather than after.
+ */
+export const intakeMinimumAnswerLength = 10;
+
+export const intakeMaximumAnswerLength = 5000;
+
+export const intakeReplyMaximumLength = 2000;
+
 const requiredOnSubmit: ReadonlySet<IntakeFieldName> = new Set([
   "companyOverview",
   "productsAndServices",
@@ -23,39 +36,63 @@ const requiredOnSubmit: ReadonlySet<IntakeFieldName> = new Set([
 
 export const projectWorkflowIdSchema = z.string().uuid("מזהה הפרויקט אינו תקין.");
 
+export interface ParsedIntakeForm {
+  readonly answers: IntakeAnswers;
+  readonly clientReply: string;
+  readonly fieldErrors: Record<string, string[] | undefined>;
+}
+
+/**
+ * Always returns what the person typed, valid or not.
+ *
+ * The earlier version returned either answers or errors. That made the failure path throw
+ * away ten minutes of writing: the action returned only messages, React reset the
+ * uncontrolled form, and the fields fell back to the last values the server had — which,
+ * validation having failed, were the ones from before the session. Echoing the submitted
+ * text back is what lets the screen redraw with the work still in it.
+ */
 export function parseIntakeForm(
   formData: FormData,
   submit: boolean
-):
-  | { readonly success: true; readonly answers: IntakeAnswers }
-  | {
-      readonly success: false;
-      readonly fieldErrors: Record<string, string[] | undefined>;
-    } {
+): ParsedIntakeForm {
   const answers = {} as IntakeAnswers;
   const fieldErrors: Record<string, string[] | undefined> = {};
 
   for (const name of intakeFieldNames) {
     const rawValue = formData.get(name);
-    const result = answerSchema.safeParse(
-      typeof rawValue === "string" ? rawValue : ""
-    );
+    const raw = typeof rawValue === "string" ? rawValue : "";
+    const result = answerSchema.safeParse(raw);
+
     if (!result.success) {
       fieldErrors[name] = result.error.issues.map((issue) => issue.message);
-      answers[name] = "";
+      answers[name] = raw.slice(0, intakeMaximumAnswerLength);
       continue;
     }
 
     answers[name] = result.data;
-    if (submit && requiredOnSubmit.has(name) && result.data.length < 10) {
-      fieldErrors[name] = ["כדי לשלוח, יש להוסיף תשובה מעט מפורטת יותר."];
+    if (
+      submit &&
+      requiredOnSubmit.has(name) &&
+      result.data.length < intakeMinimumAnswerLength
+    ) {
+      const missing = intakeMinimumAnswerLength - result.data.length;
+      fieldErrors[name] = [
+        `חסרים עוד ${missing} תווים כדי שנוכל לשלוח את התשובה הזו.`,
+      ];
     }
   }
 
-  if (Object.keys(fieldErrors).length > 0) {
-    return { success: false, fieldErrors };
-  }
-  return { success: true, answers };
+  const rawReply = formData.get("clientReply");
+  const clientReply =
+    typeof rawReply === "string"
+      ? rawReply.trim().slice(0, intakeReplyMaximumLength)
+      : "";
+
+  return { answers, clientReply, fieldErrors };
+}
+
+export function hasIntakeFieldErrors(parsed: ParsedIntakeForm): boolean {
+  return Object.keys(parsed.fieldErrors).length > 0;
 }
 
 export const intakeReviewSchema = z.object({

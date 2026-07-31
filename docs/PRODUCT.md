@@ -123,6 +123,10 @@ invitation.
 
 ### 5.3 Pre-meeting guest intake
 
+On first arrival a client is shown a one-time orientation covering the four stages of the
+engagement, where each kind of thing lives, and the offer to enable device notifications.
+Completion is recorded on the profile, and the screen is never shown again.
+
 After invitation activation, a potential client sees only the guest side of the
 assigned project. The first required action is a private, structured business-intake
 document:
@@ -130,10 +134,18 @@ document:
 1. The client completes a five-part questionnaire covering the business, current
    workflow, problems, goals, users, required capabilities, integrations, data,
    automation, reporting, security, timetable, and commercial context.
-2. A draft may be saved and resumed. Submission locks the reviewed snapshot.
-3. SYSTEMIZE receives a durable in-app notification and may approve the document or
+2. Each field states how much has been written and, where an answer is required, how much
+   is still missing. A rejected submission returns the client's own text to the screen and
+   opens the step that carries the error.
+3. Work is persisted continuously: to the device as it is typed, and to the server once
+   typing pauses or the page is left. The explicit draft button remains. Submission locks
+   the reviewed snapshot.
+4. SYSTEMIZE receives a durable in-app notification and may approve the document or
    request a focused update.
-4. Approval creates a notification for the client and unlocks owner-published meeting
+5. A requested update survives a saved draft: the note stays on screen until the client
+   actually re-submits. The client answers it in place and re-submits from wherever they
+   are, and the answer reaches the owner beside the questionnaire.
+6. Approval creates a notification for the client and unlocks owner-published meeting
    slots.
 5. The client may reserve one available slot. Booking is atomic and advances the
    project to `intro_call_scheduled`.

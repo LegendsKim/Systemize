@@ -17,7 +17,6 @@ export interface PortalNavItem {
   readonly label: string;
   /** Pathnames owned by this destination. `exact` matches only itself. */
   readonly match: { readonly exact: string } | { readonly prefix: string };
-  readonly primary?: boolean;
 }
 
 export const portalNavItems: readonly PortalNavItem[] = [
@@ -31,7 +30,6 @@ export const portalNavItems: readonly PortalNavItem[] = [
     href: "/portal/actions",
     label: "פעולות",
     match: { prefix: "/portal/actions" },
-    primary: true,
   },
   {
     href: "/portal/documents",

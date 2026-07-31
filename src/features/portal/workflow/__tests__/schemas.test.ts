@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { formatIls } from "../format";
-import { parseIntakeForm, paymentRequestSchema } from "../schemas";
+import {
+  hasIntakeFieldErrors,
+  intakeMinimumAnswerLength,
+  parseIntakeForm,
+  paymentRequestSchema,
+} from "../schemas";
 
 function createCompleteIntakeForm(): FormData {
   const form = new FormData();
@@ -27,22 +32,52 @@ describe("guest intake validation", () => {
   it("allows an incomplete draft to be saved", () => {
     const form = new FormData();
     form.set("companyOverview", "Short");
-    expect(parseIntakeForm(form, false).success).toBe(true);
+    expect(hasIntakeFieldErrors(parseIntakeForm(form, false))).toBe(false);
   });
 
   it("requires meaningful answers before submission", () => {
     const form = new FormData();
     form.set("companyOverview", "Short");
     const result = parseIntakeForm(form, true);
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.fieldErrors.companyOverview).toBeDefined();
-      expect(result.fieldErrors.currentProcess).toBeDefined();
-    }
+    expect(hasIntakeFieldErrors(result)).toBe(true);
+    expect(result.fieldErrors.companyOverview).toBeDefined();
+    expect(result.fieldErrors.currentProcess).toBeDefined();
+  });
+
+  it("says how many characters are still missing", () => {
+    const form = new FormData();
+    form.set("companyOverview", "קצר");
+    const result = parseIntakeForm(form, true);
+
+    expect(result.fieldErrors.companyOverview?.[0]).toContain(
+      String(intakeMinimumAnswerLength - 3)
+    );
+  });
+
+  /*
+   * The regression that cost a client ten minutes of typing: a rejected submission has to
+   * hand every answer back, or the form redraws from server state that never received it.
+   */
+  it("returns the submitted answers even when the submission is rejected", () => {
+    const form = new FormData();
+    form.set("companyOverview", "Short");
+    form.set("additionalNotes", "A note that is long enough to keep.");
+    form.set("clientReply", "  השלמתי את מה שביקשתם  ");
+
+    const result = parseIntakeForm(form, true);
+
+    expect(hasIntakeFieldErrors(result)).toBe(true);
+    expect(result.answers.companyOverview).toBe("Short");
+    expect(result.answers.additionalNotes).toBe(
+      "A note that is long enough to keep."
+    );
+    expect(result.clientReply).toBe("השלמתי את מה שביקשתם");
   });
 
   it("accepts a complete confidential intake", () => {
-    expect(parseIntakeForm(createCompleteIntakeForm(), true).success).toBe(true);
+    expect(
+      hasIntakeFieldErrors(parseIntakeForm(createCompleteIntakeForm(), true))
+    ).toBe(false);
   });
 });
 describe("payment request validation", () => {

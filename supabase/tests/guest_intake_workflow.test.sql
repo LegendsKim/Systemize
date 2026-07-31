@@ -30,8 +30,20 @@ SELECT ok(
 SELECT has_function(
   'public',
   'save_client_intake',
+  ARRAY['uuid', 'jsonb', 'smallint', 'boolean', 'uuid', 'text'],
+  'intake save and submission use one transactional RPC that carries the reply'
+);
+SELECT hasnt_function(
+  'public',
+  'save_client_intake',
   ARRAY['uuid', 'jsonb', 'smallint', 'boolean', 'uuid'],
-  'intake save and submission use one transactional RPC'
+  'the pre-reply signature is gone rather than left as an ambiguous overload'
+);
+SELECT has_function(
+  'public',
+  'autosave_client_intake',
+  ARRAY['uuid', 'jsonb', 'smallint', 'text'],
+  'background draft persistence has its own RPC'
 );
 SELECT has_function(
   'public',

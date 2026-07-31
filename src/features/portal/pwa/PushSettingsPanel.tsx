@@ -2,11 +2,8 @@
 // Required: notification permission, PushManager and installed-app state are browser APIs.
 
 import { useEffect, useState, useSyncExternalStore } from "react";
-import {
-  detectPwaPlatform,
-  urlBase64ToUint8Array,
-  type PwaPlatformState,
-} from "./platform";
+import { detectPwaPlatform, type PwaPlatformState } from "./platform";
+import { enrollCurrentDevice, persistPushSubscription } from "./enroll";
 import { mutableNotificationCategories } from "./push-schema";
 
 interface Device {
@@ -35,26 +32,6 @@ const categoryLabels: Record<(typeof mutableNotificationCategories)[number], str
 
 function timeoutSignal(milliseconds: number): AbortSignal {
   return AbortSignal.timeout(milliseconds);
-}
-
-async function persistSubscription(subscription: PushSubscription): Promise<string> {
-  const json = subscription.toJSON();
-  const response = await fetch("/api/push/subscriptions", {
-    method: "POST",
-    cache: "no-store",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      endpoint: subscription.endpoint,
-      keys: json.keys,
-      userAgent: navigator.userAgent.slice(0, 300),
-    }),
-    signal: timeoutSignal(8_000),
-  });
-  const result = (await response.json()) as { id?: string; error?: string };
-  if (!response.ok || !result.id) {
-    throw new Error(result.error ?? "save_failed");
-  }
-  return result.id;
 }
 
 export function PushSettingsPanel({
@@ -104,7 +81,7 @@ export function PushSettingsPanel({
       .then((registration) => registration.pushManager.getSubscription())
       .then(async (subscription) => {
         if (!subscription) return;
-        const id = await persistSubscription(subscription);
+        const id = await persistPushSubscription(subscription);
         if (active) setCurrentDeviceId(id);
       })
       .catch(() => {
@@ -124,38 +101,31 @@ export function PushSettingsPanel({
     if (!platform?.supported || !publicKey) return;
     setPending(true);
     setStatus("");
-    try {
-      const nextPermission = await Notification.requestPermission();
-      setPermission(nextPermission);
-      if (nextPermission !== "granted") return;
-      const registration = await navigator.serviceWorker.ready;
-      const existing = await registration.pushManager.getSubscription();
-      const subscription =
-        existing ??
-        (await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(publicKey),
-        }));
-      const id = await persistSubscription(subscription);
-      setCurrentDeviceId(id);
-      setDevices((current) =>
-        current.some((device) => device.id === id)
-          ? current
-          : [
-              {
-                id,
-                label: "המכשיר הזה",
-                lastSeenLabel: "עכשיו",
-              },
-              ...current,
-            ]
+
+    const result = await enrollCurrentDevice(publicKey);
+    if (result.outcome !== "enabled" || !result.subscriptionId) {
+      setPermission(
+        result.outcome === "denied" ? "denied" : Notification.permission
       );
-      setStatus("ההתראות הופעלו במכשיר הזה.");
-    } catch {
-      setStatus("לא הצלחנו להפעיל התראות. אפשר לנסות שוב.");
-    } finally {
+      setStatus(
+        result.outcome === "denied"
+          ? "ההרשאה לא ניתנה. אפשר לאשר התראות בהגדרות המכשיר."
+          : "לא הצלחנו להפעיל התראות. אפשר לנסות שוב."
+      );
       setPending(false);
+      return;
     }
+
+    const id = result.subscriptionId;
+    setPermission("granted");
+    setCurrentDeviceId(id);
+    setDevices((current) =>
+      current.some((device) => device.id === id)
+        ? current
+        : [{ id, label: "המכשיר הזה", lastSeenLabel: "עכשיו" }, ...current]
+    );
+    setStatus("ההתראות הופעלו במכשיר הזה.");
+    setPending(false);
   }
 
   async function revokeDevice(id: string) {

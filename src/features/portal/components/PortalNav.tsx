@@ -42,11 +42,6 @@ export function PortalNav({ variant }: PortalNavProps) {
              * and the position a screen reader announces cannot disagree.
              */
             aria-current={current ? "page" : undefined}
-            className={
-              item.primary && variant === "mobile"
-                ? "portal-mobile-nav-primary"
-                : undefined
-            }
           >
             {item.label}
           </Link>

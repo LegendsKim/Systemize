@@ -9,6 +9,8 @@ import {
 } from "@/features/portal/auth/session";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
+  hasIntakeFieldErrors,
+  intakeReplyMaximumLength,
   intakeReviewSchema,
   meetingBookingSchema,
   meetingSlotSchema,
@@ -17,7 +19,9 @@ import {
   paymentRequestSchema,
   projectWorkflowIdSchema,
 } from "./schemas";
+import { parseIntakeAnswers } from "./intake";
 import type {
+  IntakeActionState,
   WorkflowActionState,
   WorkflowFieldErrors,
 } from "./action-state";
@@ -31,9 +35,9 @@ function errorState(
 }
 
 export async function saveClientIntake(
-  _state: WorkflowActionState,
+  _state: IntakeActionState,
   formData: FormData
-): Promise<WorkflowActionState> {
+): Promise<IntakeActionState> {
   await requirePortalIdentity();
   const projectIdResult = projectWorkflowIdSchema.safeParse(
     formData.get("projectId")
@@ -45,38 +49,50 @@ export async function saveClientIntake(
     formData.get("idempotencyKey")
   );
   const submit = formData.get("intent") === "submit";
+  const parsed = parseIntakeForm(formData, submit);
+  // Every failure path below returns this, so no rejection can cost the client their text.
+  const values = { answers: parsed.answers, clientReply: parsed.clientReply };
 
   if (
     !projectIdResult.success ||
     !currentStepResult.success ||
     !idempotencyResult.success
   ) {
-    return errorState("לא ניתן לשמור את המסמך. רעננו את העמוד ונסו שוב.");
+    return {
+      ...errorState("לא ניתן לשמור את המסמך. רעננו את העמוד ונסו שוב."),
+      values,
+    };
   }
 
-  const parsedAnswers = parseIntakeForm(formData, submit);
-  if (!parsedAnswers.success) {
-    return errorState(
-      "יש להשלים את השדות המסומנים לפני שליחת המסמך.",
-      parsedAnswers.fieldErrors
-    );
+  if (hasIntakeFieldErrors(parsed)) {
+    return {
+      ...errorState(
+        "יש להשלים את השדות המסומנים לפני שליחת המסמך. מה שכתבתם נשמר במסך.",
+        parsed.fieldErrors
+      ),
+      values,
+    };
   }
 
   const supabase = await createServerSupabaseClient();
   const { error } = await supabase.rpc("save_client_intake", {
     p_project_id: projectIdResult.data,
-    p_answers: parsedAnswers.answers,
+    p_answers: parsed.answers,
     p_current_step: currentStepResult.data,
     p_submit: submit,
     p_idempotency_key: idempotencyResult.data,
+    p_client_reply: parsed.clientReply || null,
   });
 
   if (error) {
-    return errorState(
-      error.message.includes("intake_locked")
-        ? "המסמך כבר נשלח לבדיקה ואינו פתוח לעריכה."
-        : "לא הצלחנו לשמור את המסמך כרגע. התוכן נשאר במסך וניתן לנסות שוב."
-    );
+    return {
+      ...errorState(
+        error.message.includes("intake_locked")
+          ? "המסמך כבר נשלח לבדיקה ואינו פתוח לעריכה."
+          : "לא הצלחנו לשמור את המסמך כרגע. התוכן נשאר במסך וניתן לנסות שוב."
+      ),
+      values,
+    };
   }
 
   schedulePushOutboxDrain();
@@ -87,6 +103,56 @@ export async function saveClientIntake(
       submit ? "intake-submitted" : "draft-saved"
     }`
   );
+}
+
+export interface IntakeAutosaveResult {
+  readonly status: "saved" | "locked" | "failed";
+  readonly savedAt?: string;
+}
+
+/**
+ * Background draft persistence, called while the client types.
+ *
+ * Deliberately not the same call as the button: it transitions nothing, notifies nobody,
+ * and writes no idempotency record, because a last-write-wins draft upsert replayed twice
+ * is the same draft. It also never redirects — the person is mid-sentence.
+ */
+export async function autosaveClientIntake(input: {
+  readonly projectId: string;
+  readonly currentStep: number;
+  readonly answers: Record<string, string>;
+  readonly clientReply: string;
+}): Promise<IntakeAutosaveResult> {
+  await requirePortalIdentity();
+  const projectIdResult = projectWorkflowIdSchema.safeParse(input.projectId);
+  const stepResult = z.coerce.number().int().min(1).max(5).safeParse(
+    input.currentStep
+  );
+  if (!projectIdResult.success || !stepResult.success) {
+    return { status: "failed" };
+  }
+
+  const answers = parseIntakeAnswers(input.answers);
+  const clientReply =
+    typeof input.clientReply === "string"
+      ? input.clientReply.trim().slice(0, intakeReplyMaximumLength)
+      : "";
+
+  const supabase = await createServerSupabaseClient();
+  const { data, error } = await supabase.rpc("autosave_client_intake", {
+    p_project_id: projectIdResult.data,
+    p_answers: answers,
+    p_current_step: stepResult.data,
+    p_client_reply: clientReply || null,
+  });
+
+  if (error) {
+    return {
+      status: error.message.includes("intake_locked") ? "locked" : "failed",
+    };
+  }
+
+  return { status: "saved", savedAt: data ?? undefined };
 }
 
 export async function reviewClientIntake(formData: FormData): Promise<void> {

@@ -3,6 +3,7 @@ import { Heebo, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
 import { a11yRestoreScript } from "@/features/accessibility/a11y-settings";
 import { defaultLocale, getDirection, getHtmlLang } from "@/lib/i18n";
+import { openGraphImageDescriptor } from "@/lib/seo/open-graph-image";
 import { siteDescription, siteName, siteTagline, siteUrl } from "@/lib/site-config";
 import "./globals.css";
 
@@ -44,11 +45,13 @@ export const metadata: Metadata = {
     title: `${siteName} | ${siteTagline}`,
     description: siteDescription,
     url: "/",
+    images: [openGraphImageDescriptor],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteName} | ${siteTagline}`,
     description: siteDescription,
+    images: [openGraphImageDescriptor],
   },
 };
 

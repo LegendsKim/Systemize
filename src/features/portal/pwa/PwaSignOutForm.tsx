@@ -1,8 +1,9 @@
 "use client";
-// Required: logout purges Cache Storage through browser APIs before submitting.
+// Required: logout purges browser-held PWA and draft data before submitting.
 
 import { useRef, type FormEvent } from "react";
 import { signOut } from "@/features/portal/auth/actions";
+import { clearAllLocalIntakeDrafts } from "@/features/portal/workflow/intake-draft";
 
 export function PwaSignOutForm({
   buttonClassName,
@@ -18,6 +19,7 @@ export function PwaSignOutForm({
     event.preventDefault();
     const form = event.currentTarget;
     void (async () => {
+      clearAllLocalIntakeDrafts();
       if ("caches" in window) {
         const keys = await window.caches.keys();
         await Promise.all(

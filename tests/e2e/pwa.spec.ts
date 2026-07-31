@@ -109,7 +109,10 @@ test("the worker never stores authenticated HTML, RSC or API responses", async (
   }
 });
 
-test("logout purges every SYSTEMIZE PWA cache", async ({ browser, baseURL }) => {
+test("logout purges PWA caches and private intake drafts", async ({
+  browser,
+  baseURL,
+}) => {
   const context = await authenticatedPortalContext(
     browser,
     portalE2EUsers.clientB,
@@ -141,6 +144,11 @@ test("logout purges every SYSTEMIZE PWA cache", async ({ browser, baseURL }) => 
     await page.evaluate(async () => {
       const cache = await caches.open("systemize-pwa-test-private");
       await cache.put("/portal/private-fixture", new Response("private"));
+      localStorage.setItem(
+        "systemize:intake-draft:e2e-private-project",
+        JSON.stringify({ answers: { companyOverview: "private" } })
+      );
+      localStorage.setItem("unrelated-e2e-setting", "keep");
     });
 
     await page.getByRole("button", { name: "יציאה" }).click();
@@ -167,6 +175,14 @@ test("logout purges every SYSTEMIZE PWA cache", async ({ browser, baseURL }) => 
         })
       )
       .toEqual([]);
+    expect(
+      await page.evaluate(() => ({
+        draft: localStorage.getItem(
+          "systemize:intake-draft:e2e-private-project"
+        ),
+        unrelated: localStorage.getItem("unrelated-e2e-setting"),
+      }))
+    ).toEqual({ draft: null, unrelated: "keep" });
 
     const admin = createClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

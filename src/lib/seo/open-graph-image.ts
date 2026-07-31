@@ -4,22 +4,18 @@ import { siteName, siteTagline } from "@/lib/site-config";
  * The one description of the Open Graph card, shared by the route that generates it and
  * the routes that reference it.
  *
- * This module exists because of a specific Next.js behaviour that is easy to ship broken:
- * the `opengraph-image` file convention is resolved into a segment's metadata, and a
- * deeper segment that exports its own `openGraph` object *replaces* that resolution
- * wholesale, including the images. The home page inherits the root layout's `openGraph`
- * and therefore keeps the generated card, but `/privacy`, `/terms` and `/accessibility`
- * each need a route-appropriate `og:title`, and the moment they declare one the card
- * disappears from them. It was verified missing from the rendered HTML before this module
- * existed.
+ * A stable public path is intentional. Social crawlers cache previews aggressively, and
+ * Next's metadata file convention may emit a build-specific query string. Keeping the
+ * card at one immutable-looking URL makes WhatsApp and similar crawlers much less likely
+ * to retain a failed or obsolete generated URL.
  *
- * So the image is restated on those routes, from here, once, next to the size the
- * generator actually uses, so the two cannot drift. The path is relative: `metadataBase`
- * in the root layout resolves it against `siteUrl`, and no host is written down.
+ * Every route restates the image from this shared descriptor. The path is relative:
+ * `metadataBase` in the root layout resolves it against `siteUrl`, and no host is written
+ * down.
  */
 
-/** Route Next.js serves the generated card from. Matches `src/app/opengraph-image.png`. */
-export const openGraphImagePath = "/opengraph-image.png";
+/** Stable public crawler asset. Matches `public/systemize-share-card.png`. */
+export const openGraphImagePath = "/systemize-share-card.png";
 
 export const openGraphImageSize = { width: 1200, height: 630 } as const;
 
