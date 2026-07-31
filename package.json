@@ -2,6 +2,7 @@
   "name": "systemize-site",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@10.9.8",
   "description": "SYSTEMIZE marketing site and authenticated client delivery portal. Hebrew, RTL, Next.js App Router with Supabase.",
   "license": "UNLICENSED",
   "engines": {
