@@ -13,7 +13,7 @@ const optionalCredential = z
   .transform((value) => (value && value.length > 0 ? value : undefined));
 
 const serverSchema = z.object({
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, "SUPABASE_SERVICE_ROLE_KEY is required"),
+  SUPABASE_SERVICE_ROLE_KEY: optionalCredential,
   TELEGRAM_BOT_TOKEN: optionalCredential,
   TELEGRAM_CHAT_ID: optionalCredential,
   SYSTEMIZE_OWNER_GMAIL: optionalCredential,

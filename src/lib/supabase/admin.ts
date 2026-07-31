@@ -15,6 +15,9 @@ export function getAdminSupabaseClient() {
   if (!adminClient) {
     const publicEnv = getPublicEnv();
     const serverEnv = getServerEnv();
+    if (!serverEnv.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error("SUPABASE_SERVICE_ROLE_KEY is required for admin operations.");
+    }
     adminClient = createClient<Database>(
       publicEnv.NEXT_PUBLIC_SUPABASE_URL,
       serverEnv.SUPABASE_SERVICE_ROLE_KEY,
