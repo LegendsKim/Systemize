@@ -55,6 +55,15 @@
   outline: 3px solid var(--color-primary-focus);
   outline-offset: 3px;
 }
+
+@media (max-width: 30rem) {
+  .a11y-trigger {
+    inset-block-end: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    inset-inline-end: calc(0.75rem + env(safe-area-inset-left, 0px));
+    inline-size: 3rem;
+    block-size: 3rem;
+  }
+}
 /* ---------------------------------------------------------------------------
  * Panel
  *

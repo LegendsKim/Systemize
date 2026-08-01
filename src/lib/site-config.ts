@@ -41,18 +41,21 @@ export const siteTagline = "מערכות ניהול בענן, בנויות סב�
  * hero, where a person reads it.
  */
 export const siteDescription =
-  "Systemize בונה מערכות ניהול בענן בהתאמה לעסק, משיחת ההיכרות והאפיון ועד פיתוח, הטמעה ושירות מתמשך.";
+  "האתר של Systemize לבניית מערכות ניהול בענן בהתאמה לעסק — מאפיון ועד פיתוח, הטמעה ושירות מתמשך — וכניסה מאובטחת ל־SYSTEMIZE PORTAL ללקוחות.";
 
-/**
- * In-page navigation. Each `href` must match a section `id` rendered on the home page,
- * so that a missing section becomes an obviously broken anchor rather than a silent
- * no-op.
- */
+/** The public header stays focused on the two destinations visitors return to. */
+export const primaryNavigation = [
+  { href: "/portal", label: "אזור אישי" },
+  { href: "/projects", label: "פרויקטים" },
+] as const;
+
+/** Broader site navigation remains available in the footer. */
 export const navigation = [
-  { href: "#process", label: "איך זה עובד" },
-  { href: "#diagnostic", label: "האזור האישי" },
-  { href: "#faq", label: "שאלות" },
-  { href: "#blueprint", label: "יצירת קשר" },
+  { href: "/#process", label: "איך זה עובד" },
+  { href: "/projects", label: "פרויקטים" },
+  { href: "/portal", label: "אזור אישי" },
+  { href: "/#faq", label: "שאלות" },
+  { href: "/#blueprint", label: "יצירת קשר" },
 ] as const;
 
 export const legalRoutes = [
@@ -64,5 +67,9 @@ export const legalRoutes = [
 /** Every indexable route, used by the sitemap. */
 export const indexableRoutes = [
   "/",
+  "/projects",
+  "/projects/athletetrack",
+  "/projects/finquest",
+  "/projects/guesto",
   ...legalRoutes.map((route) => route.href),
 ] as const;

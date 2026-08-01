@@ -1,6 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000";
+const requestedPort = process.env.PORTAL_E2E_PORT;
+const portalE2EPort =
+  requestedPort && /^\d{2,5}$/.test(requestedPort) ? requestedPort : "3000";
+const baseURL =
+  process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${portalE2EPort}`;
 
 export default defineConfig({
   testDir: "./tests",
@@ -12,7 +16,7 @@ export default defineConfig({
     ? [["html", { open: "never" }], ["github"]]
     : [["html", { open: "on-failure" }]],
   snapshotPathTemplate:
-    "{testDir}/{testFilePath}-snapshots/{arg}-{projectName}{ext}",
+    "{testDir}/{testFilePath}-snapshots/{arg}-{projectName}-{platform}{ext}",
 
   use: {
     baseURL,
@@ -30,6 +34,12 @@ export default defineConfig({
       name: "a11y",
       testDir: "./tests/a11y",
       use: { ...devices["Desktop Chrome"] },
+    },
+    {
+      name: "responsive-webkit",
+      testDir: "./tests/e2e",
+      testMatch: "responsive-mobile.spec.ts",
+      use: { ...devices["iPhone 14"] },
     },
     {
       name: "visual",
@@ -51,10 +61,12 @@ export default defineConfig({
     },
   ],
 
-  webServer: {
-    command: "npm run build && npm run start",
-    url: baseURL,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: process.env.PLAYWRIGHT_BASE_URL
+    ? undefined
+    : {
+      command: `npm run build && npm run start -- -p ${portalE2EPort}`,
+      url: baseURL,
+      reuseExistingServer: !process.env.CI && process.env.PORTAL_E2E !== "1",
+      timeout: 120_000,
+      },
 });

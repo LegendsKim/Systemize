@@ -78,6 +78,35 @@ export class SupabaseLeadRepository implements LeadRepository {
   }
 }
 
+/**
+ * The console's read path for `public.leads`.
+ *
+ * Deliberately takes the caller's request-scoped client rather than reusing the
+ * service-role client above. The service-role client bypasses RLS, so reading leads
+ * through it would make the `leads_owner_read` policy decorative and leave authorization
+ * resting on nothing but this function being called from the right place. Passing the
+ * signed-in client means the database refuses the rows for anyone who is not the
+ * SYSTEMIZE owner, whatever the calling page believes.
+ */
+export async function listLeadsForOwner(
+  supabase: SupabaseClient<Database>,
+  limit = 100
+): Promise<readonly LeadRecord[]> {
+  const safeLimit = Math.min(Math.max(limit, 1), 200);
+  const { data, error } = await supabase
+    .from("leads")
+    .select(LEAD_COLUMNS)
+    .order("created_at", { ascending: false })
+    .limit(safeLimit);
+
+  if (error) {
+    // The message can quote the offending row, which is PII. Only the code travels.
+    throw new Error(`Failed to list leads (code ${error.code ?? "unknown"})`);
+  }
+
+  return data;
+}
+
 let repository: LeadRepository | null = null;
 
 export function getLeadRepository(): LeadRepository {

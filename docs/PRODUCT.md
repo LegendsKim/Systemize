@@ -1,246 +1,561 @@
-# Systemize Marketing Site — Product Definition
+# SYSTEMIZE Platform — Product Definition
 
-- Client: Systemize
+- Client: SYSTEMIZE
+- Product: SYSTEMIZE marketing site + SYSTEMIZE PORTAL
 - Decision owner: Marlen Kimiagrov
 - Boilerplate source: Systemize Boilerplate v1.0.1
-- Status: approved 2026-07-25; scope narrowed the same day (§3.2); positioning restated
-  by the owner on 2026-07-26 (§1, §3.1.6)
-- Last reviewed: 2026-07-26
+- Status: approved by the decision owner on 2026-07-29
+- Last reviewed: 2026-07-29
 
-Raw input is preserved at `docs/discovery/CLIENT_BRIEF.md`. Implementation-governing
-configuration lives in `AGENTS.client.md`. This document defines *what* is being built
-and how completion is judged.
+Raw requirements are preserved in `docs/discovery/CLIENT_BRIEF.md`.
+Implementation-governing configuration lives in `AGENTS.client.md`.
 
----
+## 1. Product vision
 
-## 1. Objective and success criteria
+SYSTEMIZE is one continuous customer-delivery platform with two connected surfaces:
 
-Systemize builds bespoke cloud management systems for small and medium businesses, in
-any trade — a judo coach tracking memberships and attendance, or a company tracking
-cleanroom inventory. The delivery model is the product: learn the client's existing
-workflow, specify, plan, build with the client in the loop, and roll the system out.
+1. A public marketing site that explains the offer and captures qualified leads.
+2. SYSTEMIZE PORTAL, which manages the relationship from the introductory call through
+   discovery, contracting, payment, delivery, rollout, and ongoing service.
 
-The claim that carries the site: *software does not dictate how the business works; the
-business dictates how the software is built.* The breadth of the client range is itself
-the proof — two businesses with nothing in common both received a system cut to fit.
+The differentiator is not merely that a customer has a portal. The differentiator is a
+clear, documented, and transparent delivery process. At every point the customer should
+understand:
 
-"Cloud" is the customer-facing word, not "web". It names the benefit the buyer is
-actually purchasing: reachable from anywhere, nothing to install, no server in the
-office. The site is a public, single-page marketing and lead-generation platform whose
-purpose is to convert business visitors into qualified leads.
+- where the project stands;
+- what changed;
+- what requires their attention;
+- what SYSTEMIZE is doing next;
+- what has been approved, signed, or paid;
+- which document version and decision are authoritative.
 
-This restates the positioning captured at intake, which described an
-automation-and-Excel/VBA services agency. The owner narrowed nothing and removed no
-capability — the offer is stated at its real scope. Recorded 2026-07-26 at the owner's
-direction.
+The product is Hebrew-first, RTL, mobile-first, installable as a PWA, and designed for
+customers who are not expected to understand software development terminology.
 
-Success criteria:
+## 2. Product principles
 
-1. A visitor can understand what Systemize does and how it works within one screen of
-   the hero.
-2. A visitor can see the four-stage delivery process at a glance, on any device.
-3. A visitor can submit a lead in under a minute, and that lead is never lost.
-4. The visual quality of the site is itself a sales argument — the hero must render
-   identically proportioned on every viewport from 360px to 2560px.
+1. **One source of truth.** Project state, documents, approvals, payments, and updates
+   are durable records, not chat-message history.
+2. **Action before analytics.** A customer sees what requires action before charts or
+   vanity metrics.
+3. **Explicit state.** Every project has a current stage, next action, responsible party,
+   and history.
+4. **Versioned commitments.** A signed or approved document is an immutable snapshot.
+5. **Human-reviewed automation.** Structured AI output is validated and previewed;
+   SYSTEMIZE decides what is published.
+6. **Persistence before notification.** An important event is committed before push
+   delivery is attempted. Push failure never deletes or rolls back business state.
+7. **Least privilege.** Authentication never substitutes for project-level
+   authorization.
 
-Explicitly not a success criterion: authenticated admin tooling, multi-language support,
-or e-commerce.
+## 3. Users and roles
 
----
+### 3.1 Public visitor
 
-## 2. Users
+- Reads the marketing site and legal pages.
+- Submits the Blueprint lead form.
+- Has no access to stored leads or portal records.
 
-| User | Access | May do | May not do |
-|---|---|---|---|
-| Public visitor | Anonymous | Read all public content and submit a lead | Read, list, enumerate, or modify any stored lead |
-| Owner / operator | Supabase dashboard + Telegram | Read and manage leads, receive notifications | — (no in-app admin surface exists in the MVP) |
+### 3.2 SYSTEMIZE owner
 
-There is no sign-in anywhere on the site.
+The initial internal team contains one user: Marlen Kimiagrov.
 
----
+- Creates and manages companies, people, projects, invitations, documents, contracts,
+  payment records, stages, questions, and updates.
+- Is the only user who may mark a manual payment as received.
+- May preview the client experience.
+- Receives in-app and push notifications for important customer actions.
 
-## 3. Scope
+The data model must support future SYSTEMIZE staff without enabling staff invitations in
+the first release.
 
-### 3.1 In scope — MVP
+### 3.3 Client owner
 
-**Single-page marketing surface** (`/`), composed of:
+A company may have more than one client owner.
 
-1. **Hero** — two compositions from one set of markup. On landscape, the topographic
-   render with an animated turquoise trail and four milestones (אפיון · תכנון · פיתוח ·
-   הטמעה) plotted onto its terraces. On portrait, no artwork at all: the headline arrives
-   word by word over a generated contour field, and the same four stages draw down a
-   vertical track. Headline, sub-copy and one primary call to action in both.
-2. **Delivery process** — the four stages from introductory mapping through planning,
-   development, rollout, and ongoing service.
-3. **Client workspace journey** — a responsive two-state preview that explains what the
-   prospect receives after the introductory call (agreement, detailed preferences and
-   discovery questionnaire, delivery options, pricing, and payment terms), and what opens
-   after approval and payment (project progress, update history, comments, service
-   requests, and direct contact). This is intentionally presented as cards rather than a
-   comparison table on mobile.
-4. **FAQ** — purchasing and delivery questions that support a complete system project.
-5. **Blueprint lead form** — the primary conversion surface.
+- Belongs to one company and may be a member of one or more of that company's projects.
+- May read project information exposed to clients.
+- May comment, answer questions, sign contracts, and perform client actions.
+- May view commercial information when granted that project permission.
+- Receives in-app and push notifications for important SYSTEMIZE actions.
 
-**Standalone indexable routes:** `/privacy`, `/terms`, `/accessibility`. These are real
-pages, not modals.
+For the MVP, one eligible client-owner signature is sufficient unless a document
+explicitly requires a different rule in a later release.
 
-**Server capabilities:** durable lead persistence, idempotent submission, distributed
-rate limiting, best-effort Telegram notification. The public shell also includes
-first-party cookie preference management with optional categories disabled by default.
+## 4. Company, project, and membership model
 
-### 3.2 Out of scope — MVP
+- A company can have multiple contacts and multiple owners.
+- A company can have multiple projects, even though that is not expected to be common
+  initially.
+- A user receives access through a project membership, never because a client-supplied
+  company or project ID was trusted.
+- Each invitation belongs to exactly one email address, company, project, and intended
+  role.
+- Revoking one membership must not affect the company's other users or projects.
+- The SYSTEMIZE owner is internal staff and is not represented as a client owner.
 
-- Any authenticated area, admin dashboard, or lead management UI.
-- Any locale other than Hebrew; any currency other than ILS.
-- Payments, quotations, contracts, or scheduling/booking.
-- A savings/ROI calculator. Removed from scope by the owner on 2026-07-25.
-- The AI chat assistant. Deferred by the owner on 2026-07-25; not in the current build.
-- Analytics and marketing pixels. The consent interface exists, but no analytics or
-  marketing provider is activated by it.
-- Blog, CMS, or editorable content.
-- Email delivery. Telegram is the only notification channel.
-- File uploads or attachments on the lead form.
+## 5. Authentication and invitations
 
-### 3.3 Deferred
+### 5.1 Authentication
 
-| Item | Owner | Milestone |
-|---|---|---|
-| Real portfolio content and founder copy | Marlen Kimiagrov | Before public launch |
-| Hosted Supabase project and preview RLS verification | Marlen Kimiagrov | Before production release |
-| Firefox and WebKit visual coverage | Marlen Kimiagrov | Before public launch |
-| Final legal copy authored by a competent party | Marlen Kimiagrov | Before public launch |
+- Sign-in uses Google OAuth only.
+- The initial allowlist accepts verified Google accounts whose email address ends in
+  `@gmail.com`.
+- Google Workspace custom-domain accounts are intentionally excluded from the MVP.
+- Local passwords, phone OTP, and email magic links are not supported.
+- The SYSTEMIZE owner also signs in through an explicitly allowlisted Gmail account.
 
----
+### 5.2 Invitation activation
 
-## 4. Critical journeys and acceptance criteria
+1. The SYSTEMIZE owner creates a person with name, Gmail address, phone, company,
+   project, and role.
+2. The system creates a random, single-use invitation token and stores only its hash.
+3. The owner copies a prepared WhatsApp message containing the invitation link.
+4. The recipient opens the link and chooses “Continue with Google”.
+5. The server verifies that Google's verified Gmail address exactly matches the pending
+   invitation.
+6. The invitation is consumed atomically and a project membership is created.
+7. Expired, revoked, reused, malformed, or mismatched invitations reveal no project
+   information.
 
-### J1 — Submit a lead
+Invitation validity for the MVP is seven days. The owner may revoke and reissue an
+invitation.
 
-*Given* a visitor has completed the Blueprint form with valid details,
-*when* they submit,
-*then* the lead is written to Supabase before any notification is attempted, a Telegram
-message is sent on a best-effort basis, and the visitor sees an explicit success state.
+### 5.3 Pre-meeting guest intake
 
-Acceptance:
-- Invalid input is rejected on the server with field-level, announced error messages.
-- The pending state is visible and the submit control is disabled while in flight.
-- Offline and rate-limited (429) states are distinct from a generic failure.
-- The network call has an explicit timeout.
-- No lead PII appears in any log line.
+On first arrival a client is shown a one-time orientation covering the four stages of the
+engagement, where each kind of thing lives, and the offer to enable device notifications.
+Completion is recorded on the profile, and the screen is never shown again.
 
-### J2 — Duplicate submission is safe
+After invitation activation, a potential client sees only the guest side of the
+assigned project. The first required action is a private, structured business-intake
+document:
 
-*Given* a visitor submits, and the response is lost or they submit twice,
-*when* the same idempotency key arrives again,
-*then* exactly one lead row exists and exactly one Telegram message was sent.
+1. The client completes a five-part questionnaire covering the business, current
+   workflow, problems, goals, users, required capabilities, integrations, data,
+   automation, reporting, security, timetable, and commercial context.
+2. Each field states how much has been written and, where an answer is required, how much
+   is still missing. A rejected submission returns the client's own text to the screen and
+   opens the step that carries the error.
+3. Work is persisted continuously: to the device as it is typed, and to the server once
+   typing pauses or the page is left. The explicit draft button remains. Submission locks
+   the reviewed snapshot.
+4. SYSTEMIZE receives a durable in-app notification and may approve the document or
+   request a focused update.
+5. A requested update survives a saved draft: the note stays on screen until the client
+   actually re-submits. The client answers it in place and re-submits from wherever they
+   are, and the answer reaches the owner beside the questionnaire.
+6. Approval creates a notification for the client and unlocks owner-published meeting
+   slots.
+5. The client may reserve one available slot. Booking is atomic and advances the
+   project to `intro_call_scheduled`. The saved booking then provisions one Zoom
+   meeting and one Google Calendar invitation through a durable outbox. The client sees
+   the date immediately and receives the join link when both providers are ready.
+6. After the owner records the meeting as completed, the owner creates and publishes an
+   immutable initial-summary version for the client.
+7. Only after that version is published may the owner publish a secure external payment
+   link for discovery, a future 40% implementation deposit, or the balance.
+8. Payment is authoritative only after the SYSTEMIZE owner records receipt in the MVP.
 
-Acceptance: verified by an automated test that replays the identical key.
+The intake answers, review notes, meeting records, payment metadata, and notifications
+are project-confidential. Anonymous users and users from other projects have no table
+access. Durable workflow mutations are idempotent and persist before notifications.
 
-### J3 — Notification failure does not lose the lead
+## 6. Delivery lifecycle
 
-*Given* Telegram is unreachable or returns an error,
-*when* a lead is submitted,
-*then* the lead row persists, the visitor sees success, and the failure is recorded in
-observability without PII.
+The canonical project lifecycle is:
 
-Acceptance: verified by fault injection against the notification adapter.
+1. `lead`
+2. `intro_call_scheduled`
+3. `initial_summary_preparation`
+4. `discovery_offer_awaiting_client`
+5. `discovery_payment_pending`
+6. `full_discovery_and_planning`
+7. `solution_options_preparation`
+8. `proposal_and_contract_awaiting_client`
+9. `initial_payment_pending`
+10. `delivery`
+11. `client_review`
+12. `rollout`
+13. `support`
+14. `completed`
+15. `cancelled`
 
-### J4 — Read the process on any device
+Transitions are server-authorized and recorded as append-only project events. A stage
+change may require a prerequisite such as a signature or payment.
 
-*Given* any viewport,
-*when* the hero renders,
-*then* the four delivery stages are present as real, focusable links with readable text.
+## 7. Commercial rule: approval means payment
 
-Acceptance:
-- Exactly one `<h1>` and exactly four milestone links exist in the document, whichever
-  composition is displayed. Neither is duplicated per orientation.
-- Each milestone has an accessible name that states its stage and its position in the
-  sequence.
-- The keyboard order matches the visual reading order.
-- With `prefers-reduced-motion: reduce`, every hero animation is at its finished state
-  within the first paint.
+Signing a proposal or contract records agreement but does not by itself approve the
+commercial transition.
 
-### J5 — Hero renders proportionally at any viewport
+For the MVP:
 
-*Given* any viewport between 320px and 2560px wide,
-*when* the hero renders,
-*then* the trail, its glow, and all four milestones remain anchored to the same points
-of the background artwork.
+```text
+contract signed
+→ awaiting payment
+→ SYSTEMIZE owner records payment received
+→ commercial approval becomes effective
+→ project advances
+```
 
-Acceptance:
-- All hero geometry is expressed in `viewBox` units or percentages. No hard-coded pixel
-  coordinates for trail or milestone placement.
-- The artwork layer and the marker layer take their size from one shared pair of CSS
-  variables, so they cannot diverge.
-- Portrait viewports download no artwork: the `<source>` media query does not match, so
-  the browser resolves to a transparent pixel.
-- Milestones are real focusable links with visible focus and a target size of at least
-  24×24 CSS pixels.
-- With `prefers-reduced-motion: reduce`, the trail is shown fully drawn and static.
+Automatic payment processing is deferred. The payment model must already support an
+external provider reference and idempotency key so a provider can replace the manual
+step without changing the domain rule.
 
----
+Prices, currency, paid amount, authoritative payment time, and payment status are
+server-controlled. Currency is ILS.
 
-## 5. Non-functional requirements
+## 8. Documents
 
-- **Accessibility:** WCAG 2.2 AA. Automated axe coverage on every indexable route plus
-  manual keyboard verification of every interactive component.
-- **Performance:** on landscape the hero plate is the LCP element. On portrait no
-  artwork is fetched at all — the largest element is text, and the topographic background
-  is a 46KB generated vector — so the page paints without waiting on an image.
-- **Reliability:** every outbound call has an explicit timeout; retries are bounded,
-  jittered, and never applied to a non-idempotent mutation without a durable key.
-- **Security:** deny-by-default RLS on every table; the anon key can neither read nor
-  write leads. Service-role credentials are server-only. Origin/CSRF protection on
-  sensitive mutations. Nonce-based CSP retained from the boilerplate.
-- **Privacy:** lead PII is excluded from logs, error reports, and analytics.
-- **Rendering:** Server Components by default; `"use client"` only on the lead form, at
-  the smallest coherent subtree. The hero is entirely server-rendered — every animation
-  in it is CSS.
-- **Layout:** logical CSS properties only. Physical directional utilities are rejected
-  by `npm run check:architecture`.
+### 8.1 Initial summary and paid-discovery offer
 
----
+The first default document is:
 
-## 6. Data
+**“Introductory call summary and proposal for discovery and planning”**
 
-Single new table, `leads`:
+It contains:
 
-| Field | Source | Notes |
-|---|---|---|
-| `id` | server | primary key |
-| `created_at` | server | UTC |
-| `full_name` | visitor | PII |
-| `business_name` | visitor | PII |
-| `phone` | visitor | PII |
-| `email` | visitor | PII |
-| `message` | visitor | free text; PII |
-| `idempotency_key` | client, enforced server-side | unique constraint |
-| `request_id` | server | correlation for observability |
+1. Client company and contacts.
+2. Current situation as described by the client.
+3. Problems and operational friction reported by the client.
+4. Desired business outcomes.
+5. Known scope and assumptions.
+6. Questions and facts still requiring validation.
+7. What the paid discovery and planning stage includes.
+8. Deliverables the client receives.
+9. Estimated timetable.
+10. Price and payment terms.
+11. Exclusions.
+12. Proposal validity.
 
-RLS is deny-by-default. The anonymous role has insert-only access through the server
-path and no select access. Existing boilerplate tables for idempotency and rate limiting
-are reused unchanged.
+### 8.2 Full discovery and planning document
 
----
+The full document is unlocked after the paid discovery gate. It is written for the person
+deciding whether to build, in the order that person asks their questions, and everything
+that answers an engineering question instead sits in an appendix at the back.
 
-## 7. Risks
+The client-facing body contains:
 
-| Risk | Impact | Mitigation |
-|---|---|---|
-| Hero artwork and SVG trail drift apart at extreme aspect ratios | The primary visual argument breaks | Identical crop maths on image and SVG; visual regression at desktop and mobile RTL; manual sweep 360→2560px |
-| Placeholder content deployed publicly | Credibility damage | Content centralised in one module; launch checklist blocks on replacement |
-| No hosted Supabase at build time | RLS unverified in production | Local Supabase CLI stack for development; RLS re-verified in preview before release |
-| The hero artwork is a wide panorama unsuited to a tall screen | A cropped, cramped hero on the platform most visitors use | Portrait gets its own composition built from type, vector and motion; the artwork is never cropped to fit |
+1. What is being built and how both sides will know it worked.
+2. What the system will contain: the solution overview, its modules and workflows.
+3. Two to four materially different development options with exactly one recommended
+   option, scope, timetable, and ILS price for each — followed by two to eight delivery
+   phases describing how the work behind the recommended option is sequenced.
+4. One to four monthly support plans with coverage, response time, and ILS price;
+   starting prices for small and large future features, an hourly rate, and an explicit
+   rule that every change still requires a bounded scope decision.
+5. Commercial terms: payment terms, exclusions, client responsibilities, assumptions and
+   risks, warranty after delivery, and proposal validity.
 
----
+**Exactly one price is a commitment.** The offer is the price of the recommended
+development option. Phases carry no price of their own: a document that priced both left
+two different totals on the page with nothing saying which one the client owed, and
+payment against phases is governed by the payment terms instead.
 
-## 8. Open questions
+An optional technical appendix carries users and permissions, data and integrations,
+architecture and security, experience and accessibility, and migration and rollout. Each
+entry is optional, the appendix is collapsed in the web view and printed on its own page,
+and an entry left empty does not appear at all.
 
-1. **Canonical domain.** Blocks `metadataBase`, canonical URLs, sitemap, and absolute
-   Open Graph URLs. `OPEN — owner and decision date required`.
-2. **Lead PII retention and deletion policy.** Blocks production release.
-   `OPEN — owner and decision date required`.
-3. **Real portfolio, founder, and legal copy.** Blocks public launch.
-4. **Whether the owner wants an authenticated lead dashboard later.** Currently out of
-   scope; would change the authentication model and RLS design.
-5. **Whether the AI chat assistant returns.** Deferred on 2026-07-25, not cancelled.
+Creating the first `discovery_plan` draft advances paid discovery work to solution
+option preparation. Publishing it advances the project to client review of the proposal
+and contract. The client sees the expanded roadmap and only the immutable published
+version.
+
+### 8.3 Document invariants
+
+- Documents are created from editable templates.
+- Every published document has an immutable version.
+- Client-visible rendering and exported PDF derive from the same structured content.
+- Approval and signature always reference a specific immutable version and content hash.
+- Replacing content creates a new version; it never changes prior evidence.
+- The owner may copy a versioned ChatGPT interview prompt and paste its final JSON into
+  the introductory-summary editor. The import rejects unknown or invalid fields and
+  only fills an editable draft; it never saves or publishes without an explicit owner
+  action.
+- The full system-plan editor follows the same rule with
+  `systemize.system-plan.autofill.v1`. Its prompt includes bounded discovery context,
+  requires an interview before output, forbids invented prices or commitments, and
+  validates phases, options, support plans, change pricing, and commercial boundaries
+  before filling the editable draft.
+- The client renderer groups current-state and friction content, groups discovery work
+  and deliverables, and presents price, timing, payment terms, validity, and client
+  dependencies as one commercial block. Existing schema-v1 snapshots remain readable;
+  absent optional narrative fields are omitted rather than rendered as placeholders.
+
+## 9. Contract and signature
+
+The SYSTEMIZE contract flow adopts the proven CoachSync evidence pattern with new
+SYSTEMIZE branding and contract-specific language.
+
+An eligible client owner:
+
+1. Reviews the complete contract.
+2. Confirms authority to sign.
+3. Confirms the document was read.
+4. Confirms agreement.
+5. Draws a signature with pointer, mouse, or touch.
+6. Submits once through an idempotent server mutation.
+
+The durable evidence record includes:
+
+- signer identity and project membership;
+- signer name and Gmail snapshot;
+- document title, version, full-content snapshot, and SHA-256 hash;
+- declaration values;
+- signature image and SHA-256 hash;
+- UTC timestamp;
+- bounded user-agent snapshot;
+- privacy-preserving request evidence such as an IP-derived hash;
+- immutable event identifier.
+
+The signed PDF contains the contract snapshot, signature, declarations, evidence
+summary, and verification hashes. The legal text requires review by a competent Israeli
+legal professional before production use.
+
+## 10. Updates and project progress
+
+### 10.1 Manual and structured updates
+
+The SYSTEMIZE owner can publish a manual update or import structured output produced by
+an external AI tool. SYSTEMIZE PORTAL does not call an AI provider in the MVP.
+
+The flow is:
+
+```text
+copy versioned prompt
+→ use an external AI tool
+→ paste its structured output
+→ parse and validate
+→ show a designed preview
+→ allow owner edits
+→ publish
+→ persist notification records
+→ attempt push delivery
+```
+
+### 10.2 Structured-output contract
+
+The prompt requests JSON matching a versioned schema. The parser never depends on prose
+headings or punctuation.
+
+Required concepts include:
+
+- schema version;
+- project reference;
+- update category;
+- client-facing title and summary;
+- completed items;
+- client impact;
+- changes from the prior plan;
+- next steps;
+- client action required;
+- proposed stage or progress change;
+- internal technical notes;
+- visibility.
+
+Invalid, oversized, unknown-version, wrong-project, or duplicate payloads are rejected
+with an actionable preview error. Importing never publishes automatically.
+
+Progress is derived from approved project events and milestones. AI output may propose a
+change, but cannot directly overwrite project progress.
+
+### 10.3 Dynamic project memory
+
+SYSTEMIZE, rather than the external AI conversation, is the durable project memory.
+
+Each accepted session records:
+
+- session summary;
+- completed task references;
+- partially completed task references and proposed states;
+- decisions made;
+- blockers;
+- newly discovered work;
+- next-session goal;
+- client-facing update proposal.
+
+The next copied prompt is generated dynamically from the approved specification,
+weighted plan, current task states, accepted decisions, open blockers, latest session
+handoff, and requested goal. Full history remains durable, but the generated prompt uses
+a bounded rolling context snapshot so it cannot grow without limit.
+
+Project completion is not an AI-authored percentage. The owner-approved plan assigns
+weights to milestones and tasks. Accepted task states contribute deterministic values:
+
+- not started: 0%;
+- started: 25%;
+- in progress: 50%;
+- awaiting verification: 75%;
+- verified complete: 100%.
+
+AI output proposes task-state and scope changes. The SYSTEMIZE owner reviews them, and
+the application calculates the authoritative percentage only from accepted state.
+Adding approved scope may keep the percentage unchanged or reduce it; the resulting
+update explains why.
+
+## 11. Notifications and PWA
+
+The marketing site remains usable as a website. Authenticated portal surfaces are
+installable as a PWA.
+
+Every important durable event creates notification records for the affected party:
+
+- invitation created, accepted, expired, revoked, or reissued;
+- document published or superseded;
+- signature requested, completed, or declined;
+- payment requested, recorded, or disputed;
+- question asked or answered;
+- comment added or mention received;
+- update published;
+- stage or milestone changed;
+- client action requested or completed;
+- service request opened or updated.
+
+Notification rules:
+
+- Recipients are calculated on the server from memberships and event type.
+- The actor does not receive a redundant notification for their own action.
+- In-app notification persistence precedes best-effort Web Push.
+- Push failure is observable and retryable within a bound but never rolls back the
+  underlying event.
+- Each user may control non-critical categories, but contractual, security, and payment
+  notifications cannot be silently disabled.
+- Push subscriptions are revocable, scoped to a user and device, and removed when the
+  provider reports them permanently invalid.
+
+## 12. Mobile information architecture
+
+The client mobile navigation has five persistent destinations:
+
+1. Home
+2. Project
+3. Actions
+4. Documents
+5. More
+
+“Actions” is visually prominent and aggregates approvals, signatures, questions, and
+other work awaiting the client.
+
+The client home screen prioritizes:
+
+1. current stage;
+2. required action;
+3. latest update;
+4. next step.
+
+The internal owner surface may expose denser controls but uses the same project state and
+document records.
+
+## 13. MVP delivery slices
+
+### Slice 1 — foundation
+
+- Updated product governance and architecture decisions.
+- Google OAuth restricted to invited `@gmail.com` accounts.
+- Company, people, project, membership, and invitation model.
+- Owner-managed invitation lifecycle: live, expired, accepted, and revoked states;
+  idempotent revocation and reissue; changing an unactivated contact Gmail revokes
+  every stale pending invitation.
+- Owner editing of company, project, and contact details. An activated Google identity
+  keeps its Gmail address immutable.
+- Protected internal and client shells.
+- Client dashboard with current stage and required actions.
+- Confidential guest intake, owner review, meeting-slot booking, manual payment-link
+  publication, and durable in-app notifications.
+
+### Slice 2 — documents and commercial flow
+
+- Default initial-summary template. **Implemented.**
+- Versioned documents and shared web/PDF rendering. **Implemented.**
+- Contract declarations, drawn signature, evidence record, and signed PDF.
+- Manual payment recording and payment-gated stage transition. **Implemented for the
+  discovery payment; later contract payments remain in scope.**
+
+### Slice 3 — transparent delivery
+
+- Questions, comments, project events, milestones, and update timeline.
+- Versioned structured-output prompt and deterministic parser.
+- Preview, editing, publication, and duplicate protection.
+
+### Slice 4 — PWA and notifications
+
+- Manifest, icons, installable shell, service worker, and offline-safe navigation.
+- In-app notification center and Web Push subscription.
+- Important-event fan-out to SYSTEMIZE and client owners.
+
+## 14. Public marketing site
+
+The existing public site remains in scope:
+
+- `/`
+- `/projects`
+- `/projects/athletetrack`
+- `/projects/finquest`
+- `/projects/guesto`
+- `/privacy`
+- `/terms`
+- `/accessibility`
+
+It continues to provide the hero, delivery process, workspace preview, FAQ, Blueprint
+lead form, a three-product portfolio, durable Supabase persistence, and best-effort
+Telegram lead notification.
+
+Authenticated routes are non-indexable and excluded from the sitemap.
+
+## 15. Systems of record
+
+- **Supabase Postgres:** companies, people, memberships, projects, project events,
+  documents, versions, signatures, payments, updates, notifications, push
+  subscriptions, and idempotency.
+- **Supabase Auth:** Google identity and server sessions.
+- **Private object storage:** future signed PDFs and private project files. The initial
+  summary PDF is generated on demand from its immutable database version.
+- **Vercel:** application hosting and server runtime.
+- **Web Push provider contract:** best-effort delivery only.
+- **Zoom and Google Calendar:** server-only meeting providers. Provider failure never
+  rolls back a booked slot, and only the participant Zoom URL becomes client-visible.
+- **Telegram:** existing public-lead notification only.
+
+## 16. Security and privacy
+
+- Every non-public table has RLS and explicit allow/deny tests.
+- Project access is re-authorized in every sensitive action and route.
+- Invitation, signature, payment, and publication mutations require durable idempotency.
+- Tokens are random, single-use, time-limited, and stored hashed.
+- Signed evidence is append-only through trusted server boundaries.
+- Private PDFs are never published through guessable URLs.
+- Logs exclude names, full email addresses, phone numbers, document bodies, signatures,
+  tokens, and project free text.
+- Data export, revocation, retention, and deletion workflows are required before portal
+  production launch.
+
+## 17. Acceptance journeys
+
+1. Owner creates a company, project, and two client owners.
+2. Each owner receives a distinct invitation and only the matching Gmail account can
+   activate it.
+3. Cross-company and cross-project reads and mutations are denied.
+4. Owner publishes the initial summary; the client sees the same content in web and PDF.
+5. An authorized client owner signs the exact contract version and a verifiable signed
+   PDF is generated.
+6. Signing alone does not advance the project; recording payment does.
+7. A structured AI payload is validated, previewed, edited, and published exactly once.
+8. Publishing creates in-app notifications before push is attempted.
+9. Push failure preserves the published update and remains observable.
+10. The client completes the critical journey on a 390×844 viewport using keyboard or
+    touch with no accessibility violations.
+
+## 18. Production blockers
+
+The following do not block architecture or local implementation, but block production
+portal launch:
+
+1. Final contract and signature language reviewed by a competent legal professional.
+2. Production Supabase project, OAuth application, redirect allowlist, and Gmail admin
+   allowlist.
+3. Approved PII retention, export, deletion, and account-revocation policy.
+4. Web Push production keys and browser/device verification.
+5. Final canonical portal URL strategy.
+6. Real template wording and commercial terms approved by the owner.

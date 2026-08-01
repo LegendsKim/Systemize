@@ -3,6 +3,7 @@ import { Heebo, Space_Grotesk } from "next/font/google";
 import { headers } from "next/headers";
 import { a11yRestoreScript } from "@/features/accessibility/a11y-settings";
 import { defaultLocale, getDirection, getHtmlLang } from "@/lib/i18n";
+import { openGraphImageDescriptor } from "@/lib/seo/open-graph-image";
 import { siteDescription, siteName, siteTagline, siteUrl } from "@/lib/site-config";
 import "./globals.css";
 
@@ -44,17 +45,20 @@ export const metadata: Metadata = {
     title: `${siteName} | ${siteTagline}`,
     description: siteDescription,
     url: "/",
+    images: [openGraphImageDescriptor],
   },
   twitter: {
     card: "summary_large_image",
     title: `${siteName} | ${siteTagline}`,
     description: siteDescription,
+    images: [openGraphImageDescriptor],
   },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  viewportFit: "cover",
   themeColor: "#f5f6f7",
 };
 
@@ -75,6 +79,7 @@ export default async function RootLayout({
       lang={lang}
       dir={dir}
       className={`${heebo.variable} ${spaceGrotesk.variable}`}
+      data-scroll-behavior="smooth"
     >
       <body>
         {/*
@@ -84,11 +89,19 @@ export default async function RootLayout({
          * React tree never renders them, which is what keeps the first render
          * deterministic (AGENTS.md §3).
          *
-         * No `nonce` attribute: the browser hides a nonce value once the CSP is applied,
-         * so React would read back an empty string and report a hydration mismatch on
-         * every load. `src/proxy.ts` allows this exact script by its SHA-256 hash instead.
+         * Deliberately a plain element rather than `next/script`. Next stamps the request
+         * CSP nonce onto a `beforeInteractive` script, and the browser blanks that
+         * attribute once the policy is applied — so the server HTML carries `nonce=""`
+         * while the client render carries nothing, and hydration fails on every load.
+         * `src/proxy.ts` already allows this exact script by SHA-256 hash, so it needs no
+         * nonce at all, and an inline script in the first position of `<body>` executes
+         * before anything below it paints.
          */}
-        <script dangerouslySetInnerHTML={{ __html: a11yRestoreScript }} />
+        <script
+          id="systemize-a11y-restore"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: a11yRestoreScript }}
+        />
         <a href="#main-content" className="skip-link">
           דילוג לתוכן הראשי
         </a>

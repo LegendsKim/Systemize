@@ -1,0 +1,2228 @@
+.portal-eyebrow,
+.portal-card-company {
+  color: var(--color-primary-hover) !important;
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.portal-primary-action {
+  display: inline-flex;
+  min-block-size: 3rem;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 1.25rem;
+  color: var(--color-text-on-primary);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  border: 0;
+  border-radius: 0.8rem;
+  background: var(--color-primary);
+  cursor: pointer;
+}
+
+.portal-primary-action:hover {
+  background: var(--color-primary-hover);
+}
+
+.portal-primary-action:focus-visible,
+
+.portal-secondary-action:focus-visible,
+
+.portal-text-link:focus-visible,
+
+.portal-back-link:focus-visible,
+
+.portal-quick-links a:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+/*
+ * The entrance screens, /login, /invite and the auth errors, live in portal-gate.css.
+ * They share the portal's tokens but not its chrome, and keeping them apart is what let
+ * this file lose the sign-in styles it used to carry.
+ */
+
+.portal-shell {
+  min-block-size: 100svh;
+  padding-block-end: 5.25rem;
+  background: var(--color-surface-1);
+}
+
+.portal-topbar {
+  position: sticky;
+  z-index: 20;
+  inset-block-start: 0;
+  display: flex;
+  min-block-size: 4.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-inline: var(--spacing-page-x);
+  border-block-end: 1px solid var(--color-border);
+  background: color-mix(in oklch, var(--color-surface-0) 92%, transparent);
+  backdrop-filter: blur(1rem);
+}
+
+.portal-brand,
+
+.portal-account {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.portal-brand {
+  color: var(--color-text-primary);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-decoration: none;
+}
+
+.portal-brand > span {
+  display: grid;
+  gap: 0.05rem;
+}
+
+.portal-brand b {
+  font-weight: 700;
+}
+
+.portal-brand small {
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0;
+}
+
+.portal-desktop-nav {
+  display: none;
+}
+
+.portal-account {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+}
+
+.portal-account-avatar {
+  display: grid;
+  inline-size: 2rem;
+  block-size: 2rem;
+  place-items: center;
+  color: var(--color-primary-hover);
+  font-weight: 700;
+  border-radius: 50%;
+  background: var(--color-primary-soft);
+}
+
+.portal-account-name {
+  overflow: hidden;
+  max-inline-size: 10rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.portal-text-action {
+  min-block-size: 2.75rem;
+  padding-inline: 0.35rem;
+  color: var(--color-primary-hover);
+  font: inherit;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.portal-content {
+  min-inline-size: 0;
+}
+
+.portal-main {
+  inline-size: min(100%, 78rem);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 5vw, 4rem) var(--spacing-page-x) clamp(4rem, 8vw, 7rem);
+}
+
+.portal-page-heading {
+  display: grid;
+  max-inline-size: 46rem;
+  gap: 0.9rem;
+}
+
+.portal-welcome {
+  display: grid;
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.portal-welcome-copy {
+  display: grid;
+  align-content: center;
+  gap: 0.9rem;
+  padding-block: clamp(0.5rem, 3vw, 2rem);
+}
+
+.portal-confidence-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 22%, var(--color-border));
+  border-radius: 1.25rem;
+  background: linear-gradient(145deg, var(--color-primary-soft), var(--color-surface-0));
+}
+
+.portal-confidence-card p {
+  margin-block-start: 0.25rem;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.portal-confidence-icon {
+  display: grid;
+  flex: none;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  place-items: center;
+  color: var(--color-text-on-primary);
+  font-weight: 800;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.portal-projects-section,
+
+.portal-orientation,
+
+.portal-journey {
+  margin-block-start: clamp(2.5rem, 6vw, 5rem);
+}
+
+.portal-section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.portal-section-heading h2 {
+  margin: 0.35rem 0 0;
+  font-size: clamp(1.55rem, 4vw, 2.25rem);
+}
+
+.portal-text-link,
+
+.portal-back-link {
+  color: var(--color-primary-hover);
+  font-weight: 700;
+  text-underline-offset: 0.25em;
+}
+
+.portal-back-link {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  margin-block-end: 1rem;
+}
+
+.portal-project-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr));
+  gap: 1rem;
+  margin-block-start: 2rem;
+}
+
+.portal-project-card,
+
+.portal-empty-state,
+
+.portal-action-card {
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  background: var(--color-surface-0);
+}
+
+.portal-form-card {
+  display: grid;
+  max-inline-size: 42rem;
+  gap: 1.25rem;
+  margin-block-start: 2rem;
+  padding: clamp(1.5rem, 4vw, 2.25rem);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  background: var(--color-surface-0);
+}
+
+.portal-form-card h2 {
+  margin: 0;
+}
+
+.portal-form {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.portal-form label,
+
+.portal-share-link {
+  display: grid;
+  gap: 0.45rem;
+  font-weight: 700;
+}
+
+.portal-form input {
+  min-block-size: 3rem;
+  padding-inline: 0.9rem;
+  color: var(--color-text-primary);
+  font: inherit;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.7rem;
+  background: var(--color-surface-0);
+}
+
+.portal-form input[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+.portal-form input:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.portal-field-error {
+  min-block-size: 1.15rem;
+  margin: 0;
+  color: var(--color-error);
+  font-size: 0.8rem;
+}
+
+.portal-form-message {
+  margin: 0.35rem 0;
+  color: var(--color-text-secondary);
+}
+
+.portal-share-link {
+  padding: 1rem;
+  border-radius: 0.8rem;
+  background: var(--color-primary-soft);
+}
+
+.portal-project-card {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  box-shadow: 0 0.8rem 2rem color-mix(in oklch, var(--color-text-primary) 5%, transparent);
+}
+
+.portal-project-card h2,
+
+.portal-empty-state h2,
+
+.portal-action-card h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.portal-project-card p {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-secondary);
+}
+
+.portal-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.portal-card-topline .portal-card-company {
+  margin: 0;
+}
+
+.portal-stage-label {
+  font-size: 0.9rem;
+}
+
+.portal-next-step {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border-inline-start: 3px solid var(--color-primary);
+  border-radius: 0.4rem;
+  background: var(--color-surface-1);
+}
+
+.portal-next-step span {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.portal-next-step strong {
+  line-height: 1.5;
+}
+
+.portal-project-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--color-text-secondary);
+}
+
+/*
+ * The client's progress meter. Same two rules as the console's: the unfilled track is a
+ * lighter step of the fill's own ramp rather than a neutral, and the fill is square at the
+ * baseline and rounded at the data end so its start is visible at small percentages.
+ */
+.portal-progress-track {
+  overflow: hidden;
+  block-size: 0.55rem;
+  border-radius: var(--radius-pill);
+  background: color-mix(in oklch, var(--color-primary) 16%, var(--color-surface-0));
+}
+
+.portal-progress-track span {
+  display: block;
+  block-size: 100%;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+  border-start-end-radius: 4px;
+  border-end-end-radius: 4px;
+  background: var(--color-primary);
+}
+
+.portal-empty-state {
+  display: grid;
+  max-inline-size: 42rem;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.portal-empty-state p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.portal-empty-state .portal-primary-action {
+  justify-self: start;
+}
+
+.portal-secondary-action {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  justify-self: start;
+  color: var(--color-primary-hover);
+  font-weight: 700;
+  text-underline-offset: 0.25em;
+}
+
+.portal-orientation-grid {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-orientation-grid li {
+  display: grid;
+  gap: 0.55rem;
+  padding: 1.35rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.portal-orientation-grid li > span {
+  color: var(--color-primary-hover);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.portal-orientation-grid p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+/*
+ * The one-time orientation. It owns the screen instead of sitting above the dashboard,
+ * so sizing is in relative units throughout and the whole thing reflows to a phone
+ * without a fixed pixel anywhere.
+ */
+.portal-onboarding {
+  display: grid;
+  gap: 1.75rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid var(--color-border);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 88% 8%, color-mix(in oklch, var(--color-primary) 13%, transparent), transparent 18rem),
+    var(--color-surface-0);
+}
+
+.portal-onboarding-intro {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.portal-onboarding-intro h1 {
+  margin: 0;
+}
+
+.portal-onboarding-intro p {
+  max-inline-size: 46ch;
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.portal-onboarding-steps {
+  display: grid;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-onboarding-steps li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  padding: 1.1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface-1);
+}
+
+.portal-onboarding-steps li > span {
+  color: var(--color-primary-hover);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.portal-onboarding-steps strong {
+  display: block;
+  margin-block-end: 0.25rem;
+}
+
+.portal-onboarding-steps p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.portal-onboarding-pointers h2,
+
+.portal-onboarding-push h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+}
+
+.portal-onboarding-pointers dl {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0;
+}
+
+.portal-onboarding-pointers dt {
+  font-weight: 700;
+}
+
+.portal-onboarding-pointers dd {
+  margin: 0.15rem 0 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.portal-onboarding-push {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.2rem;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 30%, var(--color-border));
+  border-radius: 1rem;
+  background: var(--color-primary-soft);
+}
+
+.portal-onboarding-push p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.portal-onboarding-push .portal-secondary-button {
+  justify-self: start;
+}
+
+.portal-onboarding > .portal-primary-action {
+  justify-self: start;
+}
+
+.portal-home-actions {
+  margin-block-start: 2rem;
+}
+
+.portal-project-hero {
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  border: 1px solid var(--color-border);
+  border-radius: 1.5rem;
+  background:
+    radial-gradient(circle at 90% 10%, color-mix(in oklch, var(--color-primary) 13%, transparent), transparent 18rem),
+    var(--color-surface-0);
+}
+
+.portal-project-hero > div:first-child {
+  display: grid;
+  align-content: center;
+  gap: 0.8rem;
+}
+
+.portal-progress-summary {
+  display: grid;
+  gap: 0.7rem;
+  align-content: center;
+  padding: 1.25rem;
+  border-radius: 1rem;
+  background: var(--color-surface-1);
+}
+
+.portal-progress-summary > span,
+
+.portal-progress-summary small {
+  color: var(--color-text-secondary);
+}
+
+.portal-progress-summary > strong {
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: clamp(2.25rem, 7vw, 3.75rem);
+  line-height: 1;
+}
+
+.portal-journey-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-journey-steps li {
+  position: relative;
+  display: grid;
+  min-inline-size: 0;
+  justify-items: center;
+  gap: 0.35rem;
+  text-align: center;
+}
+
+.portal-journey-steps li::before {
+  position: absolute;
+  z-index: 0;
+  inset-block-start: 1.15rem;
+  inset-inline: calc(-50% - 0.25rem) calc(50% + 1.4rem);
+  block-size: 2px;
+  content: "";
+  background: var(--color-border);
+}
+
+.portal-journey-steps li:first-child::before {
+  display: none;
+}
+
+.portal-journey-steps li > span {
+  z-index: 1;
+  display: grid;
+  inline-size: 2.35rem;
+  block-size: 2.35rem;
+  place-items: center;
+  color: var(--color-text-secondary);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-weight: 700;
+  border: 2px solid var(--color-border-strong);
+  border-radius: 50%;
+  background: var(--color-surface-1);
+}
+
+.portal-journey-steps li[data-state="complete"] > span,
+
+.portal-journey-steps li[data-state="current"] > span {
+  color: var(--color-text-on-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.portal-journey-steps li[data-state="complete"]::before,
+
+.portal-journey-steps li[data-state="current"]::before {
+  background: var(--color-primary);
+}
+
+.portal-journey-steps small {
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+}
+
+.portal-action-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-block-start: 2rem;
+  padding: 1.5rem;
+}
+
+.portal-action-card p {
+  margin: 0.45rem 0 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.portal-action-card-featured {
+  padding: clamp(1.35rem, 4vw, 2rem);
+  border-color: color-mix(in oklch, var(--color-primary) 30%, var(--color-border));
+  background: linear-gradient(145deg, var(--color-surface-0), var(--color-primary-soft));
+}
+
+.portal-status-chip {
+  flex: none;
+  padding: 0.4rem 0.8rem;
+  color: var(--color-primary-hover);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+}
+
+.portal-quick-links {
+  display: grid;
+  gap: 0.75rem;
+  margin-block-start: 1rem;
+}
+
+.portal-quick-links a {
+  display: flex;
+  min-block-size: 3rem;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 1rem;
+  color: var(--color-text-primary);
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--color-border);
+  border-radius: 0.8rem;
+  background: var(--color-surface-0);
+}
+
+.portal-quick-links a::after {
+  color: var(--color-primary-hover);
+  content: "←";
+}
+
+.portal-mobile-nav {
+  position: fixed;
+  z-index: 30;
+  inset-inline: 0;
+  inset-block-end: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  min-block-size: 4.65rem;
+  padding-block: 0.45rem;
+  padding-inline: 0.5rem;
+  border-block-start: 1px solid var(--color-border);
+  background: var(--color-surface-0);
+}
+
+.portal-mobile-nav a {
+  display: grid;
+  min-block-size: 2.75rem;
+  place-items: center;
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  text-decoration: none;
+  border-radius: 0.75rem;
+}
+
+/*
+ * Exactly one tab is ever highlighted: the one whose route is open.
+ *
+ * "פעולות" used to carry a standing tint on top of that, on the theory that it is the
+ * most important destination. On screen it read as a second current-page marker, so two
+ * tabs looked selected at once and the real one stopped meaning anything. Prominence, if
+ * it is wanted, belongs in the content — not in a bar whose entire job is to say where
+ * you are.
+ */
+.portal-mobile-nav a[aria-current="page"] {
+  color: var(--color-text-on-primary);
+  font-weight: 700;
+  background: var(--color-primary);
+}
+
+.portal-mobile-nav a:focus-visible,
+
+.portal-desktop-nav a:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (min-width: 56rem) {
+  .portal-shell {
+    padding-block-end: 0;
+  }
+
+  .portal-desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+  }
+
+  .portal-desktop-nav a {
+    min-block-size: 2.75rem;
+    padding-inline: 0.9rem;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 2.75rem;
+    text-decoration: none;
+    border-radius: 0.7rem;
+  }
+
+  .portal-desktop-nav a:hover {
+    color: var(--color-text-primary);
+    background: var(--color-surface-2);
+  }
+
+  /* Colour is never the only signal: the current tab also gains weight and a field. */
+  .portal-desktop-nav a[aria-current="page"] {
+    color: var(--color-primary-hover);
+    font-weight: 700;
+    background: var(--color-primary-soft);
+  }
+
+  .portal-mobile-nav {
+    display: none;
+  }
+
+  .portal-welcome {
+    grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.55fr);
+  }
+
+  .portal-orientation-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .portal-project-hero {
+    grid-template-columns: minmax(0, 1.4fr) minmax(17rem, 0.6fr);
+  }
+
+  .portal-quick-links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 35rem) {
+  .portal-topbar {
+    min-block-size: 4.25rem;
+  }
+
+  .portal-brand small,
+
+  .portal-account-name {
+    display: none;
+  }
+
+  .portal-account {
+    gap: 0.25rem;
+  }
+
+  .portal-action-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .portal-journey-steps strong {
+    font-size: 0.78rem;
+  }
+
+  .portal-journey-steps small {
+    font-size: 0.64rem;
+  }
+}
+
+.portal-document-list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-document-list > li {
+  display: grid;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.4rem);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface);
+}
+
+.portal-document-list h2,
+.portal-document-list p {
+  margin: 0;
+}
+
+.portal-document-actions,
+.document-page-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.document-page-actions {
+  justify-content: space-between;
+  margin-block-end: 1rem;
+}
+
+.project-document {
+  display: grid;
+  max-inline-size: 62rem;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-block-start: 0.35rem solid var(--color-primary);
+  border-block-end: 0.2rem solid color-mix(in oklch, var(--color-primary) 70%, white);
+  border-radius: 1.25rem;
+  background: var(--color-surface-0);
+  box-shadow: 0 1.5rem 4rem color-mix(in oklch, var(--color-text-primary) 7%, transparent);
+}
+
+.project-document-header {
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.project-document-brand {
+  --lockup-mark: 2.15rem;
+}
+
+.project-document-heading {
+  max-inline-size: 46rem;
+}
+
+.project-document-heading h1,
+.project-document-heading h2,
+.project-document-heading h3 {
+  max-inline-size: 42rem;
+  margin: 0;
+  margin-block-start: 0.45rem;
+  font-size: clamp(1.9rem, 5vw, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.project-document p,
+.project-document dl,
+.project-document dd {
+  margin: 0;
+}
+
+.project-document-client {
+  margin-block-start: 1rem !important;
+  color: var(--color-text-primary);
+  font-size: 1.12rem;
+  font-weight: 750;
+}
+
+.project-document-project {
+  margin-block-start: 0.2rem !important;
+  color: var(--color-text-muted);
+}
+
+.project-document-section p,
+.project-document-questions p,
+.project-document-exclusions p,
+.project-document-next-step p,
+.project-document-commercial dd,
+.project-document-definitions dd {
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  /*
+   * `isolate`, never `plaintext`.
+   *
+   * `plaintext` derives each paragraph's direction from its own first strong character, and
+   * `pre-wrap` makes every authored line its own paragraph. A line that happens to open on
+   * a Latin word — "FLOW זורם...", "MVP הראשוני..." — was therefore laid out left-to-right
+   * inside a right-to-left document: its closing period jumped to the right edge and the
+   * line no longer aligned with the ones above it. `isolate` keeps the document's own
+   * direction as the base level and still isolates embedded Latin runs correctly.
+   */
+  unicode-bidi: isolate;
+}
+
+.project-document-meta {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-meta > div {
+  min-inline-size: 0;
+}
+
+.project-document-meta dt {
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+}
+
+.project-document-meta dd {
+  margin-block-start: 0.25rem;
+  font-weight: 800;
+}
+
+.project-document-section {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.project-document-section-number {
+  padding-block-start: 0.2rem;
+  color: var(--color-primary-hover) !important;
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.project-document-section h2,
+.project-document-section h3,
+.project-document-section h4,
+.project-document-section h5,
+.project-document-questions h2,
+.project-document-questions h3,
+.project-document-questions h4,
+.project-document-commercial h2,
+.project-document-commercial h3,
+.project-document-commercial h4,
+.project-document-exclusions h2,
+.project-document-exclusions h3,
+.project-document-exclusions h4,
+.project-document-next-step h2,
+.project-document-next-step h3,
+.project-document-next-step h4 {
+  margin: 0;
+  margin-block-end: 0.8rem;
+  color: var(--color-text-primary);
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  line-height: 1.25;
+}
+
+.project-document-emphasis {
+  margin-block-start: 1.25rem;
+  padding-inline-start: 1rem;
+  border-inline-start: 0.2rem solid color-mix(in oklch, var(--color-primary) 55%, var(--color-border));
+}
+
+.project-document-emphasis strong {
+  display: block;
+  margin-block-end: 0.3rem;
+  color: var(--color-text-primary);
+}
+
+.project-document-definitions {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1.25rem !important;
+}
+
+.project-document-definitions > div {
+  padding-block-start: 0.85rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-definitions > div[data-tone="assumption"] {
+  border-block-start-color: color-mix(in oklch, var(--color-warning) 50%, var(--color-border));
+}
+
+.project-document-definitions dt,
+.project-document-commercial-details dt {
+  margin-block-end: 0.3rem;
+  color: var(--color-text-primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.project-document-section-lead {
+  max-inline-size: 44rem;
+}
+
+.project-document-deliverables {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1.5rem;
+}
+
+.project-document-deliverables > div {
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-deliverables h3,
+.project-document-deliverables h5 {
+  margin: 0;
+  margin-block-end: 0.45rem;
+  font-size: 1rem;
+}
+
+.project-document-questions,
+.project-document-exclusions,
+.project-document-next-step {
+  margin: 0;
+  margin-block-start: clamp(1.5rem, 4vw, 2.5rem);
+  margin-inline: clamp(1.5rem, 5vw, 3.5rem);
+  padding: 1.2rem 1.35rem;
+}
+
+.project-document-questions {
+  border-radius: 0.85rem;
+  background: var(--color-surface-1);
+}
+
+.project-document-questions h2,
+.project-document-questions h3,
+.project-document-questions h4 {
+  margin-block-end: 0.35rem;
+  font-size: 1rem;
+}
+
+.project-document-commercial {
+  margin: clamp(1.5rem, 5vw, 3.5rem);
+  padding: clamp(1.3rem, 4vw, 2rem);
+  border: 1px solid color-mix(in oklch, var(--color-primary) 30%, var(--color-border));
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--color-primary-soft) 58%, var(--color-surface-0));
+}
+
+.project-document-commercial-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.project-document-commercial-heading > strong {
+  flex: none;
+  color: var(--color-primary-hover);
+  font-size: clamp(1.8rem, 5vw, 2.65rem);
+  line-height: 1;
+}
+
+.project-document-commercial-details {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1.5rem !important;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid color-mix(in oklch, var(--color-primary) 24%, var(--color-border));
+}
+
+.project-document-commercial-details > div {
+  min-inline-size: 0;
+}
+
+.project-document-exclusions {
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-exclusions ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding-inline-start: 1.2rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.project-document-exclusions li::marker {
+  color: var(--color-primary);
+}
+
+.project-document-next-step {
+  margin-block-end: clamp(1.5rem, 5vw, 3.5rem);
+  padding-block-start: 1.8rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-next-step h2,
+.project-document-next-step h3,
+.project-document-next-step h4 {
+  margin-block-start: 0.4rem;
+}
+
+.project-document-footer {
+  display: grid;
+  gap: 0.65rem;
+  padding: 1.1rem clamp(1.5rem, 5vw, 3.5rem);
+  color: var(--color-text-muted);
+  font-size: 0.75rem;
+  border-block-start: 1px solid var(--color-border);
+  background: var(--color-surface-1);
+}
+
+.project-document-verification summary {
+  inline-size: fit-content;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.project-document-verification code {
+  display: block;
+  margin-block-start: 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 48rem) {
+  .portal-document-list > li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .project-document-definitions,
+  .project-document-deliverables,
+  .project-document-commercial-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 35rem) {
+  .project-document {
+    border-inline: 0;
+    border-radius: 0;
+  }
+
+  .project-document-section {
+    grid-template-columns: 1fr;
+  }
+
+  .project-document-section-number {
+    padding: 0;
+  }
+
+  .project-document-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .project-document-commercial-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  .portal-topbar,
+  .portal-desktop-nav,
+  .portal-mobile-nav,
+  .document-page-actions {
+    display: none !important;
+  }
+
+  .portal-shell,
+  .portal-main {
+    min-block-size: auto;
+    padding: 0;
+    background: white;
+  }
+
+  .project-document {
+    max-inline-size: none;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    print-color-adjust: exact;
+  }
+
+  .project-document-header,
+  .project-document-commercial,
+  .project-document-questions,
+  .project-document-next-step,
+  .project-document-exclusions {
+    break-inside: avoid;
+  }
+
+  .project-document-verification[open] code {
+    display: none;
+  }
+}
+
+/* Guest intake and owner workflow */
+
+.portal-secondary-button {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 1rem;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.8rem;
+  background: var(--color-surface-0);
+  cursor: pointer;
+}
+
+.portal-secondary-button:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.portal-secondary-button:focus-visible,
+
+.intake-stepper button:focus-visible,
+
+.workflow-compact-form input:focus-visible,
+
+.workflow-compact-form select:focus-visible,
+
+.workflow-review-form textarea:focus-visible,
+
+.intake-field textarea:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.workflow-notice {
+  margin: 0 0 1.5rem;
+  padding: 1rem 1.2rem;
+  color: var(--color-text-primary);
+  font-weight: 700;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 32%, var(--color-border));
+  border-radius: 1rem;
+  background: var(--color-primary-soft);
+}
+
+.workflow-notice p {
+  margin: 0.35rem 0 0;
+  font-weight: 400;
+  line-height: 1.65;
+}
+
+.workflow-notice-attention {
+  border-color: color-mix(in oklch, #b8791b 42%, var(--color-border));
+  background: color-mix(in oklch, #fff2d8 76%, var(--color-surface-0));
+}
+
+.workflow-client-hero {
+  display: grid;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--color-border);
+  border-radius: 1.6rem;
+  background:
+    radial-gradient(circle at 85% 5%, color-mix(in oklch, var(--color-primary) 14%, transparent), transparent 20rem),
+    var(--color-surface-0);
+  box-shadow: 0 1.5rem 4rem color-mix(in oklch, var(--color-text-primary) 6%, transparent);
+}
+
+.workflow-client-hero h1 {
+  margin: 0.45rem 0 0.75rem;
+  font-size: clamp(2rem, 6vw, 4rem);
+  line-height: 1.02;
+}
+
+.workflow-client-hero p {
+  max-inline-size: 46rem;
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+}
+
+.workflow-privacy-seal,
+
+.intake-confidentiality {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.15rem;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 26%, var(--color-border));
+  border-radius: 1.1rem;
+  background: color-mix(in oklch, var(--color-primary-soft) 72%, var(--color-surface-0));
+}
+
+.workflow-privacy-seal > span,
+
+.intake-confidentiality > span {
+  display: grid;
+  flex: none;
+  inline-size: 2.7rem;
+  block-size: 2.7rem;
+  place-items: center;
+  color: var(--color-text-on-primary);
+  font-weight: 800;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.workflow-privacy-seal p,
+
+.intake-confidentiality p {
+  margin: 0.25rem 0 0;
+  font-size: 0.85rem;
+  line-height: 1.55;
+}
+
+.workflow-roadmap,
+
+.workflow-expectations {
+  margin-block-start: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.workflow-roadmap > ol {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workflow-roadmap li {
+  display: flex;
+  min-inline-size: 0;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface-0);
+}
+
+.workflow-roadmap li > span {
+  display: grid;
+  flex: none;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  place-items: center;
+  color: var(--color-text-muted);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+}
+
+.workflow-roadmap li > div {
+  min-inline-size: 0;
+}
+
+.workflow-roadmap li strong,
+
+.workflow-roadmap li small {
+  display: block;
+}
+
+.workflow-roadmap li small {
+  margin-block-start: 0.2rem;
+  color: var(--color-text-muted);
+}
+
+.workflow-roadmap li[data-state="complete"] {
+  border-color: color-mix(in oklch, var(--color-primary) 22%, var(--color-border));
+  background: color-mix(in oklch, var(--color-primary-soft) 54%, var(--color-surface-0));
+}
+
+.workflow-roadmap li[data-state="complete"] > span,
+
+.workflow-roadmap li[data-state="current"] > span {
+  color: var(--color-text-on-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.workflow-roadmap li[data-state="upcoming"] {
+  opacity: 0.68;
+}
+
+.workflow-primary-card {
+  display: grid;
+  gap: 1.35rem;
+  margin-block-start: 2rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  color: var(--color-text-primary);
+  border: 1px solid color-mix(in oklch, var(--color-primary) 28%, var(--color-border));
+  border-radius: 1.5rem;
+  background:
+    linear-gradient(135deg, color-mix(in oklch, var(--color-primary-soft) 68%, var(--color-surface-0)), var(--color-surface-0));
+  box-shadow: 0 1rem 3rem color-mix(in oklch, var(--color-primary) 9%, transparent);
+}
+
+.workflow-primary-card h2 {
+  margin: 0.35rem 0 0.6rem;
+  font-size: clamp(1.6rem, 4vw, 2.5rem);
+}
+
+.workflow-primary-card p {
+  max-inline-size: 47rem;
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+}
+
+.workflow-card-index {
+  color: var(--color-primary-hover);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.workflow-primary-card > .portal-primary-action,
+
+.workflow-primary-card > .portal-status-chip {
+  justify-self: start;
+}
+
+.workflow-primary-card-waiting {
+  border-color: var(--color-border);
+  background: var(--color-surface-0);
+  box-shadow: none;
+}
+
+.workflow-primary-card-confirmed {
+  border-color: color-mix(in oklch, var(--color-primary) 42%, var(--color-border));
+}
+
+.workflow-slot-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.workflow-slot-grid form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface-0);
+}
+
+.workflow-payment-summary {
+  display: grid;
+  justify-items: start;
+  gap: 1rem;
+}
+
+.workflow-payment-summary > strong {
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: clamp(2rem, 7vw, 3.5rem);
+}
+
+.workflow-expectations {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.workflow-expectations h2 {
+  margin: 0.35rem 0 0;
+}
+
+.workflow-expectations ul {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workflow-expectations li {
+  padding: 1.25rem;
+  border-block-start: 2px solid var(--color-primary);
+  background: var(--color-surface-0);
+}
+
+.workflow-expectations p {
+  margin: 0.45rem 0 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.portal-main-document {
+  inline-size: min(100%, 72rem);
+}
+
+.intake-document {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 1.6rem;
+  background: var(--color-surface-0);
+  box-shadow: 0 1.5rem 4rem color-mix(in oklch, var(--color-text-primary) 7%, transparent);
+}
+
+.intake-document-header,
+
+.intake-section,
+
+.intake-actions {
+  padding: clamp(1.4rem, 4vw, 3rem);
+}
+
+.intake-document-header {
+  display: grid;
+  gap: 1.5rem;
+  border-block-end: 1px solid var(--color-border);
+  background:
+    radial-gradient(circle at 80% 10%, color-mix(in oklch, var(--color-primary) 16%, transparent), transparent 17rem),
+    var(--color-surface-0);
+}
+
+.intake-document-header h1 {
+  margin: 0.45rem 0 0.65rem;
+  font-size: clamp(1.8rem, 5vw, 3.2rem);
+}
+
+.intake-document-header p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.intake-document > .workflow-notice {
+  margin: 1.5rem;
+}
+
+.intake-stepper {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0.8rem;
+  border-block-end: 1px solid var(--color-border);
+  list-style: none;
+  background: var(--color-surface-1);
+}
+
+.intake-stepper button {
+  display: flex;
+  inline-size: 100%;
+  min-block-size: 3rem;
+  align-items: center;
+  gap: 0.7rem;
+  padding-inline: 0.75rem;
+  color: var(--color-text-secondary);
+  font: inherit;
+  text-align: start;
+  border: 0;
+  border-radius: 0.75rem;
+  background: transparent;
+  cursor: pointer;
+}
+
+.intake-stepper button > span {
+  display: grid;
+  inline-size: 2rem;
+  block-size: 2rem;
+  place-items: center;
+  font-size: 0.75rem;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 50%;
+}
+
+.intake-stepper li[data-state="current"] button {
+  color: var(--color-text-primary);
+  background: var(--color-surface-0);
+}
+
+.intake-stepper li[data-state="complete"] button > span,
+
+.intake-stepper li[data-state="current"] button > span {
+  color: var(--color-text-on-primary);
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.intake-section {
+  min-block-size: 34rem;
+}
+
+.intake-section-heading {
+  max-inline-size: 46rem;
+}
+
+.intake-section-heading h2 {
+  margin: 0.45rem 0 0.7rem;
+  font-size: clamp(1.65rem, 4vw, 2.6rem);
+}
+
+.intake-section-heading > p:last-child {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.intake-fields {
+  display: grid;
+  gap: 1.5rem;
+  margin-block-start: 2rem;
+}
+
+.intake-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.intake-field > span {
+  font-weight: 750;
+}
+
+/*
+ * A required field is marked with an asterisk rather than the word "נדרש". The word read
+ * as an instruction inside the question and made every mandatory row longer than the
+ * question itself; the mark carries the same meaning at a glance, and the screen-reader
+ * text next to it carries it for anyone who cannot see the colour or the glyph.
+ */
+.intake-required {
+  color: var(--color-error);
+  font-size: 1.05em;
+  font-weight: 700;
+}
+
+.portal-visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.intake-counter {
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.intake-counter[data-tone="short"] {
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.intake-counter[data-tone="near-limit"] {
+  color: #8a5a10;
+  font-weight: 600;
+}
+
+.intake-autosave {
+  min-block-size: 1.2rem;
+  margin: 0.75rem 0 0;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+}
+
+.intake-review {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.intake-review > .portal-primary-action {
+  justify-self: start;
+}
+
+.intake-reply {
+  display: grid;
+  gap: 0.2rem;
+  margin-block-start: 0.4rem;
+  font-weight: 700;
+}
+
+.intake-reply small {
+  color: var(--color-text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+.intake-review textarea {
+  inline-size: 100%;
+  resize: vertical;
+  padding: 0.85rem 1rem;
+  color: var(--color-text-primary);
+  font: inherit;
+  line-height: 1.65;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.9rem;
+  background: var(--color-surface-0);
+}
+
+.intake-field small {
+  color: var(--color-text-muted);
+  line-height: 1.55;
+}
+
+.intake-field textarea,
+
+.workflow-review-form textarea {
+  inline-size: 100%;
+  resize: vertical;
+  padding: 1rem;
+  color: var(--color-text-primary);
+  font: inherit;
+  line-height: 1.65;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.9rem;
+  background: var(--color-surface-0);
+}
+
+.intake-field textarea[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+.intake-field textarea:disabled {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-1);
+}
+
+.intake-field .portal-field-error {
+  font-weight: 500;
+}
+
+.workflow-form-message {
+  margin: 0 1.5rem;
+  padding: 0.9rem 1rem;
+  color: var(--color-error);
+  border: 1px solid color-mix(in oklch, var(--color-error) 35%, var(--color-border));
+  border-radius: 0.8rem;
+  background: color-mix(in oklch, var(--color-error) 6%, var(--color-surface-0));
+}
+
+.intake-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-block-start: 1px solid var(--color-border);
+  background: var(--color-surface-1);
+}
+
+.intake-actions > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.workflow-review-form,
+
+.workflow-compact-form {
+  display: grid;
+  gap: 0.9rem;
+  margin-block-start: 1.25rem;
+}
+
+.workflow-review-form label,
+
+.workflow-compact-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.workflow-compact-form input,
+
+.workflow-compact-form select {
+  min-block-size: 3rem;
+  padding-inline: 0.85rem;
+  color: var(--color-text-primary);
+  font: inherit;
+  border: 1px solid var(--color-border-strong);
+  border-radius: 0.8rem;
+  background: var(--color-surface-0);
+}
+
+.workflow-review-form > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.workflow-success-line {
+  padding: 1rem;
+  color: var(--color-primary-hover) !important;
+  font-weight: 750;
+  border-radius: 0.8rem;
+  background: var(--color-primary-soft);
+}
+
+.workflow-notification-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workflow-notification-list li {
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+  padding: 1.15rem;
+  border: 1px solid color-mix(in oklch, var(--color-primary) 24%, var(--color-border));
+  border-radius: 1rem;
+  background: var(--color-surface-0);
+}
+
+.workflow-notification-list li[data-read="true"] {
+  border-color: var(--color-border);
+  opacity: 0.78;
+}
+
+.workflow-notification-list li span {
+  display: inline-block;
+  margin-block-end: 0.4rem;
+  color: var(--color-primary-hover);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.workflow-notification-list li strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.workflow-notification-list li p {
+  margin: 0.35rem 0;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.workflow-notification-list li small {
+  color: var(--color-text-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Actions list and project history
+   --------------------------------------------------------------------------- */
+
+.portal-action-section {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2.5rem;
+}
+
+.portal-action-list {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-action-card {
+  display: grid;
+  gap: 0.65rem;
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+}
+
+/*
+ * The featured card is the one thing on the page that is genuinely waiting on the
+ * reader. It earns the accent border; the calm cards beside it stay quiet so that the
+ * distinction survives a page with six rows on it.
+ */
+.portal-action-card-featured {
+  border-color: var(--color-primary);
+  background: var(--color-surface-1);
+}
+
+.portal-action-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.portal-action-card-head .portal-card-company {
+  margin: 0;
+}
+
+.portal-action-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.portal-action-card p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.portal-action-card .portal-primary-action,
+
+.portal-action-card .portal-text-link {
+  justify-self: start;
+}
+
+.portal-status-chip[data-tone="calm"] {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-2);
+}
+
+.portal-action-empty {
+  margin: 0;
+  padding: clamp(1.25rem, 4vw, 1.75rem);
+  color: var(--color-text-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: 1.25rem;
+  background: var(--color-surface-0);
+}
+
+.portal-history {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 2.5rem;
+}
+
+.portal-history-empty {
+  margin: 0;
+  color: var(--color-text-secondary);
+}
+
+.portal-history-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-history-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  padding-block: 0.9rem;
+}
+
+/*
+ * The connecting rail is drawn as a border on the marker column rather than as an
+ * absolutely positioned line, so it follows the writing direction without a single
+ * physical offset and cannot drift out of alignment when a row grows.
+ */
+.portal-history-list li .portal-history-mark {
+  position: relative;
+  inline-size: 0.85rem;
+  border-inline-start: 2px solid var(--color-border);
+  margin-inline-start: 0.4rem;
+}
+
+.portal-history-list li:last-child .portal-history-mark {
+  border-inline-start-color: transparent;
+}
+
+.portal-history-list li .portal-history-mark::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0.55rem;
+  inset-inline-start: -0.3rem;
+  inline-size: 0.6rem;
+  block-size: 0.6rem;
+  border: 2px solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-0);
+}
+
+.portal-history-list li[data-actor="client"] .portal-history-mark::before {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+
+.portal-history-body {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.portal-history-body strong {
+  font-size: 1.02rem;
+}
+
+.portal-history-body p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.portal-history-body small {
+  color: var(--color-text-muted);
+}
+
+.pwa-settings {
+  display: grid;
+  gap: 1.5rem;
+  margin-block-start: 2.5rem;
+  padding: clamp(1.25rem, 4vw, 2rem);
+  border: 1px solid var(--color-border);
+  border-radius: 1.25rem;
+  background: var(--color-surface-0);
+}
+
+.pwa-settings h2,
+.pwa-settings h3,
+.pwa-settings p {
+  margin: 0;
+}
+
+.pwa-settings > div:first-child > p:last-child {
+  margin-block-start: 0.5rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.pwa-device-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.pwa-device-list ul {
+  display: grid;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pwa-device-list li {
+  display: flex;
+  min-block-size: 3.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.8rem;
+  background: var(--color-surface-1);
+}
+
+.pwa-device-list li span,
+.pwa-device-list li small {
+  display: block;
+}
+
+.pwa-device-list li small {
+  margin-block-start: 0.2rem;
+  color: var(--color-text-muted);
+}
+
+.pwa-preferences {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.9rem;
+}
+
+.pwa-preferences legend {
+  padding-inline: 0.4rem;
+  font-weight: 800;
+}
+
+.pwa-preferences label {
+  display: flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.pwa-preferences input {
+  inline-size: 1.2rem;
+  block-size: 1.2rem;
+}
+
+.pwa-preferences p,
+.pwa-settings-status {
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+}
+
+.pwa-settings-status {
+  min-block-size: 1.5rem;
+}
+
+.pwa-settings-admin {
+  margin-block: 1.5rem 0;
+}
+
+@media (min-width: 44rem) {
+  .workflow-roadmap > ol {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .workflow-roadmap li {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .workflow-expectations ul {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .intake-stepper {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .intake-stepper button {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .workflow-notification-list li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (min-width: 64rem) {
+  .workflow-client-hero {
+    grid-template-columns: minmax(0, 1.4fr) minmax(18rem, 0.6fr);
+  }
+
+  .intake-document-header {
+    grid-template-columns: minmax(0, 1.4fr) minmax(19rem, 0.6fr);
+  }
+}
+
+@media (max-width: 35rem) {
+  .workflow-slot-grid form,
+
+  .intake-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .intake-actions > div {
+    inline-size: 100%;
+  }
+
+  .intake-actions button {
+    flex: 1;
+  }
+}

@@ -63,6 +63,26 @@ test.describe('Visual regression', () => {
     });
   }
 
+  for (const path of [
+    '/projects',
+    '/projects/athletetrack',
+    '/projects/finquest',
+    '/projects/guesto',
+  ]) {
+    test(`${path} snapshot`, async ({ page }, testInfo) => {
+      await page.goto(path);
+      await applyDirectionFixture(page, testInfo.project.name);
+      await page.waitForLoadState('networkidle');
+      await expect(page).toHaveScreenshot(
+        `${path.slice(1).replaceAll('/', '-')}.png`,
+        {
+          fullPage: true,
+          maxDiffPixelRatio: 0.01,
+        }
+      );
+    });
+  }
+
   test('not-found page snapshot', async ({ page }, testInfo) => {
     await page.goto('/nonexistent');
     await applyDirectionFixture(page, testInfo.project.name);

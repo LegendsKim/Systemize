@@ -111,7 +111,9 @@ test.describe("Blueprint lead form", () => {
     await fillValidLead(page);
     await page.getByRole("button", { name: /שולחים רקע/ }).click();
 
-    await expect(page.getByRole("status")).toContainText("הפנייה נשלחה");
+    await expect(
+      page.getByRole("status").filter({ hasText: "הפנייה נשלחה" })
+    ).toBeVisible({ timeout: 10_000 });
     await expect(page.locator(FIELD.email)).toHaveValue("");
   });
 
@@ -140,7 +142,9 @@ test.describe("Blueprint lead form", () => {
     await expect(submit).toHaveAttribute("aria-busy", "true");
 
     release?.();
-    await expect(page.getByRole("status")).toContainText("הפנייה נשלחה");
+    await expect(
+      page.getByRole("status").filter({ hasText: "הפנייה נשלחה" })
+    ).toBeVisible({ timeout: 10_000 });
   });
 
   test("J1 — going offline reports a distinct state and keeps the entered details", async ({
@@ -181,6 +185,8 @@ test.describe("Blueprint lead form", () => {
 
     // Same key, second attempt: the server recognises the replay.
     await page.getByRole("button", { name: /שולחים רקע/ }).click();
-    await expect(page.getByRole("status")).toContainText("הפנייה כבר אצלנו");
+    await expect(
+      page.getByRole("status").filter({ hasText: "הפנייה כבר אצלנו" })
+    ).toBeVisible();
   });
 });

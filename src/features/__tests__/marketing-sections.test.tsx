@@ -6,7 +6,7 @@ import { OffTheShelfComparison } from "../comparison/components/OffTheShelfCompa
 import { ServicesAccordion } from "../services/components/ServicesAccordion";
 import { PortfolioGrid } from "../portfolio/components/PortfolioGrid";
 import { FaqList } from "../faq/components/FaqList";
-import { portfolioHeadings, portfolioProjects } from "../portfolio/portfolio-content";
+import { portfolioProjects } from "../portfolio/portfolio-content";
 import { offTheShelfComparisonRows } from "../comparison/comparison-content";
 import { serviceEntries } from "../services/services-content";
 import { faqEntries } from "../faq/faq-content";
@@ -17,8 +17,8 @@ import { faqEntries } from "../faq/faq-content";
  * These are the properties that a copy edit or a refactor could silently break and that
  * neither the type checker nor the architecture validator can see: the section is labelled
  * by its own heading, no section introduces a second `<h1>`, the disclosure controls are
- * native, the comparison table is a real table, and the portfolio's placeholder disclosure
- * is actually on the page.
+ * native, the comparison table is a real table, and the portfolio links every approved
+ * project to its detail route.
  */
 
 const sections = [
@@ -34,12 +34,6 @@ const sections = [
     id: "services",
     labelledBy: "services-heading",
     render: ServicesAccordion,
-  },
-  {
-    name: "portfolio",
-    id: "portfolio",
-    labelledBy: "portfolio-heading",
-    render: PortfolioGrid,
   },
   {
     name: "off-the-shelf comparison",
@@ -115,14 +109,19 @@ describe("faq list", () => {
 });
 
 describe("portfolio grid", () => {
-  it("renders the placeholder disclosure visibly while any entry is illustrative", () => {
-    expect(portfolioProjects.some((project) => project.isPlaceholder)).toBe(true);
+  it("renders every approved product as a named detail-page link", () => {
+    const { container } = render(<PortfolioGrid />);
 
-    render(<PortfolioGrid />);
+    expect(container.querySelectorAll(".portfolio-card")).toHaveLength(
+      portfolioProjects.length
+    );
 
-    const notice = screen.getByText(portfolioHeadings.placeholderNotice);
-    expect(notice).toBeVisible();
-    expect(notice).not.toHaveAttribute("aria-hidden");
+    for (const project of portfolioProjects) {
+      expect(
+        screen.getByRole("link", { name: new RegExp(project.name) })
+      ).toHaveAttribute("href", `/projects/${project.slug}`);
+      expect(screen.getAllByText(project.type).length).toBeGreaterThan(0);
+    }
   });
 });
 

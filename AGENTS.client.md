@@ -1,190 +1,350 @@
 ---
 configuration_status: APPROVED
 boilerplate_version: "v1.0.1"
-client_name: "Systemize"
+client_name: "SYSTEMIZE"
 decision_owner: "Marlen Kimiagrov"
-last_reviewed: "2026-07-26"
-project_phase: "MVP"
+last_reviewed: "2026-07-31"
+project_phase: "PORTAL_MVP_SLICE_4"
 deployment_target: "Vercel"
 data_classification: "confidential"
 ---
 
-# Client Configuration — Systemize Marketing Site
+# Client Configuration — SYSTEMIZE Platform
 
-This file configures **TUNABLE** decisions for the Systemize marketing and
-lead-generation site. It does not grant exemptions from **LOCKED** rules in `AGENTS.md`.
+This file configures TUNABLE decisions for the SYSTEMIZE marketing site and SYSTEMIZE
+PORTAL. It grants no exemption from a LOCKED rule in `AGENTS.md`.
 
 Authoritative product definition: `docs/PRODUCT.md`.
-Preserved raw input: `docs/discovery/CLIENT_BRIEF.md`.
+Preserved input: `docs/discovery/CLIENT_BRIEF.md`.
+
+Portal implementation is authorized only within the approved staged scope in
+`docs/PRODUCT.md`.
 
 ## 1. Product and stack
 
-- **System type:** Public, single-page marketing and lead-generation site.
-- **Business objective:** Convert business visitors into qualified leads by
-  demonstrating automation value and the delivery process behind it.
-- **Offer, as stated by the owner on 2026-07-26:** bespoke cloud management systems for
-  small and medium businesses in any trade. The customer-facing word is *cloud*, not
-  *web*. The site's central claim is that the business dictates how the software is
-  built, and the breadth of the client range is the evidence. See `docs/PRODUCT.md` §1;
-  the scope-change entry is in §8 below.
-- **Primary user groups:**
-  - *Public visitor* — anonymous prospective business client. May read all public
-    content and submit one lead. May not read, list, or modify any stored lead.
-  - *Owner / operator* — Marlen Kimiagrov. Receives Telegram notifications and reads
-    leads directly in the Supabase dashboard. **No authenticated admin UI is in scope
-    for the MVP.**
-- **Required integrations:** Supabase (database), Telegram Bot API (notifications).
-  Google Gemini is deferred with the chat assistant; see §8.
-- **Database:** Supabase.
-- **Authentication model:** none — the public site has no sign-in.
+- **System type:** Public marketing site plus authenticated multi-company project
+  delivery portal.
+- **Business objective:** Convert qualified leads and then provide a transparent,
+  documented workflow from discovery through contracting, payment, delivery, rollout,
+  and support.
+- **Primary user groups:** anonymous visitor, SYSTEMIZE owner, client owner.
+- **Initial internal staff:** Marlen Kimiagrov only.
+- **Framework:** Next.js App Router with strict TypeScript.
+- **Database and authentication:** Supabase.
+- **Hosting:** Vercel.
+- **Required integrations:** Google OAuth, Web Push, existing Telegram lead
+  notifications.
+- **Deferred integrations:** automatic payment provider, WhatsApp Business API, direct
+  AI provider.
 - **Environments:** local, preview, production.
 
 ## 2. Locale and regional behavior
 
 - **Supported locales:** `["he"]`
 - **Default locale:** `he`
-- **URL locale strategy:** unprefixed default — a single locale means no locale segment.
+- **URL locale strategy:** unprefixed default.
 - **Default timezone:** `Asia/Jerusalem`
 - **Supported currencies:** `["ILS"]`
-- **RTL locales:** `["he"]` — the entire site renders `dir="rtl"`.
+- **Direction:** RTL.
+- **Customer-facing date locale:** `he-IL`.
 
-Timestamps are stored and transmitted in UTC and formatted at the presentation edge with
-an explicit `he-IL` locale and the `Asia/Jerusalem` IANA timezone. Money is formatted
-with `Intl.NumberFormat` and the explicit `ILS` currency code.
+Timestamps are stored in UTC. Money uses `Intl.NumberFormat` with explicit ILS.
+Components use logical layout properties even while Hebrew is the sole locale.
 
-## 3. Public routes and SEO
+## 3. Routes and indexing
 
-- **Public/indexable routes:** `/`, `/privacy`, `/terms`, `/accessibility`
-- **Authenticated/non-indexable routes:** none.
-- **Canonical host:** not yet decided — see the production-release blockers in §10.
-  Until it is decided, `metadataBase` reads from `NEXT_PUBLIC_SITE_URL` and defaults to
-  the local development origin. No production release may occur while this is open.
-- **Required structured-data types:** `ProfessionalService`, `FAQPage`. Both derive from
-  the same content source as the visible text.
-- **Sitemap policy:** all four indexable routes listed; no route is excluded.
-- **Analytics/consent requirements:** a compact consent panel is required. Necessary
-  cookies are always active; preferences, analytics, and marketing categories default to
-  off and remain user-selectable. The choice is stored in a first-party consent cookie
-  for 180 days and can be reopened from the footer. No analytics, pixels, or marketing
-  providers are currently installed; adding one requires gating it on the relevant
-  consent category and updating the privacy text before activation.
+### Public and indexable
 
-Explicit SEO exceptions, with reason:
+- `/`
+- `/projects`
+- `/projects/athletetrack`
+- `/projects/finquest`
+- `/projects/guesto`
+- `/privacy`
+- `/terms`
+- `/accessibility`
 
-- The hero background is rendered as a raw `<img>` inside a `<picture>`, from srcSets
-  produced by `getImageProps()`. Reason: the `<source>` media query is what keeps the
-  artwork off portrait viewports entirely — `display: none` does not reliably prevent a
-  fetch, whereas an unmatched `<source>` is never selected, so a phone downloads a 43-byte
-  transparent pixel instead of a megabyte. The optimizer still supplies AVIF negotiation
-  and responsive variants. This is the documented exception to `AGENTS.md` §9.
+### Authentication and invitation, non-indexable
 
-## 4. Testing depth
+- `/invite/[token]`
+- `/login`
+- `/auth/callback`
+- `/auth/error`
 
-The locked floor for money, authorization, data integrity, persistence, and destructive
-operations always applies.
+### Client portal, authenticated and non-indexable
 
-- **Critical end-to-end journeys:**
-  1. Visitor submits the Blueprint lead form successfully.
-  2. Duplicate submission of the same lead creates exactly one record.
-  3. Lead persistence succeeds while Telegram notification fails — the visitor still
-     sees success and the record survives.
-  4. Visitor navigates the hero's four process milestones from the keyboard, in both
-     the landscape and the portrait composition.
-- **Required browser/device matrix:** latest Chromium desktop (1440×900) and mobile
-  viewport (390×844). Firefox and WebKit are deferred.
-- **Visual regression scope:** home page and the three legal routes, each at desktop RTL
-  and mobile RTL. The hero is included because it is the primary conversion surface.
-- **Accessibility verification scope:** automated axe on every indexable route, plus
-  keyboard verification of the hero milestones, FAQ disclosures and the lead form,
-  and a reduced-motion check that every hero animation resolves to its finished state.
-- **Deferred non-critical coverage:** cross-browser Firefox/WebKit visual coverage —
-  owner Marlen Kimiagrov, target milestone: before public launch.
+- `/portal`
+- `/portal/actions`
+- `/portal/documents`
+- `/portal/projects/[projectId]`
+- `/portal/projects/[projectId]/discovery`
+- `/portal/projects/[projectId]/actions`
+- `/portal/projects/[projectId]/updates`
+- `/portal/projects/[projectId]/documents`
+- `/portal/projects/[projectId]/payments`
+- `/portal/projects/[projectId]/people`
+- `/portal/notifications`
+- `/portal/settings`
 
-## 5. Domain invariants
+### SYSTEMIZE owner surface, authenticated and non-indexable
 
-Business rules that must never be inferred or altered by an agent.
+- `/admin`
+- `/admin/notifications`
+- `/admin/settings`
+- `/admin/companies`
+- `/admin/companies/[companyId]`
+- `/admin/projects/[projectId]`
+- `/admin/projects/[projectId]/documents`
+- `/admin/projects/[projectId]/updates`
+- `/admin/projects/[projectId]/payments`
+- `/admin/projects/[projectId]/people`
+- `/admin/templates`
 
-- A lead is durably persisted to Supabase **before** any notification delivery is
-  attempted. A Telegram failure never deletes, rolls back, or hides the stored lead, and
-  never turns a successful submission into a user-visible error.
-- Every lead submission is protected by a durable idempotency key. Replaying the same
-  key never creates a second lead record and never sends a second notification.
-- Lead identity, ownership, and audit fields — `id`, `created_at`, request correlation —
-  are generated on the server. A client-supplied value for any of them is ignored.
-- Lead records are never hard-deleted by application code. Deletion is an explicit,
-  manual operator action tied to the retention policy.
-- The hero's trail, its milestone markers and the terrain they stand on are derived from
-  one coordinate list. A marker is never positioned independently of the artwork.
+Route names are contracts. Changing the `/portal` or `/admin` root requires an ADR.
+All authenticated routes explicitly emit noindex/noarchive behavior and are excluded
+from sitemap generation.
 
-## 6. Data and integration boundaries
+Canonical marketing host is `https://www.systemize.co.il`. The final portal host
+strategy is a production blocker and may remain same-origin under `/portal` for MVP.
 
-- **Systems of record:** Supabase — the sole durable store for leads, idempotency keys,
-  and rate-limit counters.
-- **Notification-only systems:** Telegram Bot API. Best-effort, non-authoritative. Its
-  failure is logged and swallowed after the lead is stored.
-- **Inbound webhook contracts:** none.
-- **Outbound provider contracts:**
-  - Telegram `sendMessage` — explicit timeout, no retry on ordinary 4xx, bounded
-    backoff with jitter on network failure/429/transient 5xx, honours `Retry-After`.
-  - Google Gemini text generation — deferred with the chat assistant; see §8.
-- **PII fields and retention:** collected on the lead form — full name, business name,
-  phone number, email address, and a free-text description of the need. Purpose:
-  responding to a business enquiry. Retention: not yet decided — see the
-  production-release blockers in §10. Access: owner only, via Supabase.
-  Deletion/export: manual operator action on request.
-  Lead PII must never appear in logs, error reports, or analytics.
-- **Idempotency requirements:** mandatory on lead submission. Key is generated on the
-  client per form session, enforced by a unique database constraint.
-- **Rate-limit policy:** database-backed and therefore distributed, never process-local.
-  Lead submission: 5 requests per IP per hour, returning a typed, user-visible
-  rate-limit state rather than a generic error.
+## 4. Authentication and authorization
 
-## 7. Approved tunings and exceptions
+- Google OAuth is the only sign-in provider.
+- Only Google-verified emails ending exactly in `@gmail.com` are allowed in the MVP.
+- Google Workspace custom domains are denied.
+- The SYSTEMIZE owner account is an explicit server-side allowlist entry.
+- Client access requires both a valid identity and an active project membership.
+- An invitation is single-use, expires after seven days, and is bound to one exact Gmail
+  address, company, project, and intended role.
+- Invitation tokens are random and stored only as cryptographic hashes.
+- Account activation consumes the invitation and creates the membership atomically.
+- Authentication does not grant implicit company or project access.
+- Every sensitive Server Action and Route Handler re-authorizes membership and required
+  capability.
 
-Only rules explicitly marked **TUNABLE** in `AGENTS.md` may be configured here.
+The owner may revoke a membership or invitation. Revocation takes effect on the next
+authorized request and does not delete the historical audit record.
 
-| Rule | Decision | Reason | Owner | Review date |
-|---|---|---|---|---|
-| §9 SEO and assets — `next/image` for content images | The hero plate is rendered as a raw `<img>` inside a `<picture>`, from `getImageProps()` srcSets | An unmatched `<source>` media query is the only reliable way to keep the artwork off portrait viewports; the optimizer is still used | Marlen Kimiagrov | 2026-10-25 |
-| §10 Testing depth — browser matrix | Chromium desktop and mobile only for the MVP | Single-locale marketing site; cross-browser visual coverage deferred to pre-launch | Marlen Kimiagrov | 2026-10-25 |
+## 5. Roles and capabilities
 
-## 8. Scope changes since approval
+### `systemize_owner`
 
-Recorded at the owner's direction on the dates given.
+- Full application administration.
+- Sole authority to record a manual payment.
+- Sole publisher of client-visible updates in the MVP.
+- Sole creator of companies, projects, templates, and invitations.
 
-| Item | Decision | Effect |
-|---|---|---|
-| Positioning and vocabulary (2026-07-26) | Systemize builds **bespoke cloud management systems for small and medium businesses in any trade**, not specifically an automation-and-Excel/VBA agency. *Cloud* is the customer-facing word. | Site copy states the offer at its real scope. The "Excel versus SaaS" section becomes **off-the-shelf versus built around you** — same marketing job, correct positioning. No LOCKED rule, route, data field, or integration changes. |
-| Savings calculator | **Removed from scope.** Not required at all. | Journey J4 and its rate-limit and formatting requirements no longer apply. `Intl` money formatting stays in `src/lib/i18n` for the lead flow. |
-| AI chat assistant | **Deferred.** Not required now. | Journey J5, the Gemini adapter, the chat route and its rate limit are out of the current build. The provider-neutral boundary is still the design if it returns. |
-| Cookie preferences (2026-07-27) | **Added.** A compact Systemize-branded consent panel lets visitors accept all, keep only necessary cookies, or choose preferences, analytics, and marketing individually. | Consent is explicit, optional categories default off, the first-party choice expires after 180 days, and settings remain reachable from the footer. No analytics or marketing provider is activated by this UI alone. |
+### `client_owner`
 
-Neither change weakens a LOCKED rule; both narrow the product surface.
+- Reads client-visible content for assigned projects.
+- Answers questions, comments, signs eligible contracts, and completes client actions.
+- Sees commercial information for assigned projects.
+- Cannot record payment, publish SYSTEMIZE updates, manage templates, or access another
+  project by guessing an identifier.
 
-## 9. Known deviations
+Future staff roles may be added without widening current permissions. They are not
+invitable in the MVP.
 
-This section documents existing non-compliance. It does not authorize new violations of
-a **LOCKED** rule.
+## 6. Domain invariants
 
-| Deviation | Risk | Remediation | Owner | Target date |
-|---|---|---|---|---|
-| Portfolio, founder, and legal copy ship as clearly marked placeholder content | A premature deploy could publish non-final text | Replace from a single content module before public launch; the launch checklist blocks on it | Marlen Kimiagrov | Before public launch |
-| No hosted Supabase project; development runs against the local Supabase CLI stack | Production RLS and migrations are unverified against the real project | Provision the project, apply migrations, re-run RLS tests in preview | Marlen Kimiagrov | Before production release |
+- A company may have multiple client owners and projects.
+- Membership is project-scoped.
+- A project always has one explicit current lifecycle state.
+- Lifecycle changes create append-only events.
+- A document approval or signature always references an immutable document version.
+- Signed evidence cannot be updated or deleted through browser-facing roles.
+- Signing does not equal commercial approval.
+- Payment receipt is the event that makes commercial approval effective.
+- Only the SYSTEMIZE owner records manual payment in the MVP.
+- Project state advances past a payment gate only after an authoritative paid event.
+- Structured AI import cannot publish or mutate progress without owner preview and
+  confirmation.
+- Durable state is committed before notification delivery.
+- Notification failure never reverses a document, signature, payment, update, or stage
+  event.
 
-## 10. Approval
+## 7. Data model and systems of record
+
+Supabase Postgres is authoritative for:
+
+- `profiles`
+- `companies`
+- `company_people`
+- `projects`
+- `project_memberships`
+- `project_invitations`
+- `project_events`
+- `project_actions`
+- `document_templates`
+- `documents`
+- `document_versions`
+- `signature_requests`
+- `signature_events`
+- `payment_records`
+- `project_updates`
+- `project_update_imports`
+- `questions`
+- `comments`
+- `notifications`
+- `push_subscriptions`
+- durable idempotency and rate-limit records
+
+Exact migrations may refine names, but boundaries and invariants remain stable.
+
+Supabase Auth is authoritative for Google identity. Private Supabase Storage is
+authoritative for signed PDFs and future private project files. Vercel is the runtime,
+not a system of record.
+
+## 8. Documents, contracts, and signatures
+
+- Documents originate from versioned editable templates.
+- Published versions are immutable.
+- Web and PDF render from the same structured source.
+- Contract submission requires authority/read/agreement declarations and a drawn
+  signature.
+- The server validates the signature as bounded PNG input and hashes its decoded bytes.
+- Evidence includes document and identity snapshots, declaration values, UTC time,
+  signature hash, document hash, and bounded privacy-safe request evidence.
+- Signature and evidence creation is one idempotent durable mutation.
+- Signed PDF access is private and re-authorized.
+- Contract language remains a production blocker until competent legal review.
+
+CoachSync is a behavioral reference only. SYSTEMIZE receives its own domain model,
+templates, copy, tests, and visual system.
+
+## 9. Payments
+
+- MVP payment capture is manual.
+- Only `systemize_owner` may record a payment.
+- Amount, currency, project, payer, effective time, and status are validated on the
+  server.
+- Recording is idempotent and auditable.
+- The initial commercial flow is `signed → payment_pending → paid → approved`.
+- Automatic payment processing is deferred behind a server-only provider adapter.
+- A future provider mutation must reconcile timeouts by durable idempotency key.
+
+## 10. Structured update ingestion
+
+- SYSTEMIZE PORTAL does not call an AI provider in the MVP.
+- The owner copies a versioned prompt and pastes back JSON.
+- JSON is validated against a versioned schema with maximum lengths and collection
+  bounds.
+- Unknown fields are rejected unless explicitly introduced by a new schema version.
+- The project reference must match the selected project.
+- A deterministic fingerprint prevents duplicate import and publication.
+- The owner receives a preview and may edit client-facing fields before publication.
+- Internal technical notes never become client-visible by default.
+- AI may propose a lifecycle or progress change; only an explicit owner action applies
+  it.
+- Every accepted session import updates a bounded current-context snapshot containing
+  completed and partial task references, decisions, blockers, newly discovered work,
+  and the recommended next-session goal.
+- The next copied prompt is generated dynamically from the approved project plan,
+  current-context snapshot, prior accepted session summary, open work, and current
+  lifecycle state.
+- Full session history remains durable, while the prompt uses a bounded rolling summary
+  so prompt size cannot grow without limit.
+- Project completion is calculated deterministically from owner-approved weighted
+  milestones and task states. AI may propose task-state changes but never supplies the
+  authoritative project percentage.
+
+## 11. PWA and notification behavior
+
+- Authenticated surfaces are installable as a PWA.
+- In-app notifications are authoritative; Web Push is best-effort.
+- Important events notify the affected opposite party.
+- The actor does not receive a redundant self-notification.
+- Notification recipients are derived server-side from memberships.
+- Persistence precedes push delivery.
+- Subscriptions are device-specific, revocable, and deleted after permanent provider
+  rejection.
+- Retry is bounded and applies only to retryable provider failures.
+- Contractual, payment, security, and required-action notifications cannot be disabled.
+
+Offline support may cache the application shell and previously safe public assets. It
+must not expose private project responses through a shared or public cache, and it must
+not queue a signature, payment, or publication mutation without an explicit durable
+idempotency design.
+
+## 12. PII and retention
+
+PII includes:
+
+- name;
+- Gmail address;
+- phone number;
+- company and role;
+- project free text;
+- questions and comments;
+- contract and signature evidence;
+- payment metadata;
+- push subscription endpoints.
+
+PII is excluded from logs, analytics, error reports, notification provider payloads
+beyond the minimum display copy, and non-production fixtures.
+
+An approved retention, export, deletion, and revocation policy is required before portal
+production launch. Signed contractual evidence and payment records are not deleted by a
+normal account-deletion request; their retention period requires legal approval.
+
+## 13. Caching and mutations
+
+- User-specific and project-specific reads are request-scoped and never publicly cached.
+- Shared mutable templates may use tagged cache entries only when authorization scope is
+  preserved.
+- Invitation, activation, signature, payment, update publication, and lifecycle
+  mutations are idempotent.
+- Every mutation invalidates only the project, action, document, payment, or notification
+  entries it changed.
+- Server Components call server-only services directly rather than internal HTTP routes.
+
+## 14. Testing depth
+
+Required automated coverage includes:
+
+- Google callback allow/deny cases.
+- Gmail-domain restriction and exact invitation-email match.
+- Invitation expiry, reuse, revocation, mismatch, and atomic activation.
+- Anonymous, cross-company, cross-project, revoked-member, client-owner, and
+  SYSTEMIZE-owner RLS cases.
+- Document version immutability and web/PDF source parity.
+- Signature declarations, image validation, hashes, evidence immutability, and duplicate
+  submission.
+- Payment authorization, idempotency, and payment-gated lifecycle transition.
+- Structured import valid, invalid, oversized, unknown-version, wrong-project, and
+  duplicate cases.
+- Notification recipient calculation and persistence-before-push failure behavior.
+- PWA manifest, service worker lifecycle, invalid subscription cleanup, and safe caching.
+- Critical mobile journey at 390×844.
+- Automated axe plus manual keyboard and touch verification.
+- Existing marketing-site lead, RTL, SEO, legal-route, and visual coverage.
+
+## 15. Approved tunings and known blockers
+
+No LOCKED rule is weakened.
+
+The following block portal production but not approved local implementation:
+
+- final contract text and legal review;
+- production Google OAuth configuration and redirect allowlist;
+- production Supabase migrations and RLS verification;
+- approved PII retention/export/deletion policy;
+- Web Push production configuration and device matrix;
+- final portal host strategy;
+- final wording and commercial values for document templates.
+
+## 16. Approval
 
 - **Configuration status:** `APPROVED`
+- **Decision owner:** Marlen Kimiagrov
+- **Approval requested:** 2026-07-29
 - **Approved by:** Marlen Kimiagrov
-- **Approval date:** 2026-07-25
-- **Notes:** This approval authorizes implementation against the local Supabase CLI
-  stack with clearly marked placeholder content. Three tracked items below block a
-  **production release**, not development. They are owned by Marlen Kimiagrov and due
-  before the production release.
+- **Approval date:** 2026-07-29
+- **Approval statement:** “יאללה בו נתקדם”
+- **Implementation authorization:** granted for the staged portal MVP in
+  `docs/PRODUCT.md`.
 
-### Production-release blockers
-
-| Item | Why it blocks | Owner | Due |
-|---|---|---|---|
-| Canonical domain | `metadataBase`, canonical URLs, sitemap, and absolute Open Graph URLs cannot be correct without it | Marlen Kimiagrov | Before production release |
-| Lead PII retention and deletion policy | Personal data is collected without a defined lifetime or deletion path | Marlen Kimiagrov | Before production release |
-| Real portfolio, founder, and legal copy | Placeholder text must not be published | Marlen Kimiagrov | Before public launch |
+Approval means the owner accepts the product boundaries, Gmail-only authentication,
+multi-owner project membership, signature evidence model, payment-gated approval,
+manual-payment MVP, structured JSON import, PWA notification model, and production
+blockers recorded above.

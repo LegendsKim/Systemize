@@ -7,8 +7,8 @@
  *
  * - `svh` rather than `vh`, so the card is sized against the *small* viewport and never
  *   ends up under Safari's collapsing toolbar.
- * - `env(safe-area-inset-*)` on every edge it is pinned to, for the home indicator and
- *   for landscape notches.
+ * - `env(safe-area-inset-*)` when calculating its available box, for the home indicator
+ *   and landscape notches.
  * - The card itself never scrolls the page: the category list is the only scroll area,
  *   so the heading and the action buttons stay reachable on short screens.
  * ------------------------------------------------------------------------ */
@@ -300,9 +300,9 @@
 
 /*
  * Phones. The WhatsApp launcher and the accessibility launcher own both bottom corners,
- * so the card is lifted clear of them rather than covering either one. While the
- * categories are open the card needs the height more than the clearance, so it drops
- * back down and takes the full column.
+ * so the consent card is centred in the unobstructed part of the viewport instead of
+ * becoming a third bottom control. The same centre is preserved when categories open;
+ * only the card's height changes.
  *
  * A phone also gets the compact treatment: the panel is an interruption, so it takes
  * roughly half the height it takes on desktop. Everything that is decoration rather
@@ -312,18 +312,31 @@
  */
 @media (max-width: 40rem) {
   .cookie-consent {
-    inset-block-end: calc(5.4rem + env(safe-area-inset-bottom, 0px));
-    inset-inline-start: calc(0.75rem + env(safe-area-inset-left, 0px));
-    inset-inline-end: calc(0.75rem + env(safe-area-inset-right, 0px));
-    max-block-size: calc(100svh - 6.4rem);
+    inset-block-start: auto;
+    inset-block-end: calc(5rem + env(safe-area-inset-bottom, 0px));
+    inset-inline: 0;
+    inline-size: min(
+      27rem,
+      calc(
+        100% - 1.5rem - env(safe-area-inset-left, 0px) -
+          env(safe-area-inset-right, 0px)
+      )
+    );
+    max-block-size: calc(
+      100svh - 6rem - env(safe-area-inset-top, 0px) -
+        env(safe-area-inset-bottom, 0px)
+    );
     gap: 0.5rem;
     border-radius: 0.95rem;
     padding: 0.7rem 0.8rem;
+    translate: none;
   }
 
   .cookie-consent--customizing {
-    inset-block-end: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-    max-block-size: calc(100svh - 1.5rem);
+    max-block-size: calc(
+      100svh - 6rem - env(safe-area-inset-top, 0px) -
+        env(safe-area-inset-bottom, 0px)
+    );
   }
 
   .cookie-consent-header {

@@ -1,83 +1,150 @@
-# Systemize — Marketing Site
+# SYSTEMIZE Platform
 
-Public, single-page marketing and lead-generation site for Systemize, a business
-automation and Excel/VBA services agency. Hebrew only, right-to-left.
+The Hebrew, RTL platform for SYSTEMIZE: a public marketing site plus an authenticated
+client portal for discovery, proposals, contracts, payments, delivery updates, and
+project handoff.
 
 - **Created from:** Systemize Boilerplate `v1.0.1`
 - **Decision owner:** Marlen Kimiagrov
 - **Deployment target:** Vercel
+- **Application stack:** Next.js App Router, strict TypeScript, Supabase
 
 ## Documentation map
 
 | Document | Purpose |
 |---|---|
-| [`AGENTS.md`](./AGENTS.md) | Engineering constitution. Authoritative, LOCKED rules. |
-| [`AGENTS.client.md`](./AGENTS.client.md) | Client configuration — the TUNABLE decisions for this project. |
-| [`docs/PRODUCT.md`](./docs/PRODUCT.md) | Approved product scope, journeys, and acceptance criteria. |
-| [`docs/discovery/CLIENT_BRIEF.md`](./docs/discovery/CLIENT_BRIEF.md) | Preserved raw brief and clarification history. |
-| [`docs/decisions/`](./docs/decisions/) | Architecture decision records. |
-| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Routes, modules, data flow, RSC boundaries, providers. |
-| [`QUALITY.md`](./QUALITY.md) | Security, RLS, testing, CI, and accessibility verification. |
-| [`WORKFLOW.md`](./WORKFLOW.md) | Release, upgrade, and backport process. |
+| [`AGENTS.md`](./AGENTS.md) | Authoritative engineering constitution and locked rules |
+| [`AGENTS.client.md`](./AGENTS.client.md) | Approved SYSTEMIZE-specific configuration |
+| [`docs/PRODUCT.md`](./docs/PRODUCT.md) | Product scope, journeys, and acceptance criteria |
+| [`docs/discovery/CLIENT_BRIEF.md`](./docs/discovery/CLIENT_BRIEF.md) | Preserved brief and clarification history |
+| [`docs/decisions/`](./docs/decisions/) | Accepted architecture decisions |
+| [`ARCHITECTURE.md`](./ARCHITECTURE.md) | Routes, modules, data flow, and provider boundaries |
+| [`QUALITY.md`](./QUALITY.md) | Security, RLS, testing, CI, and accessibility requirements |
+| [`WORKFLOW.md`](./WORKFLOW.md) | Release, upgrade, and backport workflow |
 
 Read `AGENTS.md` first, then `AGENTS.client.md`.
 
 ## Requirements
 
-- Node.js 22 or newer (see `.node-version`)
-- Supabase CLI, for local database work
-- Docker, required by the local Supabase stack
-- Playwright Chromium (`npx playwright install chromium`) for browser tests
+- Node.js 22 or newer
+- Docker Desktop and the Supabase CLI for local database work
+- Playwright Chromium for browser verification
 
-## Setup
+## Local setup
 
 ```bash
 npm ci
-cp .env.example .env.local   # then fill in local values
-npx supabase start           # local Postgres, auth, and storage
-npm run dev
+cp .env.example .env.local
+npx supabase start
+npm run dev:https
 ```
 
-No production credentials are required to build, test, or develop. Absent provider
-credentials degrade to safe local behaviour:
+Set `SYSTEMIZE_OWNER_GMAIL` to the exact Gmail account used by the initial SYSTEMIZE
+owner. Google OAuth is configured in the Supabase dashboard; its client secret must not
+be placed in this repository.
 
-- **Supabase** — the local CLI stack is the development database.
-- **Telegram** — the notification adapter no-ops when unconfigured.
-- **Gemini** — the chat falls back to the local Hebrew intent adapter.
+New Google identities are invite-only at the Auth boundary. After applying migration
+`00016`, enable `public.before_user_created_invite_only` under Supabase Authentication →
+Hooks → Before User Created. Existing Auth users are never deleted by this migration.
+
+HTTPS is required to exercise installation and Web Push outside `localhost`. Generate a
+VAPID key pair with `npm run pwa:keys`, then set
+`NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`, and a random
+`CRON_SECRET` of at least 16 characters in every deployed environment. Keep the private
+key and cron secret server-only.
+
+Automatic meeting provisioning requires Zoom Server-to-Server OAuth variables
+(`ZOOM_ACCOUNT_ID`, `ZOOM_CLIENT_ID`, `ZOOM_CLIENT_SECRET`, `ZOOM_HOST_USER_ID`) and a
+Google Calendar web OAuth client (`GOOGLE_CALENDAR_CLIENT_ID`,
+`GOOGLE_CALENDAR_CLIENT_SECRET`). After deployment, the SYSTEMIZE owner grants the
+narrow calendar scope once at `/api/integrations/google/connect`; the offline token is
+kept in the private Supabase credential store, never in the browser.
+
+No production credentials are required for static checks or the production build.
+Authenticated portal journeys and RLS tests require a running local or hosted Supabase
+project.
 
 ## Commands
 
 | Command | Purpose |
 |---|---|
-| `npm run dev` | Development server |
-| `npm run build` | Production build |
-| `npm run check` | lint, typecheck, unit tests, architecture, dependency audit |
-| `npm run test` | Unit and integration tests |
-| `npm run test:e2e` | Critical journey end-to-end tests |
-| `npm run test:a11y` | axe accessibility scan |
-| `npm run test:visual` | Visual regression, desktop and mobile RTL |
+| `npm run dev` | Start the development server |
+| `npm run dev:https` | Start a local HTTPS server for PWA/device testing |
+| `npm run pwa:keys` | Generate a Web Push VAPID key pair |
+| `npm run build` | Create a production build |
+| `npm run check` | Run lint, typecheck, unit tests, architecture checks, and dependency audit |
+| `npm run test` | Run unit and integration tests |
+| `npm run test:e2e` | Run critical browser journeys |
+| `npm run test:e2e:portal` | Reset local Supabase and run the authenticated owner/client intake, document, PDF, and payment journey |
+| `npm run test:a11y` | Run automated accessibility checks |
+| `npm run test:visual` | Run desktop, mobile, and RTL visual regression checks |
 | `npm run test:db` | Reset the local database and run migration/RLS tests |
-| `npm run check:architecture` | Structural validators, including client-config completeness |
-
-`npm run check` fails while `AGENTS.client.md` is `UNCONFIGURED`. That is intentional —
-it is the gate that blocks product implementation before the configuration is approved.
+| `npm run brand:og` | Regenerate the public and private-link social preview images |
 
 ## Environments
 
-| Environment | Database | Notes |
+| Environment | Database | Status |
 |---|---|---|
-| local | Supabase CLI stack | No production secrets |
-| preview | Supabase project | Pending provisioning |
-| production | Supabase project | Blocked on canonical domain and PII retention policy |
+| local | Supabase CLI stack | Requires Docker Desktop |
+| preview | Dedicated Supabase project | Pending provisioning |
+| production | Dedicated Supabase project | Provisioned |
 
-## Open items before production
+The recommended next infrastructure step is a separate SYSTEMIZE Supabase project in
+Central EU (Frankfurt). Preview and production separation should be introduced before
+real client or contract data is stored.
 
-1. Canonical domain — required for `metadataBase`, canonical URLs, and sitemap.
-2. Lead PII retention and deletion policy.
-3. Replacement of placeholder portfolio, founder, and legal copy.
-4. Gemini API key and a hosted Supabase project.
+## Current portal foundation
 
-See [`docs/PRODUCT.md`](./docs/PRODUCT.md) §8.
+- Gmail-only Google OAuth entry flow
+- single-use, Gmail-bound project invitations
+- multiple owners or contacts per company and project
+- server-authorized owner and client surfaces
+- RLS-protected companies, projects, memberships, invitations, and audit events
+- deterministic owner/client pending-action views and shared project history
+- invitation revoke/reissue controls and owner-managed company, project, and contacts
+- intake, meeting scheduling, and manual payment-status gates
+- immutable document versions with owner draft/publication controls
+- one structured source for the client Web document and private, on-demand PDF
+- a database-enforced rule that blocks payment requests until the initial summary is published
+- branded, privacy-safe WhatsApp/Open Graph previews for login and invitation links
+- responsive portal, lead inbox, and admin navigation
+- installable PWA shell with a server-resolved `/app` entry point
+- per-device Web Push subscriptions, user notification preferences, durable outbox,
+  bounded retry delivery, and automatic invalid-subscription cleanup
+- privacy-safe generic Push payloads; full notification content remains behind portal
+  authentication
+- a service worker that never caches authenticated HTML, RSC payloads, API responses,
+  login/auth routes, cookies, or any response carrying `Set-Cookie`/`no-store`
+
+The local authenticated E2E fixtures use fake `e2e.*@gmail.com` identities and are
+recreated by `npm run test:e2e:portal`. They must never be copied to a hosted database.
+
+### PWA production gate
+
+Apply the Supabase migrations before enabling the VAPID variables. The durable Push
+dispatcher is invoked immediately after relevant notification writes and by
+`/api/push/dispatch`; Vercel must send `Authorization: Bearer <CRON_SECRET>`. The
+linked Vercel Hobby project runs the recovery scan once daily at 03:00 UTC. Routine
+delivery is still requested immediately through Next.js `after()`. If the project moves
+to Pro, the recovery schedule may be tightened back to `*/5 * * * *`.
+
+Before enabling Push for real users, verify on one current iPhone and one current
+Android device:
+
+1. Install from the browser, launch the icon, and confirm `/app` resolves the currently
+   authenticated account and role.
+2. Enable notifications from Settings, receive a test notification, and verify its click
+   opens the intended authenticated destination.
+3. Sign out, sign in as a different account, and confirm no private screen or data from
+   the previous account appears, including while offline.
+4. Revoke a device and confirm it no longer receives notifications.
+
+The offline page is deliberately generic. Private portal data is never available from
+the service-worker cache.
+
+Contract signatures and the dynamic AI update importer remain future slices.
+Payment-provider automation is also deferred; the current payment flow uses an external
+link and an owner-authoritative receipt record.
 
 ## License
 

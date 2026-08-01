@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#20262f" />
+    <title>אין חיבור | SYSTEMIZE</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        min-block-size: 100svh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 1.5rem;
+        color: #20262f;
+        background: #f5f6f7;
+        font-family: Arial, sans-serif;
+      }
+      main {
+        inline-size: min(100%, 32rem);
+        padding: 2rem;
+        border: 1px solid #d7dce1;
+        border-radius: 1.25rem;
+        background: #fff;
+      }
+      h1 { margin-block: 0 0.75rem; }
+      p { margin: 0; line-height: 1.7; color: #56606c; }
+      button {
+        min-block-size: 2.75rem;
+        margin-block-start: 1.5rem;
+        padding-inline: 1rem;
+        color: #fff;
+        font: inherit;
+        font-weight: 700;
+        border: 0;
+        border-radius: 0.75rem;
+        background: #008f8a;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>אין כרגע חיבור לרשת</h1>
+      <p>
+        מידע פרטי מהפורטל אינו נשמר לצפייה אופליין. לאחר שהחיבור יחזור,
+        נטען מחדש את החשבון וההרשאות מהשרת.
+      </p>
+      <button type="button" onclick="location.reload()">ניסיון נוסף</button>
+    </main>
+  </body>
+</html>

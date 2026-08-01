@@ -9,6 +9,7 @@ import {
 
 const projectRoot = process.cwd();
 const brandDirectory = join(projectRoot, "brand");
+const pwaDirectory = join(projectRoot, "public", "pwa");
 const fontPath = join(
   projectRoot,
   "src",
@@ -26,6 +27,17 @@ function appIconSvg(): string {
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${geometry.viewBox}" fill="none">`,
     `<rect width="24" height="24" rx="5.4" fill="${colors.deepInk}"/>`,
     '<g transform="translate(12 12) scale(.82) translate(-12 -12)">',
+    `<path d="${geometry.path}" stroke="${colors.paper}" stroke-width="${geometry.strokeWidth}" stroke-linecap="butt" stroke-linejoin="miter"/>`,
+    `<path d="${geometry.accentPath}" stroke="${colors.paper}" stroke-width="${geometry.strokeWidth}" stroke-linecap="butt"/>`,
+    "</g></svg>",
+  ].join("");
+}
+
+function maskableIconSvg(): string {
+  return [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${geometry.viewBox}" fill="none">`,
+    `<rect width="24" height="24" fill="${colors.deepInk}"/>`,
+    '<g transform="translate(12 12) scale(.64) translate(-12 -12)">',
     `<path d="${geometry.path}" stroke="${colors.paper}" stroke-width="${geometry.strokeWidth}" stroke-linecap="butt" stroke-linejoin="miter"/>`,
     `<path d="${geometry.accentPath}" stroke="${colors.paper}" stroke-width="${geometry.strokeWidth}" stroke-linecap="butt"/>`,
     "</g></svg>",
@@ -53,7 +65,7 @@ function lockupSvg(fontBase64: string, knockout: boolean): string {
 async function rasterise(
   page: Page,
   svg: string,
-  outputName: string,
+  outputPath: string,
   width: number,
   height: number
 ): Promise<void> {
@@ -65,7 +77,7 @@ async function rasterise(
     `<style>html,body{margin:0;background:transparent}svg{display:block;width:${width}px;height:${height}px}</style>${svg}`
   );
   await page.locator("svg").screenshot({
-    path: join(brandDirectory, outputName),
+    path: outputPath,
     omitBackground: true,
     animations: "disabled",
   });
@@ -109,6 +121,7 @@ async function renderStressTest(page: Page): Promise<void> {
 
 async function main(): Promise<void> {
   await mkdir(brandDirectory, { recursive: true });
+  await mkdir(pwaDirectory, { recursive: true });
   const fontBase64 = (await readFile(fontPath)).toString("base64");
 
   const assets = {
@@ -130,34 +143,68 @@ async function main(): Promise<void> {
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage({ deviceScaleFactor: 1 });
-    await rasterise(page, assets["systemize-mark.svg"], "systemize-mark-512.png", 512, 512);
     await rasterise(
       page,
-      assets["systemize-app-icon.svg"],
-      "systemize-app-icon-512.png",
+      assets["systemize-mark.svg"],
+      join(brandDirectory, "systemize-mark-512.png"),
       512,
       512
     );
     await rasterise(
       page,
       assets["systemize-app-icon.svg"],
-      "systemize-app-icon-1024.png",
+      join(brandDirectory, "systemize-app-icon-512.png"),
+      512,
+      512
+    );
+    await rasterise(
+      page,
+      assets["systemize-app-icon.svg"],
+      join(brandDirectory, "systemize-app-icon-1024.png"),
       1024,
       1024
     );
     await rasterise(
       page,
       assets["systemize-lockup.svg"],
-      "systemize-lockup-400h.png",
+      join(brandDirectory, "systemize-lockup-400h.png"),
       (480 / 72) * 400,
       400
     );
     await rasterise(
       page,
       assets["systemize-lockup.svg"],
-      "systemize-lockup-800h.png",
+      join(brandDirectory, "systemize-lockup-800h.png"),
       (480 / 72) * 800,
       800
+    );
+    await rasterise(
+      page,
+      assets["systemize-app-icon.svg"],
+      join(pwaDirectory, "icon-192.png"),
+      192,
+      192
+    );
+    await rasterise(
+      page,
+      assets["systemize-app-icon.svg"],
+      join(pwaDirectory, "icon-512.png"),
+      512,
+      512
+    );
+    await rasterise(
+      page,
+      maskableIconSvg(),
+      join(pwaDirectory, "icon-maskable-512.png"),
+      512,
+      512
+    );
+    await rasterise(
+      page,
+      assets["systemize-app-icon.svg"],
+      join(projectRoot, "src", "app", "apple-icon.png"),
+      180,
+      180
     );
     await renderStressTest(page);
   } finally {
