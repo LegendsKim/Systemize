@@ -107,6 +107,19 @@ describe("payment request validation", () => {
     ).toBe(false);
   });
 
+  it("rejects a local file path because a client cannot open it", () => {
+    expect(
+      paymentRequestSchema.safeParse({
+        projectId: "123e4567-e89b-42d3-a456-426614174000",
+        kind: "discovery",
+        title: "Full discovery",
+        amountIls: "800",
+        paymentUrl: "file:///C:/Users/owner/Downloads/summary.pdf",
+        idempotencyKey: "123e4567-e89b-42d3-a456-426614174001",
+      }).success
+    ).toBe(false);
+  });
+
   it("formats money explicitly as ILS", () => {
     expect(formatIls(450_000)).toContain("4,500");
   });

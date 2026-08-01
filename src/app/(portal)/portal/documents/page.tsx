@@ -4,6 +4,7 @@ import { formatPortalDateTime } from "@/features/portal/workflow/format";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { listClientProjects } from "@/server/repositories/portal.repository";
 import { listProjectDocuments } from "@/server/repositories/document.repository";
+import type { DocumentVersionSnapshot } from "@/server/repositories/document.repository";
 
 export default async function PortalDocumentsPage() {
   const identity = await requirePortalIdentity();
@@ -17,7 +18,7 @@ export default async function PortalDocumentsPage() {
     projects.map((project) => [project.id, project.name])
   );
   const publishedVersions = documents
-    .flatMap((document) => document.versions)
+    .flatMap((document): DocumentVersionSnapshot[] => [...document.versions])
     .filter((version) => version.status === "published")
     .sort(
       (left, right) =>

@@ -897,118 +897,384 @@
 
 .project-document {
   display: grid;
-  gap: 1.25rem;
-  padding: clamp(1.2rem, 4vw, 2.5rem);
+  max-inline-size: 62rem;
+  margin-inline: auto;
+  overflow: hidden;
   border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  background: var(--color-surface);
-  box-shadow: var(--shadow-card);
+  border-block-start: 0.35rem solid var(--color-primary);
+  border-block-end: 0.2rem solid color-mix(in oklch, var(--color-primary) 70%, white);
+  border-radius: 1.25rem;
+  background: var(--color-surface-0);
+  box-shadow: 0 1.5rem 4rem color-mix(in oklch, var(--color-text-primary) 7%, transparent);
 }
 
 .project-document-header {
   display: grid;
-  gap: 1rem;
-  padding-block-end: 1.2rem;
+  gap: 1.5rem;
+  padding: clamp(1.5rem, 5vw, 3.5rem);
   border-block-end: 1px solid var(--color-border);
 }
 
-.project-document-header h1,
-.project-document-header h2,
-.project-document-header h3,
-.project-document-header p,
-.project-document section p {
+.project-document-brand {
+  --lockup-mark: 2.15rem;
+}
+
+.project-document-heading {
+  max-inline-size: 46rem;
+}
+
+.project-document-heading h1,
+.project-document-heading h2,
+.project-document-heading h3 {
+  max-inline-size: 42rem;
+  margin: 0;
+  margin-block-start: 0.45rem;
+  font-size: clamp(1.9rem, 5vw, 3.25rem);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+.project-document p,
+.project-document dl,
+.project-document dd {
   margin: 0;
 }
 
-.project-document section {
-  display: grid;
-  gap: 0.55rem;
+.project-document-client {
+  margin-block-start: 1rem !important;
+  color: var(--color-text-primary);
+  font-size: 1.12rem;
+  font-weight: 750;
 }
 
-.project-document section h2 {
-  margin: 0;
-  font-size: 1.05rem;
+.project-document-project {
+  margin-block-start: 0.2rem !important;
+  color: var(--color-text-muted);
 }
 
-.project-document section p {
+.project-document-section p,
+.project-document-questions p,
+.project-document-exclusions p,
+.project-document-next-step p,
+.project-document-commercial dd,
+.project-document-definitions dd {
   color: var(--color-text-secondary);
-  line-height: 1.75;
+  line-height: 1.8;
   white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  /*
+   * `isolate`, never `plaintext`.
+   *
+   * `plaintext` derives each paragraph's direction from its own first strong character, and
+   * `pre-wrap` makes every authored line its own paragraph. A line that happens to open on
+   * a Latin word — "FLOW זורם...", "MVP הראשוני..." — was therefore laid out left-to-right
+   * inside a right-to-left document: its closing period jumped to the right edge and the
+   * line no longer aligned with the ones above it. `isolate` keeps the document's own
+   * direction as the base level and still isolates embedded Latin runs correctly.
+   */
+  unicode-bidi: isolate;
 }
 
 .project-document-meta {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.5rem;
-  margin: 0;
+  gap: 1rem;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid var(--color-border);
 }
 
 .project-document-meta > div {
-  padding: 0.7rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.7rem;
+  min-inline-size: 0;
 }
 
 .project-document-meta dt {
   color: var(--color-text-muted);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
 }
 
 .project-document-meta dd {
-  margin: 0.2rem 0 0;
+  margin-block-start: 0.25rem;
   font-weight: 800;
 }
 
-.project-document-contacts {
+.project-document-section {
   display: grid;
-  gap: 0.45rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+  border-block-end: 1px solid var(--color-border);
 }
 
-.project-document-contacts li {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem 0.8rem;
+.project-document-section-number {
+  padding-block-start: 0.2rem;
+  color: var(--color-primary-hover) !important;
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.project-document-section h2,
+.project-document-section h3,
+.project-document-section h4,
+.project-document-section h5,
+.project-document-questions h2,
+.project-document-questions h3,
+.project-document-questions h4,
+.project-document-commercial h2,
+.project-document-commercial h3,
+.project-document-commercial h4,
+.project-document-exclusions h2,
+.project-document-exclusions h3,
+.project-document-exclusions h4,
+.project-document-next-step h2,
+.project-document-next-step h3,
+.project-document-next-step h4 {
+  margin: 0;
+  margin-block-end: 0.8rem;
+  color: var(--color-text-primary);
+  font-size: clamp(1.25rem, 3vw, 1.65rem);
+  line-height: 1.25;
+}
+
+.project-document-emphasis {
+  margin-block-start: 1.25rem;
+  padding-inline-start: 1rem;
+  border-inline-start: 0.2rem solid color-mix(in oklch, var(--color-primary) 55%, var(--color-border));
+}
+
+.project-document-emphasis strong {
+  display: block;
+  margin-block-end: 0.3rem;
+  color: var(--color-text-primary);
+}
+
+.project-document-definitions {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1.25rem !important;
+}
+
+.project-document-definitions > div {
+  padding-block-start: 0.85rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-definitions > div[data-tone="assumption"] {
+  border-block-start-color: color-mix(in oklch, var(--color-warning) 50%, var(--color-border));
+}
+
+.project-document-definitions dt,
+.project-document-commercial-details dt {
+  margin-block-end: 0.3rem;
+  color: var(--color-text-primary);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.project-document-section-lead {
+  max-inline-size: 44rem;
+}
+
+.project-document-deliverables {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1.5rem;
+}
+
+.project-document-deliverables > div {
+  padding-block-start: 1rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-deliverables h3,
+.project-document-deliverables h5 {
+  margin: 0;
+  margin-block-end: 0.45rem;
+  font-size: 1rem;
+}
+
+.project-document-questions,
+.project-document-exclusions,
+.project-document-next-step {
+  margin: 0;
+  margin-block-start: clamp(1.5rem, 4vw, 2.5rem);
+  margin-inline: clamp(1.5rem, 5vw, 3.5rem);
+  padding: 1.2rem 1.35rem;
+}
+
+.project-document-questions {
+  border-radius: 0.85rem;
+  background: var(--color-surface-1);
+}
+
+.project-document-questions h2,
+.project-document-questions h3,
+.project-document-questions h4 {
+  margin-block-end: 0.35rem;
+  font-size: 1rem;
 }
 
 .project-document-commercial {
-  padding: 1rem;
-  border: 1px solid color-mix(in srgb, var(--color-primary) 35%, transparent);
-  border-radius: 0.85rem;
-  background: var(--color-primary-soft);
+  margin: clamp(1.5rem, 5vw, 3.5rem);
+  padding: clamp(1.3rem, 4vw, 2rem);
+  border: 1px solid color-mix(in oklch, var(--color-primary) 30%, var(--color-border));
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--color-primary-soft) 58%, var(--color-surface-0));
 }
 
-.project-document-commercial > strong {
-  color: var(--color-primary-strong);
-  font-size: clamp(1.5rem, 4vw, 2.1rem);
+.project-document-commercial-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.project-document-commercial-heading > strong {
+  flex: none;
+  color: var(--color-primary-hover);
+  font-size: clamp(1.8rem, 5vw, 2.65rem);
+  line-height: 1;
+}
+
+.project-document-commercial-details {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1.5rem !important;
+  padding-block-start: 1.25rem;
+  border-block-start: 1px solid color-mix(in oklch, var(--color-primary) 24%, var(--color-border));
+}
+
+.project-document-commercial-details > div {
+  min-inline-size: 0;
+}
+
+.project-document-exclusions {
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-exclusions ul {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0;
+  padding-inline-start: 1.2rem;
+  color: var(--color-text-secondary);
+  line-height: 1.65;
+}
+
+.project-document-exclusions li::marker {
+  color: var(--color-primary);
+}
+
+.project-document-next-step {
+  margin-block-end: clamp(1.5rem, 5vw, 3.5rem);
+  padding-block-start: 1.8rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.project-document-next-step h2,
+.project-document-next-step h3,
+.project-document-next-step h4 {
+  margin-block-start: 0.4rem;
 }
 
 .project-document-footer {
   display: grid;
-  gap: 0.45rem;
-  padding-block-start: 1rem;
-  border-block-start: 1px solid var(--color-border);
+  gap: 0.65rem;
+  padding: 1.1rem clamp(1.5rem, 5vw, 3.5rem);
   color: var(--color-text-muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  border-block-start: 1px solid var(--color-border);
+  background: var(--color-surface-1);
 }
 
-.project-document-footer code {
+.project-document-verification summary {
+  inline-size: fit-content;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.project-document-verification code {
+  display: block;
+  margin-block-start: 0.5rem;
   overflow-wrap: anywhere;
 }
 
 @media (min-width: 48rem) {
-  .portal-document-list > li,
-  .project-document-header {
+  .portal-document-list > li {
     grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
+  }
+
+  .project-document-definitions,
+  .project-document-deliverables,
+  .project-document-commercial-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 35rem) {
+  .project-document {
+    border-inline: 0;
+    border-radius: 0;
+  }
+
+  .project-document-section {
+    grid-template-columns: 1fr;
+  }
+
+  .project-document-section-number {
+    padding: 0;
+  }
+
   .project-document-meta {
     grid-template-columns: 1fr;
+  }
+
+  .project-document-commercial-heading {
+    align-items: start;
+    flex-direction: column;
+  }
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+
+  .portal-topbar,
+  .portal-desktop-nav,
+  .portal-mobile-nav,
+  .document-page-actions {
+    display: none !important;
+  }
+
+  .portal-shell,
+  .portal-main {
+    min-block-size: auto;
+    padding: 0;
+    background: white;
+  }
+
+  .project-document {
+    max-inline-size: none;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    print-color-adjust: exact;
+  }
+
+  .project-document-header,
+  .project-document-commercial,
+  .project-document-questions,
+  .project-document-next-step,
+  .project-document-exclusions {
+    break-inside: avoid;
+  }
+
+  .project-document-verification[open] code {
+    display: none;
   }
 }
 

@@ -6,6 +6,7 @@ describe("isPrivateSurface", () => {
     const privatePaths = [
       "/admin",
       "/admin/leads",
+      "/admin/projects",
       "/admin/projects/2f9c1f28-0000-4000-8000-000000000000",
       "/portal",
       "/portal/actions",

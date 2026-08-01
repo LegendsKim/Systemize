@@ -7,6 +7,14 @@ const boundedText = (label: string, max = 4_000) =>
     .min(2, `${label} חייב לכלול לפחות שני תווים.`)
     .max(max, `${label} ארוך מדי.`);
 
+const optionalSnapshotText = (max = 4_000) =>
+  z
+    .string()
+    .trim()
+    .max(max)
+    .nullish()
+    .transform((value) => value ?? "");
+
 export const introductorySummaryFormSchema = z.object({
   projectId: z.string().uuid(),
   documentId: z.string().uuid(),
@@ -42,21 +50,25 @@ export const introductorySummaryContentSchema = z.object({
   schemaVersion: z.literal(1),
   title: boundedText("כותרת המסמך", 160),
   companyName: boundedText("שם החברה", 160),
-  contacts: z.array(contactSnapshotSchema).max(20),
-  currentSituation: boundedText("המצב הקיים"),
-  operationalFriction: boundedText("הבעיות והחיכוך התפעולי"),
-  desiredOutcomes: boundedText("התוצאות העסקיות הרצויות"),
-  scopeAndAssumptions: boundedText("ההיקף וההנחות"),
-  openQuestions: boundedText("השאלות הפתוחות"),
-  discoveryIncludes: boundedText("תכולת האפיון והתכנון"),
-  deliverables: boundedText("התוצרים"),
-  estimatedTimeline: boundedText("לוח הזמנים", 1_000),
+  contacts: z
+    .array(contactSnapshotSchema)
+    .max(20)
+    .nullish()
+    .transform((value) => value ?? []),
+  currentSituation: optionalSnapshotText(),
+  operationalFriction: optionalSnapshotText(),
+  desiredOutcomes: optionalSnapshotText(),
+  scopeAndAssumptions: optionalSnapshotText(),
+  openQuestions: optionalSnapshotText(),
+  discoveryIncludes: optionalSnapshotText(),
+  deliverables: optionalSnapshotText(),
+  estimatedTimeline: optionalSnapshotText(1_000),
   price: z.object({
     amountAgorot: z.number().int().positive().max(100_000_000),
     currency: z.literal("ILS"),
   }),
-  paymentTerms: boundedText("תנאי התשלום", 1_000),
-  exclusions: boundedText("מה לא כלול"),
+  paymentTerms: optionalSnapshotText(1_000),
+  exclusions: optionalSnapshotText(),
   validUntil: z.string().datetime(),
   preparedAt: z.string().datetime(),
 });

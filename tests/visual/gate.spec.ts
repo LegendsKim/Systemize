@@ -20,13 +20,16 @@ async function openGate(page: import('@playwright/test').Page, path: string) {
 const invitationToken = 'A'.repeat(43);
 
 test.describe('Gate visual regression', () => {
-  test('login snapshot', async ({ page }) => {
+  test('login snapshot', async ({ page }, testInfo) => {
     await openGate(page, '/login');
-    await expect(
-      page.getByRole('complementary', {
-        name: 'SYSTEMIZE עובדת טוב יותר כאפליקציה',
-      }),
-    ).toBeVisible();
+    const reminder = page.getByRole('complementary', {
+      name: 'SYSTEMIZE עובדת טוב יותר כאפליקציה',
+    });
+    if (testInfo.project.name === 'visual-mobile') {
+      await expect(reminder).toBeVisible();
+    } else {
+      await expect(reminder).toHaveCount(0);
+    }
     await expect(page).toHaveScreenshot('gate-login.png', {
       fullPage: true,
       maxDiffPixelRatio: 0.01,

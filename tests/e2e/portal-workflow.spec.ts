@@ -12,10 +12,61 @@ test.describe.serial("authenticated client journey", () => {
     "Run with npm run test:e2e:portal so deterministic local auth fixtures exist."
   );
 
+  test("owner mobile navigation uses a drawer and a non-scrolling project grid", async ({
+    browser,
+    baseURL,
+  }) => {
+    const origin = baseURL ?? "http://127.0.0.1:3000";
+    const ownerContext = await authenticatedPortalContext(
+      browser,
+      portalE2EUsers.owner,
+      origin
+    );
+
+    try {
+      const page = await ownerContext.newPage();
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(
+        `/admin/projects/${portalE2EProjects.clientA}?tab=overview`
+      );
+
+      const trigger = page.getByRole("button", { name: "תפריט" });
+      await expect(trigger).toBeVisible();
+      await expect(page.locator(".admin-nav-desktop")).toBeHidden();
+      await trigger.click();
+
+      const drawer = page.getByRole("dialog", { name: "מעבר בין אזורים" });
+      await expect(drawer).toBeVisible();
+      await expect(
+        drawer.getByRole("link", { name: "E2E Project A, ליד חדש" })
+      ).toHaveAttribute("aria-current", "page");
+
+      const accessibility = await new AxeBuilder({ page }).include(".admin-nav-dialog").analyze();
+      expect(accessibility.violations).toEqual([]);
+
+      await page.keyboard.press("Escape");
+      await expect(drawer).toHaveCount(0);
+      await expect(trigger).toBeFocused();
+
+      const tabLayout = await page.locator(".admin-project-tabs").evaluate((tabs) => {
+        const style = getComputedStyle(tabs);
+        return {
+          display: style.display,
+          columns: style.gridTemplateColumns.split(" ").length,
+          overflows: tabs.scrollWidth > tabs.clientWidth,
+        };
+      });
+      expect(tabLayout).toEqual({ display: "grid", columns: 2, overflows: false });
+    } finally {
+      await ownerContext.close();
+    }
+  });
+
   test("client and owner complete intake, document, and payment gates", async ({
     browser,
     baseURL,
   }) => {
+    test.slow();
     const origin = baseURL ?? "http://127.0.0.1:3000";
     const [ownerContext, clientContext] = await Promise.all([
       authenticatedPortalContext(browser, portalE2EUsers.owner, origin),
@@ -25,6 +76,16 @@ test.describe.serial("authenticated client journey", () => {
     try {
       const ownerPage = await ownerContext.newPage();
       const clientPage = await clientContext.newPage();
+
+      await ownerPage.goto("/admin/projects");
+      await expect(
+        ownerPage.locator('a[href="/admin/projects"]').first()
+      ).toBeVisible();
+      await expect(
+        ownerPage.locator(
+          `a[href="/admin/projects/${portalE2EProjects.clientA}"]`
+        )
+      ).toBeVisible();
 
       /*
        * A client who has never been here is shown the orientation instead of the
@@ -88,7 +149,7 @@ test.describe.serial("authenticated client journey", () => {
        * come back as a submission the owner can see the answer to.
        */
       await ownerPage.goto(
-        `/admin/projects/${portalE2EProjects.clientA}`
+        `/admin/projects/${portalE2EProjects.clientA}?tab=discovery`
       );
       await ownerPage
         .locator('textarea[name="reviewNote"]')
@@ -118,7 +179,7 @@ test.describe.serial("authenticated client journey", () => {
       await expect(clientPage).toHaveURL(/notice=intake-submitted/);
 
       await ownerPage.goto(
-        `/admin/projects/${portalE2EProjects.clientA}`
+        `/admin/projects/${portalE2EProjects.clientA}?tab=discovery`
       );
       await expect(ownerPage.locator(".admin-client-reply")).toContainText(
         "מנהלת התפעול"
@@ -149,7 +210,7 @@ test.describe.serial("authenticated client journey", () => {
       ).toBeVisible();
 
       await ownerPage.goto(
-        `/admin/projects/${portalE2EProjects.clientA}`
+        `/admin/projects/${portalE2EProjects.clientA}?tab=discovery`
       );
       const completeMeetingForm = ownerPage
         .locator('input[name="slotId"]')
@@ -157,17 +218,45 @@ test.describe.serial("authenticated client journey", () => {
       await completeMeetingForm.getByRole("button").click();
       await expect(ownerPage).toHaveURL(/notice=meeting-completed/);
 
+      await ownerPage.goto(
+        `/admin/projects/${portalE2EProjects.clientA}?tab=documents`
+      );
+
       const documentForm = ownerPage.locator("form.document-editor");
       await expect(documentForm).toBeVisible();
-      const narrativeFields = documentForm.locator("textarea");
-      for (let index = 0; index < (await narrativeFields.count()); index += 1) {
-        await narrativeFields
-          .nth(index)
-          .fill(
-            `תוכן בדיקת E2E מפורט לשדה ${index + 1}, עם החלטות, הנחות ותוצאה עסקית ברורה.`
-          );
-      }
-      await documentForm.locator('input[name="priceIls"]').fill("4500");
+      await documentForm
+        .getByText("מילוי אוטומטי בעזרת ChatGPT", { exact: true })
+        .click();
+      await documentForm.locator("#document-autofill-payload").fill(
+        JSON.stringify({
+          schemaVersion: "systemize.introductory-summary.autofill.v1",
+          title: "סיכום שיחת היכרות והצעה לאפיון ותכנון",
+          currentSituation:
+            "תוכן בדיקת E2E מפורט לשדה 1, עם החלטות, הנחות ותוצאה עסקית ברורה.",
+          operationalFriction: "הזנה כפולה גורמת לעיכובים ולטעויות תפעוליות.",
+          desiredOutcomes: "קיצור זמני טיפול ושיפור השקיפות עבור בעלי התפקידים.",
+          scopeAndAssumptions:
+            "עובדות שאושרו:\nקיימים שלושה סוגי משתמשים.\nהנחות עבודה:\nזמינות הממשק עדיין דורשת אימות.\nגבולות ההיקף:\nהתהליך המרכזי בלבד.\nנכלל בשלב הנוכחי:\nהמשתמשים, הנתונים וההרשאות בתהליך המרכזי.",
+          openQuestions: "נדרש לאמת את הרשאות הגישה למערכת הקיימת.",
+          discoveryIncludes: "מיפוי תהליכים, משתמשים, נתונים ואינטגרציות.",
+          deliverables: "מסמך אפיון, חלופות פתרון ותכנית עבודה.",
+          estimatedTimeline:
+            "משך משוער:\nכשבועיים.\nתלות בלקוח:\nזמינות בעלי התפקידים וקבלת החומרים הנדרשים.",
+          priceIls: 4500,
+          paymentTerms: "תשלום מראש עם פתיחת שלב האפיון.",
+          exclusions: "- פיתוח המערכת\n- רישיונות צד שלישי",
+          validityDays: 14,
+        })
+      );
+      await documentForm
+        .getByRole("button", { name: "מילוי אוטומטי", exact: true })
+        .click();
+      await expect(
+        documentForm.getByText("כל שדות המסמך מולאו", { exact: false })
+      ).toBeVisible();
+      await expect(documentForm.locator('input[name="priceIls"]')).toHaveValue(
+        "4500"
+      );
       await documentForm.getByRole("button", { name: /שמירת טיוטה/ }).click();
       await expect(ownerPage).toHaveURL(/notice=document-draft-saved/);
       expect(
@@ -193,9 +282,36 @@ test.describe.serial("authenticated client journey", () => {
           { exact: true }
         )
       ).toBeVisible();
+      await expect(
+        clientPage.getByText("עובדות שאושרו", { exact: true })
+      ).toBeVisible();
+      await expect(
+        clientPage.getByText("הנחות שדורשות אימות", { exact: true })
+      ).toBeVisible();
       expect(
         (await new AxeBuilder({ page: clientPage }).analyze()).violations
       ).toEqual([]);
+
+      await clientPage.setViewportSize({ width: 390, height: 844 });
+      expect(
+        await clientPage.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth
+        )
+      ).toBe(true);
+      await expect(
+        clientPage.getByText("הצעה מסחרית", { exact: true })
+      ).toBeVisible();
+
+      await clientPage.emulateMedia({ media: "print" });
+      await expect(clientPage.locator("article.project-document")).toBeVisible();
+      await expect(clientPage.locator(".document-page-actions")).toBeHidden();
+      expect(
+        await clientPage
+          .locator("article.project-document")
+          .evaluate((element) => getComputedStyle(element).direction)
+      ).toBe("rtl");
+      await clientPage.emulateMedia({ media: "screen" });
+      await clientPage.setViewportSize({ width: 1280, height: 720 });
 
       const pdfHref = await clientPage
         .getByRole("link", { name: "הורדת PDF" })
@@ -209,7 +325,7 @@ test.describe.serial("authenticated client journey", () => {
       expect((await pdfResponse.body()).subarray(0, 4).toString()).toBe("%PDF");
 
       await ownerPage.goto(
-        `/admin/projects/${portalE2EProjects.clientA}`
+        `/admin/projects/${portalE2EProjects.clientA}?tab=commercial`
       );
       const paymentForm = ownerPage
         .locator('input[name="amountIls"]')
@@ -229,13 +345,22 @@ test.describe.serial("authenticated client journey", () => {
       ).toBeVisible();
 
       await ownerPage.goto(
-        `/admin/projects/${portalE2EProjects.clientA}`
+        `/admin/projects/${portalE2EProjects.clientA}?tab=commercial`
       );
       const paymentReceivedForm = ownerPage
         .locator('input[name="paymentRequestId"]')
         .locator("xpath=ancestor::form");
       await paymentReceivedForm.getByRole("button").click();
       await expect(ownerPage).toHaveURL(/notice=payment-received/);
+      const completedPaymentStep = ownerPage
+        .locator(".admin-stepper")
+        .getByRole("listitem")
+        .filter({ hasText: "תשלום" });
+      await expect(completedPaymentStep).toHaveAttribute(
+        "data-state",
+        "complete"
+      );
+      await expect(completedPaymentStep).toContainText("שולם");
 
       await clientPage.goto(
         `/portal/projects/${portalE2EProjects.clientA}`

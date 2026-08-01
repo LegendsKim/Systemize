@@ -20,6 +20,9 @@ export interface BootStep {
   readonly durationMs: number;
 }
 
+/** Emitted once the sign-in splash has fully left the DOM. */
+export const gateSplashCompleteEvent = "systemize:gate-splash-complete";
+
 /**
  * Shown on arrival at the sign-in screen, before anything is asked of the visitor.
  *

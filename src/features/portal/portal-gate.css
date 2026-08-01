@@ -346,7 +346,7 @@
   z-index: 70;
   inset-block-end: max(0.9rem, env(safe-area-inset-bottom));
   inset-inline: max(0.75rem, env(safe-area-inset-left)) max(0.75rem, env(safe-area-inset-right));
-  display: grid;
+  display: none;
   inline-size: min(30rem, 94%);
   margin-inline: auto;
   gap: 0.8rem;
@@ -844,6 +844,10 @@
  * ------------------------------------------------------------------------ */
 
 @media (max-width: 55.999rem) {
+  .login-pwa-install {
+    display: grid;
+  }
+
   .auth-gate {
     min-block-size: 100svh;
     gap: clamp(0.35rem, 1.2svh, 0.75rem);

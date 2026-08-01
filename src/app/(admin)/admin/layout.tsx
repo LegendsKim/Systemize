@@ -5,6 +5,7 @@ import { AdminNav } from "@/features/portal/admin/AdminNav";
 import { requireSystemizeOwner } from "@/features/portal/auth/session";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { countUnreadNotifications } from "@/server/repositories/workflow.repository";
+import { listOwnerProjectNavigation } from "@/server/repositories/portal.repository";
 import { PwaRegistration } from "@/features/portal/pwa/PwaRegistration";
 import { PwaSignOutForm } from "@/features/portal/pwa/PwaSignOutForm";
 
@@ -20,7 +21,10 @@ export default async function AdminLayout({
 }) {
   const identity = await requireSystemizeOwner();
   const supabase = await createServerSupabaseClient();
-  const unreadCount = await countUnreadNotifications(supabase, identity.userId);
+  const [unreadCount, navigationProjects] = await Promise.all([
+    countUnreadNotifications(supabase, identity.userId),
+    listOwnerProjectNavigation(supabase),
+  ]);
 
   const account = (
     <div className="admin-account">
@@ -41,11 +45,9 @@ export default async function AdminLayout({
   return (
     <div className="admin-app">
       <PwaRegistration />
-      {/*
-        The rail is a vertical column on a desktop and a horizontal strip on a phone, from
-        the same markup. No drawer and no overlay: a console that hides its navigation
-        adds a tap to every single move an operator makes.
-      */}
+      {/* The rail is a vertical workspace on desktop. On mobile its navigation opens as
+          a categorized drawer, so destinations and project names never disappear inside
+          a horizontal scroller. */}
       <aside className="admin-rail" aria-label="ניווט וחשבון ניהול">
         <Link
           href="/admin"
@@ -56,7 +58,7 @@ export default async function AdminLayout({
           <span className="admin-rail-chip">ניהול</span>
         </Link>
 
-        <AdminNav unreadCount={unreadCount} />
+        <AdminNav unreadCount={unreadCount} projects={navigationProjects} />
 
         <div className="admin-rail-account">
           {account}

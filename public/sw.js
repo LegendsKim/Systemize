@@ -1,5 +1,5 @@
 /* SYSTEMIZE PWA worker: public shell only, never authenticated responses. */
-const VERSION = "systemize-pwa-v1";
+const VERSION = "systemize-pwa-v2";
 const SHELL_CACHE = `${VERSION}-shell`;
 const ASSET_CACHE = `${VERSION}-assets`;
 const SHELL_ASSETS = [
@@ -25,7 +25,21 @@ function isPrivatePath(pathname) {
   );
 }
 
+/*
+ * Asset caching is a production-only behaviour.
+ *
+ * Production filenames under `/_next/static/` carry a content hash, so an entry can be
+ * kept forever safely. The development server does not hash them — the stylesheet chunk
+ * keeps one stable URL across every edit — so the cache-first lookup below would hand
+ * back the build from the last visit and a source change would silently never reach the
+ * page, with the markup updating (navigations always go to the network) while the CSS
+ * did not.
+ */
+const isDevelopmentHost =
+  self.location.hostname === "localhost" || self.location.hostname === "127.0.0.1";
+
 function isSafeStaticAsset(request, url) {
+  if (isDevelopmentHost) return false;
   if (request.method !== "GET" || url.origin !== self.location.origin) return false;
   if (isPrivatePath(url.pathname)) return false;
   if (url.pathname.startsWith("/_next/static/")) return true;

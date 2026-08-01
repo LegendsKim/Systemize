@@ -1,4 +1,7 @@
-import { gateSplashSteps } from "@/features/portal/boot-sequence";
+import {
+  gateSplashCompleteEvent,
+  gateSplashSteps,
+} from "@/features/portal/boot-sequence";
 import { BootSequence } from "@/features/portal/components/BootSequence";
 
 /**
@@ -17,6 +20,7 @@ export function GateSplash() {
       title="מכינים את האזור האישי שלך"
       completeTitle="האזור האישי מוכן"
       skipLabel="דילוג"
+      completionEvent={gateSplashCompleteEvent}
     />
   );
 }

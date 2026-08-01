@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { IntroductorySummaryView } from "@/features/portal/documents/IntroductorySummaryView";
+import { SystemPlanView } from "@/features/portal/documents/SystemPlanView";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getDocumentVersion } from "@/server/repositories/document.repository";
 
@@ -32,12 +33,22 @@ export default async function DocumentVersionPage({
           הורדת PDF
         </a>
       </div>
-      <IntroductorySummaryView
-        content={version.content}
-        versionNumber={version.versionNumber}
-        contentHash={version.contentHash}
-        publishedAt={version.publishedAt}
-      />
+      {version.kind === "introductory_summary" ? (
+        <IntroductorySummaryView
+          content={version.content}
+          projectName={version.projectName}
+          versionNumber={version.versionNumber}
+          contentHash={version.contentHash}
+          publishedAt={version.publishedAt}
+        />
+      ) : (
+        <SystemPlanView
+          content={version.content}
+          versionNumber={version.versionNumber}
+          contentHash={version.contentHash}
+          publishedAt={version.publishedAt}
+        />
+      )}
     </main>
   );
 }

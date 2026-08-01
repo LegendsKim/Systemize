@@ -9,6 +9,7 @@ describe("isCurrentAdminRoute", () => {
     // startsWith test would highlight the overview on all four pages at once.
     for (const path of [
       "/admin/companies",
+      "/admin/projects",
       "/admin/settings",
       "/admin/templates",
       "/admin/projects/abc",
@@ -34,18 +35,22 @@ describe("isCurrentAdminRoute", () => {
     const destinations = [
       "/admin",
       "/admin/companies",
+      "/admin/projects",
       "/admin/settings",
       "/admin/templates",
     ];
 
-    for (const path of [...destinations, "/admin/projects/abc"]) {
+    for (const path of destinations) {
       const matches = destinations.filter((href) =>
         isCurrentAdminRoute(path, href)
       );
-      // A project page belongs to no top-level destination, which is correct: nothing in
-      // the rail claims it. Every other route must light exactly one item.
-      expect(matches.length).toBeLessThanOrEqual(1);
-      if (destinations.includes(path)) expect(matches).toEqual([path]);
+      expect(matches).toEqual([path]);
     }
+
+    expect(
+      destinations.filter((href) =>
+        isCurrentAdminRoute("/admin/projects/abc", href)
+      )
+    ).toEqual(["/admin/projects"]);
   });
 });

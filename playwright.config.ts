@@ -1,6 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000";
+const requestedPort = process.env.PORTAL_E2E_PORT;
+const portalE2EPort =
+  requestedPort && /^\d{2,5}$/.test(requestedPort) ? requestedPort : "3000";
+const baseURL =
+  process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${portalE2EPort}`;
 
 export default defineConfig({
   testDir: "./tests",
@@ -60,7 +64,7 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_BASE_URL
     ? undefined
     : {
-      command: "npm run build && npm run start",
+      command: `npm run build && npm run start -- -p ${portalE2EPort}`,
       url: baseURL,
       reuseExistingServer: !process.env.CI && process.env.PORTAL_E2E !== "1",
       timeout: 120_000,

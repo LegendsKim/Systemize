@@ -39,8 +39,10 @@ test("manifest and install assets expose the server-routed app entry", async ({
 test("the browser login reminder invokes the native PWA install prompt", async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/login");
   await page.getByRole("button", { name: "דילוג" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 
   await page.evaluate(() => {
     const browserWindow = window as Window & { pwaPromptCalls?: number };
@@ -65,7 +67,13 @@ test("the browser login reminder invokes the native PWA install prompt", async (
   const reminder = page.getByRole("complementary", {
     name: "SYSTEMIZE עובדת טוב יותר כאפליקציה",
   });
+  await page.waitForTimeout(2_500);
+  await expect(reminder).toHaveCount(0);
   await expect(reminder).toBeVisible();
+  const accessibility = await new AxeBuilder({ page })
+    .include(".login-pwa-install")
+    .analyze();
+  expect(accessibility.violations).toEqual([]);
   await reminder.getByRole("button", { name: "התקנת האפליקציה" }).click();
   await expect
     .poll(() =>
@@ -76,6 +84,20 @@ test("the browser login reminder invokes the native PWA install prompt", async (
     )
     .toBe(1);
   await expect(reminder).toHaveCount(0);
+});
+
+test("the login install reminder stays hidden on a desktop screen", async ({
+  page,
+}) => {
+  await page.goto("/login");
+  await page.getByRole("button", { name: "דילוג" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await page.waitForTimeout(3_500);
+  await expect(
+    page.getByRole("complementary", {
+      name: "SYSTEMIZE עובדת טוב יותר כאפליקציה",
+    })
+  ).toHaveCount(0);
 });
 
 test("/app resolves the current server session instead of a cached role", async ({

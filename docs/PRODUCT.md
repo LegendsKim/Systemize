@@ -231,21 +231,37 @@ It contains:
 
 ### 8.2 Full discovery and planning document
 
-The full document may contain:
+The full document is unlocked after the paid discovery gate. It is written for the person
+deciding whether to build, in the order that person asks their questions, and everything
+that answers an engineering question instead sits in an appendix at the back.
 
-- goals and success measures;
-- users, roles, and permissions;
-- current and future workflows;
-- screens and primary actions;
-- data and systems of record;
-- integrations and automation;
-- notifications;
-- exceptions and edge cases;
-- security and privacy requirements;
-- migration and rollout;
-- training and support;
-- acceptance criteria;
-- risks, assumptions, and open questions.
+The client-facing body contains:
+
+1. What is being built and how both sides will know it worked.
+2. What the system will contain: the solution overview, its modules and workflows.
+3. Two to four materially different development options with exactly one recommended
+   option, scope, timetable, and ILS price for each — followed by two to eight delivery
+   phases describing how the work behind the recommended option is sequenced.
+4. One to four monthly support plans with coverage, response time, and ILS price;
+   starting prices for small and large future features, an hourly rate, and an explicit
+   rule that every change still requires a bounded scope decision.
+5. Commercial terms: payment terms, exclusions, client responsibilities, assumptions and
+   risks, warranty after delivery, and proposal validity.
+
+**Exactly one price is a commitment.** The offer is the price of the recommended
+development option. Phases carry no price of their own: a document that priced both left
+two different totals on the page with nothing saying which one the client owed, and
+payment against phases is governed by the payment terms instead.
+
+An optional technical appendix carries users and permissions, data and integrations,
+architecture and security, experience and accessibility, and migration and rollout. Each
+entry is optional, the appendix is collapsed in the web view and printed on its own page,
+and an entry left empty does not appear at all.
+
+Creating the first `discovery_plan` draft advances paid discovery work to solution
+option preparation. Publishing it advances the project to client review of the proposal
+and contract. The client sees the expanded roadmap and only the immutable published
+version.
 
 ### 8.3 Document invariants
 
@@ -254,6 +270,19 @@ The full document may contain:
 - Client-visible rendering and exported PDF derive from the same structured content.
 - Approval and signature always reference a specific immutable version and content hash.
 - Replacing content creates a new version; it never changes prior evidence.
+- The owner may copy a versioned ChatGPT interview prompt and paste its final JSON into
+  the introductory-summary editor. The import rejects unknown or invalid fields and
+  only fills an editable draft; it never saves or publishes without an explicit owner
+  action.
+- The full system-plan editor follows the same rule with
+  `systemize.system-plan.autofill.v1`. Its prompt includes bounded discovery context,
+  requires an interview before output, forbids invented prices or commitments, and
+  validates phases, options, support plans, change pricing, and commercial boundaries
+  before filling the editable draft.
+- The client renderer groups current-state and friction content, groups discovery work
+  and deliverables, and presents price, timing, payment terms, validity, and client
+  dependencies as one commercial block. Existing schema-v1 snapshots remain readable;
+  absent optional narrative fields are omitted rather than rendered as placeholders.
 
 ## 9. Contract and signature
 

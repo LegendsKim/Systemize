@@ -18,6 +18,16 @@ describe("service worker privacy contract", () => {
     expect(worker).toContain('cacheControl.includes("private")');
   });
 
+  it("never answers an asset from cache on a development host", () => {
+    // Development chunk URLs are not content-hashed, so a cache-first entry would pin the
+    // page to the previous edit and make a source change look like it never applied.
+    expect(worker).toContain('self.location.hostname === "localhost"');
+    expect(worker).toContain('self.location.hostname === "127.0.0.1"');
+    expect(worker).toMatch(
+      /function isSafeStaticAsset\([^)]*\) \{\s*if \(isDevelopmentHost\) return false;/
+    );
+  });
+
   it("does not implement background sync or queue mutations", () => {
     expect(worker).not.toContain('addEventListener("sync"');
     expect(worker).not.toContain("BackgroundSync");

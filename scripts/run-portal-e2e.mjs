@@ -1,6 +1,9 @@
 import { spawnSync } from "node:child_process";
 
 const npxCommand = process.platform === "win32" ? "npx.cmd" : "npx";
+const requestedPort = process.env.PORTAL_E2E_PORT;
+const portalE2EPort =
+  requestedPort && /^\d{2,5}$/.test(requestedPort) ? requestedPort : "3000";
 
 function run(command, args, options = {}) {
   const result = spawnSync(command, args, {
@@ -62,7 +65,8 @@ run(
       NEXT_PUBLIC_SUPABASE_URL: localEnv.API_URL,
       NEXT_PUBLIC_SUPABASE_ANON_KEY: localEnv.ANON_KEY,
       SUPABASE_SERVICE_ROLE_KEY: localEnv.SERVICE_ROLE_KEY,
-      NEXT_PUBLIC_SITE_URL: "http://127.0.0.1:3000",
+      NEXT_PUBLIC_SITE_URL: `http://127.0.0.1:${portalE2EPort}`,
+      PORTAL_E2E_PORT: portalE2EPort,
       SYSTEMIZE_OWNER_GMAIL: "e2e.owner@gmail.com",
     },
   }

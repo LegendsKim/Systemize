@@ -74,6 +74,9 @@ export default async function ProjectPage({
   const publishedSummary =
     documents.find((document) => document.kind === "introductory_summary")
       ?.latestPublished ?? null;
+  const publishedSystemPlan =
+    documents.find((document) => document.kind === "discovery_plan")
+      ?.latestPublished ?? null;
 
   const intakeComplete = workflow.intake?.status === "approved";
   const meetingComplete = Boolean(completedMeeting);
@@ -115,7 +118,7 @@ export default async function ProjectPage({
         <div className="portal-section-heading">
           <div>
             <p className="portal-eyebrow">התהליך שלך</p>
-            <h2 id="roadmap-title">ארבע תחנות עד לתחילת האפיון</h2>
+            <h2 id="roadmap-title">מהיכרות ועד תוכנית מערכת ברורה</h2>
           </div>
         </div>
         <ol>
@@ -157,6 +160,26 @@ export default async function ProjectPage({
                     ? "ממתין לתשלום"
                     : "לאחר הפגישה"}
               </small>
+            </div>
+          </li>
+          <li data-state={publishedSystemPlan ? "complete" : paymentComplete ? "current" : "upcoming"}>
+            <span>{publishedSystemPlan ? "✓" : "05"}</span>
+            <div>
+              <strong>תכנון המערכת</strong>
+              <small>
+                {publishedSystemPlan
+                  ? "המסמך פורסם"
+                  : paymentComplete
+                    ? "בביצוע SYSTEMIZE"
+                    : "לאחר התשלום"}
+              </small>
+            </div>
+          </li>
+          <li data-state={publishedSystemPlan ? "current" : "upcoming"}>
+            <span>06</span>
+            <div>
+              <strong>בחירת חלופה והתקשרות</strong>
+              <small>{publishedSystemPlan ? "ממתין להחלטה" : "לאחר פרסום התוכנית"}</small>
             </div>
           </li>
         </ol>
@@ -320,15 +343,40 @@ export default async function ProjectPage({
             </a>
           </div>
         </section>
+      ) : paidPayment && !publishedSystemPlan ? (
+        <section className="workflow-primary-card workflow-primary-card-waiting">
+          <div className="workflow-card-index">בטיפול SYSTEMIZE</div>
+          <div>
+            <p className="portal-eyebrow">אפיון ותכנון מלא</p>
+            <h2>בונים את תוכנית המערכת וחלופות הפיתוח</h2>
+            <p>
+              המסמך יפרט את מבנה המערכת, שלבי ההקמה, חלופות הפיתוח, העלויות,
+              התמיכה החודשית והמשך הפיתוח. אין צורך לבצע פעולה כרגע.
+            </p>
+          </div>
+        </section>
+      ) : publishedSystemPlan ? (
+        <section className="workflow-primary-card">
+          <div className="workflow-card-index">הפעולה הבאה שלך</div>
+          <div>
+            <p className="portal-eyebrow">תוכנית המערכת מוכנה</p>
+            <h2>{publishedSystemPlan.content.title}</h2>
+            <p>
+              אפשר להשוות בין החלופות, לעבור על השלבים והמחירים ולבדוק את
+              מסלולי התמיכה לפני בחירת דרך הפיתוח.
+            </p>
+          </div>
+          <Link href={`/portal/documents/${publishedSystemPlan.id}`} className="portal-primary-action">
+            צפייה בתוכנית המלאה
+          </Link>
+        </section>
       ) : (
         <section className="workflow-primary-card workflow-primary-card-waiting">
           <div className="workflow-card-index">בטיפול SYSTEMIZE</div>
           <div>
-            <p className="portal-eyebrow">הפגישה הושלמה</p>
-            <h2>מכינים את שלב האפיון והתכנון</h2>
-            <p>
-              סיכום הפגישה ובקשת התשלום יופיעו כאן. אין צורך לבצע פעולה כרגע.
-            </p>
+            <p className="portal-eyebrow">המשך התהליך</p>
+            <h2>מכינים את הפעולה הבאה</h2>
+            <p>עדכון חדש יופיע כאן ברגע שיהיה מוכן.</p>
           </div>
         </section>
       )}

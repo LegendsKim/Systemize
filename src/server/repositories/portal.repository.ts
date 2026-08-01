@@ -19,6 +19,31 @@ export interface PortalProjectSummary {
   readonly role: ProjectMemberRole | null;
 }
 
+export interface OwnerProjectNavigationItem {
+  readonly id: string;
+  readonly name: string;
+  readonly stage: ProjectStage;
+}
+
+/** A bounded list for the persistent admin rail; the directory remains the full view. */
+export async function listOwnerProjectNavigation(
+  supabase: SupabaseClient<Database>
+): Promise<OwnerProjectNavigationItem[]> {
+  const { data, error } = await supabase
+    .from("projects")
+    .select("id,name,stage")
+    .neq("stage", "completed")
+    .neq("stage", "cancelled")
+    .order("updated_at", { ascending: false })
+    .limit(12);
+
+  if (error) {
+    throw new Error("Unable to load owner project navigation");
+  }
+
+  return data;
+}
+
 export async function listClientProjects(
   supabase: SupabaseClient<Database>,
   userId: string

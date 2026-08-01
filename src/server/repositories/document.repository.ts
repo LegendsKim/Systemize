@@ -3,34 +3,67 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type {
   Database,
   DocumentVersionStatus,
-  ProjectDocumentKind,
 } from "@/lib/supabase/types";
 import {
   introductorySummaryContentSchema,
   type IntroductorySummaryContent,
 } from "@/features/portal/documents/introductory-summary";
+import {
+  systemPlanContentSchema,
+  type SystemPlanContent,
+} from "@/features/portal/documents/system-plan";
 
-export interface DocumentVersionSnapshot {
+interface DocumentVersionSnapshotBase {
   readonly id: string;
   readonly documentId: string;
   readonly projectId: string;
-  readonly kind: ProjectDocumentKind;
+  readonly projectName?: string;
   readonly versionNumber: number;
   readonly status: DocumentVersionStatus;
-  readonly content: IntroductorySummaryContent;
   readonly contentHash: string;
   readonly createdAt: string;
   readonly publishedAt: string | null;
 }
 
-export interface ProjectDocumentSnapshot {
+export interface IntroductoryDocumentVersionSnapshot
+  extends DocumentVersionSnapshotBase {
+  readonly kind: "introductory_summary";
+  readonly content: IntroductorySummaryContent;
+}
+
+export interface SystemPlanDocumentVersionSnapshot
+  extends DocumentVersionSnapshotBase {
+  readonly kind: "discovery_plan";
+  readonly content: SystemPlanContent;
+}
+
+export type DocumentVersionSnapshot =
+  | IntroductoryDocumentVersionSnapshot
+  | SystemPlanDocumentVersionSnapshot;
+
+interface ProjectDocumentSnapshotBase {
   readonly id: string;
   readonly projectId: string;
-  readonly kind: ProjectDocumentKind;
-  readonly versions: readonly DocumentVersionSnapshot[];
-  readonly latestDraft: DocumentVersionSnapshot | null;
-  readonly latestPublished: DocumentVersionSnapshot | null;
 }
+
+export interface IntroductoryDocumentSnapshot
+  extends ProjectDocumentSnapshotBase {
+  readonly kind: "introductory_summary";
+  readonly versions: readonly IntroductoryDocumentVersionSnapshot[];
+  readonly latestDraft: IntroductoryDocumentVersionSnapshot | null;
+  readonly latestPublished: IntroductoryDocumentVersionSnapshot | null;
+}
+
+export interface SystemPlanDocumentSnapshot extends ProjectDocumentSnapshotBase {
+  readonly kind: "discovery_plan";
+  readonly versions: readonly SystemPlanDocumentVersionSnapshot[];
+  readonly latestDraft: SystemPlanDocumentVersionSnapshot | null;
+  readonly latestPublished: SystemPlanDocumentVersionSnapshot | null;
+}
+
+export type ProjectDocumentSnapshot =
+  | IntroductoryDocumentSnapshot
+  | SystemPlanDocumentSnapshot;
 
 export async function listProjectDocuments(
   supabase: SupabaseClient<Database>,
@@ -74,43 +107,72 @@ export async function listProjectDocuments(
 
   for (const version of versions) {
     const document = documentById.get(version.document_id);
-    if (!document || document.kind !== "introductory_summary") {
+    if (!document) {
       continue;
     }
-    const parsed = introductorySummaryContentSchema.safeParse(version.content);
-    if (!parsed.success) {
-      continue;
-    }
-    const snapshot: DocumentVersionSnapshot = {
+    const base = {
       id: version.id,
       documentId: version.document_id,
       projectId: document.project_id,
-      kind: document.kind,
       versionNumber: version.version_number,
       status: version.status,
-      content: parsed.data,
       contentHash: version.content_hash,
       createdAt: version.created_at,
       publishedAt: version.published_at,
     };
+    let snapshot: DocumentVersionSnapshot;
+    if (document.kind === "introductory_summary") {
+      const parsed = introductorySummaryContentSchema.safeParse(version.content);
+      if (!parsed.success) continue;
+      snapshot = { ...base, kind: document.kind, content: parsed.data };
+    } else if (document.kind === "discovery_plan") {
+      const parsed = systemPlanContentSchema.safeParse(version.content);
+      if (!parsed.success) continue;
+      snapshot = { ...base, kind: document.kind, content: parsed.data };
+    } else {
+      continue;
+    }
     const bucket = versionsByDocument.get(document.id) ?? [];
     bucket.push(snapshot);
     versionsByDocument.set(document.id, bucket);
   }
 
-  return documents.map((document) => {
+  return documents.flatMap((document): ProjectDocumentSnapshot[] => {
+    if (
+      document.kind !== "introductory_summary" &&
+      document.kind !== "discovery_plan"
+    ) {
+      return [];
+    }
     const documentVersions = versionsByDocument.get(document.id) ?? [];
-    return {
+    if (document.kind === "introductory_summary") {
+      const versions = documentVersions.filter(
+        (version): version is IntroductoryDocumentVersionSnapshot =>
+          version.kind === "introductory_summary"
+      );
+      return [{
+        id: document.id,
+        projectId: document.project_id,
+        kind: document.kind,
+        versions,
+        latestDraft: versions.find((version) => version.status === "draft") ?? null,
+        latestPublished: versions.find((version) => version.status === "published") ?? null,
+      }];
+    }
+    const versions = documentVersions.filter(
+      (version): version is SystemPlanDocumentVersionSnapshot =>
+        version.kind === "discovery_plan"
+    );
+    return [{
       id: document.id,
       projectId: document.project_id,
       kind: document.kind,
-      versions: documentVersions,
+      versions,
       latestDraft:
-        documentVersions.find((version) => version.status === "draft") ?? null,
+        versions.find((version) => version.status === "draft") ?? null,
       latestPublished:
-        documentVersions.find((version) => version.status === "published") ??
-        null,
-    };
+        versions.find((version) => version.status === "published") ?? null,
+    }];
   });
 }
 
@@ -136,25 +198,41 @@ export async function getDocumentVersion(
     .eq("id", version.document_id)
     .maybeSingle();
 
-  if (documentError || !document || document.kind !== "introductory_summary") {
+  if (
+    documentError ||
+    !document ||
+    (document.kind !== "introductory_summary" &&
+      document.kind !== "discovery_plan")
+  ) {
     return null;
   }
 
-  const content = introductorySummaryContentSchema.safeParse(version.content);
+  const content =
+    document.kind === "introductory_summary"
+      ? introductorySummaryContentSchema.safeParse(version.content)
+      : systemPlanContentSchema.safeParse(version.content);
   if (!content.success) {
     throw new Error("Document content does not match its schema version");
   }
 
-  return {
+  const { data: project } = await supabase
+    .from("projects")
+    .select("name")
+    .eq("id", document.project_id)
+    .maybeSingle();
+
+  const base = {
     id: version.id,
     documentId: document.id,
     projectId: document.project_id,
-    kind: document.kind,
+    projectName: project?.name,
     versionNumber: version.version_number,
     status: version.status,
-    content: content.data,
     contentHash: version.content_hash,
     createdAt: version.created_at,
     publishedAt: version.published_at,
   };
+  return document.kind === "introductory_summary"
+    ? { ...base, kind: document.kind, content: content.data as IntroductorySummaryContent }
+    : { ...base, kind: document.kind, content: content.data as SystemPlanContent };
 }

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import Link from "next/link";
-import type { ProjectDocumentSnapshot } from "@/server/repositories/document.repository";
+import type { IntroductoryDocumentSnapshot } from "@/server/repositories/document.repository";
 import { formatPortalDateTime } from "@/features/portal/workflow/format";
 import { publishDocumentVersion } from "./actions";
 import { IntroductorySummaryForm } from "./IntroductorySummaryForm";
@@ -9,12 +9,16 @@ import { toIntroductorySummaryFormDefaults } from "./introductory-summary";
 
 interface AdminDocumentPanelProps {
   readonly projectId: string;
-  readonly document: ProjectDocumentSnapshot | null;
+  readonly companyName: string;
+  readonly projectName: string;
+  readonly document: IntroductoryDocumentSnapshot | null;
   readonly meetingCompleted: boolean;
 }
 
 export function AdminDocumentPanel({
   projectId,
+  companyName,
+  projectName,
   document,
   meetingCompleted,
 }: AdminDocumentPanelProps) {
@@ -90,6 +94,7 @@ export function AdminDocumentPanel({
               </div>
               <IntroductorySummaryView
                 content={latestDraft.content}
+                projectName={projectName}
                 versionNumber={latestDraft.versionNumber}
                 contentHash={latestDraft.contentHash}
                 publishedAt={latestDraft.publishedAt}
@@ -118,6 +123,7 @@ export function AdminDocumentPanel({
               </div>
               <IntroductorySummaryView
                 content={latestPublished.content}
+                projectName={projectName}
                 versionNumber={latestPublished.versionNumber}
                 contentHash={latestPublished.contentHash}
                 publishedAt={latestPublished.publishedAt}
@@ -136,6 +142,8 @@ export function AdminDocumentPanel({
             </summary>
             <IntroductorySummaryForm
               projectId={projectId}
+              companyName={companyName}
+              projectName={projectName}
               documentId={document?.id ?? randomUUID()}
               versionId={randomUUID()}
               idempotencyKey={randomUUID()}

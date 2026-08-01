@@ -27,19 +27,6 @@ for (const path of [
         Promise.all(shell.getAnimations().map((animation) => animation.finished))
       );
 
-    // The install reminder is revealed three seconds after arrival, so an audit fired the
-    // moment the shell settles would miss it. Wait for it explicitly rather than let the
-    // coverage depend on how long the steps above happened to take.
-    if (path === "/login") {
-      const reminder = page.getByRole("complementary", {
-        name: "SYSTEMIZE עובדת טוב יותר כאפליקציה",
-      });
-      await expect(reminder).toBeVisible();
-      await reminder.evaluate((card) =>
-        Promise.all(card.getAnimations().map((animation) => animation.finished))
-      );
-    }
-
     const results = await new AxeBuilder({ page }).withTags(wcagTags).analyze();
     expect(results.violations).toEqual([]);
   });

@@ -33,6 +33,8 @@ interface BootSequenceProps {
    * it. Only the post-sign-in overlay uses one.
    */
   readonly clearParam?: string;
+  /** Optional browser event emitted after the overlay has fully unmounted. */
+  readonly completionEvent?: string;
 }
 
 type BootPhase = "running" | "leaving" | "done";
@@ -78,6 +80,7 @@ export function BootSequence({
   completeTitle,
   skipLabel,
   clearParam,
+  completionEvent,
 }: BootSequenceProps) {
   const [phase, setPhase] = useState<BootPhase>("running");
   const [index, setIndex] = useState(0);
@@ -135,6 +138,14 @@ export function BootSequence({
     url.searchParams.delete(clearParam);
     window.history.replaceState(null, "", `${url.pathname}${url.search}`);
   }, [phase, clearParam]);
+
+  // Consumers that must wait for the overlay—not merely page hydration—can coordinate
+  // without owning the boot component's internal timing. Dispatching after the `done`
+  // commit guarantees the overlay is already absent when listeners begin their delay.
+  useEffect(() => {
+    if (phase !== "done" || !completionEvent) return;
+    window.dispatchEvent(new Event(completionEvent));
+  }, [phase, completionEvent]);
 
   // The overlay covers the page, so the page behind it must not scroll underneath.
   // `document.body` is not part of the React tree, and the style is removed on unmount.

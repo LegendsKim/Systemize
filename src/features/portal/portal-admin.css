@@ -108,7 +108,239 @@
   scrollbar-width: thin;
 }
 
+.admin-nav-desktop {
+  display: none;
+}
+
+.admin-mobile-nav-bar {
+  display: flex;
+  min-inline-size: 0;
+  min-block-size: 3.35rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem var(--admin-gutter) 0.55rem;
+  border-block-start: 1px solid var(--admin-line-soft);
+}
+
+.admin-nav-trigger {
+  display: inline-flex;
+  flex: none;
+  min-block-size: 2.5rem;
+  align-items: center;
+  gap: 0.55rem;
+  padding-inline: 0.8rem;
+  color: var(--color-text-on-primary);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 750;
+  border: 0;
+  border-radius: var(--admin-radius-sm);
+  background: var(--color-primary);
+  cursor: pointer;
+}
+
+.admin-nav-trigger-icon {
+  display: grid;
+  inline-size: 1rem;
+  gap: 0.2rem;
+}
+
+.admin-nav-trigger-icon span {
+  display: block;
+  block-size: 1.5px;
+  border-radius: var(--radius-pill);
+  background: currentColor;
+}
+
+.admin-mobile-nav-current {
+  overflow: hidden;
+  min-inline-size: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-nav-dialog {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+  inline-size: min(22rem, 88vi);
+  max-inline-size: none;
+  block-size: 100dvh;
+  max-block-size: none;
+  padding: 0;
+  margin: 0;
+  color: var(--color-text-primary);
+  border: 0;
+  background: var(--color-surface-0);
+  box-shadow: var(--admin-shadow-md);
+}
+
+.admin-nav-dialog::backdrop {
+  background: color-mix(in oklch, var(--color-text-primary) 42%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.admin-nav-drawer {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  block-size: 100%;
+}
+
+.admin-nav-drawer-head {
+  display: flex;
+  min-block-size: 4.5rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-inline: 1rem;
+  border-block-end: 1px solid var(--admin-line-soft);
+}
+
+.admin-nav-drawer-head > div {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.admin-nav-drawer-head span {
+  color: var(--color-primary-hover);
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+}
+
+.admin-nav-drawer-head strong {
+  font-size: 1rem;
+}
+
+.admin-nav-drawer-close {
+  display: grid;
+  flex: none;
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  place-items: center;
+  padding: 0;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--admin-line);
+  border-radius: 50%;
+  background: var(--color-surface-1);
+  cursor: pointer;
+}
+
+.admin-nav-drawer-close svg {
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+}
+
+.admin-nav-trigger:focus-visible,
+.admin-nav-drawer-close:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.admin-nav-drawer-list {
+  display: grid;
+  align-content: start;
+  overflow: hidden auto;
+  gap: 0.1rem;
+  padding: 0.8rem;
+}
+
+.admin-nav-drawer-list .admin-nav-group-label {
+  display: block;
+  padding: 0.65rem 0.7rem 0.3rem;
+  color: var(--color-text-muted);
+  font-size: 0.68rem;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-nav-drawer-list .admin-nav-projects-label {
+  margin-block-start: 0.35rem;
+}
+
+.admin-nav-drawer-list .admin-nav-project-list {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.admin-nav-drawer-list a {
+  justify-content: start;
+}
+
+.admin-nav-drawer-list a.admin-nav-project {
+  min-block-size: 3.15rem;
+  padding-inline-start: 1rem;
+}
+
+.admin-nav-drawer-list .admin-nav-project-marker {
+  display: block;
+  flex: none;
+  inline-size: 0.45rem;
+  block-size: 0.45rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.admin-nav-drawer-list .admin-nav-project-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
+  gap: 0.1rem;
+}
+
+.admin-nav-drawer-list .admin-nav-project-copy strong,
+.admin-nav-drawer-list .admin-nav-project-copy small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-nav-drawer-list .admin-nav-project-copy strong {
+  color: inherit;
+  font-size: 0.8rem;
+}
+
+.admin-nav-drawer-list .admin-nav-project-copy small,
+.admin-nav-drawer-list .admin-nav-project-empty {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.admin-nav-drawer-list .admin-nav-project-empty {
+  padding: 0.45rem 1rem 0.65rem;
+}
+
+.admin-nav-drawer-list .admin-nav-count {
+  margin-inline-start: auto;
+}
+
 .admin-nav-group-label {
+  display: none;
+}
+
+.admin-nav-project-list {
+  display: flex;
+  flex: none;
+  gap: 0.15rem;
+}
+
+.admin-nav-project-copy {
+  display: flex;
+  align-items: center;
+}
+
+.admin-nav-project-copy small,
+.admin-nav-project-empty,
+.admin-nav-project-marker {
   display: none;
 }
 
@@ -1638,6 +1870,468 @@ a.admin-stat:focus-visible {
   line-height: 1.6;
 }
 
+.document-autofill-shell {
+  border: 1px solid var(--admin-line);
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--color-primary) 5%, white);
+  padding: 1rem;
+}
+
+.document-autofill-shell > summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.document-autofill-content {
+  display: grid;
+  gap: 0.75rem;
+  padding-block-start: 1rem;
+}
+
+.document-autofill-content .admin-button {
+  justify-self: start;
+}
+
+/* Project navigation keeps the large workspace divided into stable, shareable views. */
+.admin-project-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-block: 1.25rem;
+  padding: 0.35rem;
+  overflow-x: auto;
+  border: 1px solid var(--admin-line);
+  border-radius: 1rem;
+  background: color-mix(in oklch, white 92%, var(--color-primary));
+}
+
+.admin-project-tabs a {
+  flex: 0 0 auto;
+  padding: 0.7rem 1rem;
+  border-radius: 0.75rem;
+  color: var(--admin-muted);
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.admin-project-tabs a[aria-current="page"] {
+  background: var(--color-primary);
+  color: white;
+}
+
+@media (max-width: 63.999rem) {
+  .admin-project-tabs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+
+  .admin-project-tabs a {
+    display: grid;
+    min-inline-size: 0;
+    min-block-size: 3rem;
+    place-items: center;
+    padding-inline: 0.6rem;
+    text-align: center;
+  }
+}
+
+@media (min-width: 48rem) and (max-width: 63.999rem) {
+  .admin-project-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.admin-project-overview {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-block-start: 1rem;
+  padding: clamp(1.1rem, 2vw, 1.6rem);
+  border: 1px solid color-mix(in oklch, var(--color-primary) 30%, var(--admin-line));
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--color-primary) 5%, white);
+}
+
+.admin-project-overview h2,
+.admin-project-directory h3 {
+  margin: 0;
+}
+
+.admin-project-overview-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.admin-project-directory {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.admin-project-directory > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 0.9rem;
+}
+
+.admin-project-directory-progress {
+  display: grid;
+  gap: 0.1rem;
+  text-align: center;
+}
+
+.admin-project-directory-progress strong {
+  font-size: 1.25rem;
+}
+
+.admin-project-directory-progress span {
+  color: var(--admin-muted);
+  font-size: 0.78rem;
+}
+
+.system-plan-locked {
+  padding: 1.2rem;
+  border: 1px dashed var(--admin-line-strong);
+  border-radius: 0.9rem;
+  background: var(--admin-surface-soft);
+}
+
+.system-plan-editor {
+  gap: 1.25rem;
+}
+
+.system-plan-editor-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.system-plan-repeatable {
+  display: grid;
+  gap: 1rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 1rem;
+}
+
+.system-plan-repeatable > legend {
+  padding-inline: 0.45rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+}
+
+.system-plan-repeatable-card {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 0.85rem;
+  background: white;
+}
+
+.system-plan-repeatable-head,
+.system-plan-money-row,
+.system-plan-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.system-plan-money-row > *,
+.system-plan-price-grid > * {
+  flex: 1 1 12rem;
+}
+
+.system-plan-price-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.system-plan-price-grid label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.system-plan p,
+.system-plan dd {
+  white-space: pre-line;
+}
+
+.system-plan-modules {
+  margin-block-start: 1.15rem;
+}
+
+/*
+ * The commercial choice.
+ *
+ * Three prices side by side is the one moment in the document where the client is asked to
+ * decide, so the recommended option carries every signal at once — a tinted field, an
+ * accent edge, and a chip — rather than relying on the word "מומלץ" alone to be noticed.
+ */
+.system-plan-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.85rem;
+  margin: 1.15rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.system-plan-options > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.15rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background: var(--color-surface-1);
+}
+
+.system-plan-options > li[data-recommended="true"] {
+  border-color: color-mix(in oklch, var(--color-primary) 55%, var(--color-border));
+  box-shadow: inset 0 0 0 1px
+    color-mix(in oklch, var(--color-primary) 22%, transparent);
+  background: color-mix(in oklch, var(--color-primary) 6%, white);
+}
+
+.system-plan-option-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.system-plan-option-head > div {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  min-inline-size: 0;
+}
+
+.system-plan-option-head strong {
+  flex: none;
+  color: var(--color-primary-hover);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.system-plan-option-best-for {
+  color: var(--color-primary-hover) !important;
+  font-size: 0.83rem;
+  font-weight: 650;
+}
+
+.system-plan-options small {
+  margin-block-start: auto;
+  padding-block-start: 0.55rem;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.system-plan-plan {
+  margin-block-start: 1.75rem;
+}
+
+/*
+ * A rail rather than a stack of cards: the phases describe one continuous piece of work, and
+ * four separate boxes read as four separate purchases — which is the confusion the priced
+ * phase list used to create.
+ */
+.system-plan-phases {
+  display: grid;
+  gap: 0;
+  margin: 0.85rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.system-plan-phases > li {
+  display: grid;
+  grid-template-columns: 1.75rem minmax(0, 1fr);
+  gap: 0.85rem;
+  padding-block: 0.85rem;
+}
+
+.system-plan-phases > li + li {
+  border-block-start: 1px solid var(--color-border);
+}
+
+.system-plan-phase-number {
+  display: grid;
+  place-items: center;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
+  color: var(--color-primary-hover);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 800;
+  border-radius: var(--radius-pill);
+  background: var(--color-primary-soft);
+}
+
+.system-plan-phase-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-block-end: 0.3rem;
+}
+
+.system-plan-phase-head small {
+  flex: none;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.system-plan-phase-deliverables {
+  margin-block-start: 0.3rem !important;
+  color: var(--color-text-muted) !important;
+  font-size: 0.85rem;
+}
+
+.system-plan-support {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.85rem;
+  margin-block-start: 1rem;
+}
+
+.system-plan-support > article {
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 0.85rem;
+  background: var(--color-surface-1);
+}
+
+.system-plan-support strong {
+  display: block;
+  margin-block: 0.3rem 0.5rem;
+  color: var(--color-primary-hover);
+  font-family: var(--font-space-grotesk), var(--font-sans);
+  font-weight: 800;
+}
+
+.system-plan-support small {
+  display: block;
+  margin-block-start: 0.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+}
+
+.system-plan-change-pricing {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0.65rem;
+  margin-block: 1.25rem 1rem;
+}
+
+.system-plan-change-pricing > div {
+  padding-block-start: 0.65rem;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.system-plan-change-pricing dt {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+}
+
+.system-plan-change-pricing dd {
+  margin: 0;
+  font-weight: 750;
+}
+
+/*
+ * The technical appendix. Closed by default: it answers an engineer's questions, and a
+ * client deciding whether to buy should be able to reach the end of the document without
+ * reading past it.
+ */
+.system-plan-appendix,
+.system-plan-appendix-editor {
+  border-block-start: 1px solid var(--color-border);
+}
+
+.system-plan-appendix {
+  padding: clamp(1.5rem, 5vw, 3.5rem);
+}
+
+.system-plan-appendix-editor {
+  margin-block-start: 1.5rem;
+  padding-block-start: 1.25rem;
+}
+
+.system-plan-appendix > summary,
+.system-plan-appendix-editor > summary {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.system-plan-appendix > summary small {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.system-plan-appendix > summary:focus-visible,
+.system-plan-appendix-editor > summary:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.system-plan-appendix[open] > summary {
+  margin-block-end: 0.85rem;
+}
+
+@media (max-width: 760px) {
+  .admin-project-overview {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-project-directory > li,
+  .system-plan-editor-grid,
+  .system-plan-options,
+  .system-plan-support,
+  .system-plan-change-pricing {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-project-directory-progress {
+    text-align: start;
+  }
+
+  .system-plan-money-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  /* The price and the duration each get their own line rather than being squeezed onto
+     one, which on a narrow screen truncated whichever of the two came second. */
+  .system-plan-option-head,
+  .system-plan-phase-head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+}
+
 /* ===========================================================================
  * 9a. Internal notes
  *
@@ -1848,9 +2542,8 @@ a.admin-stat:focus-visible {
 /* ===========================================================================
  * 10. Layout
  *
- * Below the desktop breakpoint the rail is a horizontal strip under the brand: no
- * drawer, no overlay, no focus trap, and every destination stays one tap away. A console
- * that hides its navigation behind a hamburger costs a tap on every single move.
+ * Below the desktop breakpoint the brand is followed by a compact context row. Its
+ * button opens the categorized navigation drawer; the desktop keeps the persistent rail.
  * ======================================================================== */
 
 @media (min-width: 64rem) {
@@ -1871,12 +2564,16 @@ a.admin-stat:focus-visible {
     border-block-end: 1px solid var(--admin-line-soft);
   }
 
-  .admin-nav {
+  .admin-nav-desktop {
     display: grid;
     align-content: start;
     overflow: hidden auto;
     gap: 0.1rem;
     padding: 0.85rem 0.7rem;
+  }
+
+  .admin-mobile-nav-bar {
+    display: none;
   }
 
   .admin-nav-group-label {
@@ -1887,6 +2584,67 @@ a.admin-stat:focus-visible {
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
+  }
+
+  .admin-nav-projects-label {
+    margin-block-start: 0.45rem;
+  }
+
+  .admin-nav-project-list {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .admin-nav a.admin-nav-project {
+    min-block-size: 3.15rem;
+    padding-inline-start: 1rem;
+  }
+
+  .admin-nav-project-marker {
+    display: block;
+    flex: none;
+    inline-size: 0.45rem;
+    block-size: 0.45rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
+  }
+
+  .admin-nav-project-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-inline-size: 0;
+    gap: 0.1rem;
+  }
+
+  .admin-nav-project-copy strong,
+  .admin-nav-project-copy small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .admin-nav-project-copy strong {
+    color: inherit;
+    font-size: 0.8rem;
+  }
+
+  .admin-nav-project-copy small {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: 0.67rem;
+    font-weight: 500;
+  }
+
+  .admin-nav a.admin-nav-project[aria-current="page"] small {
+    color: var(--color-primary-hover);
+  }
+
+  .admin-nav-project-empty {
+    display: block;
+    padding: 0.45rem 1rem 0.65rem;
+    color: var(--color-text-muted);
+    font-size: 0.72rem;
   }
 
   .admin-nav a {

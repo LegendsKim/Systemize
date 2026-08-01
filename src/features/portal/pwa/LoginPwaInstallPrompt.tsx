@@ -3,11 +3,13 @@
 // browser-only APIs.
 
 import { useEffect, useRef, useState } from "react";
+import { gateSplashCompleteEvent } from "@/features/portal/boot-sequence";
 
 const dismissalKey = "systemize:pwa-login-install-dismissed:v1";
+const smallScreenQuery = "(max-width: 55.999rem)";
 
 /**
- * How long the sign-in screen is left alone before the reminder arrives.
+ * How long the sign-in screen is left alone after the splash has fully disappeared.
  *
  * A card that is already on screen when the page paints reads as an obstacle between the
  * visitor and the one button they came to press. Three seconds is long enough for the
@@ -79,6 +81,7 @@ export function LoginPwaInstallPrompt() {
 
   useEffect(() => {
     const standaloneQuery = window.matchMedia("(display-mode: standalone)");
+    const smallScreen = window.matchMedia(smallScreenQuery);
     const navigatorStandalone = (navigator as Navigator & {
       standalone?: boolean;
     }).standalone;
@@ -97,9 +100,35 @@ export function LoginPwaInstallPrompt() {
         currentMode === "checking" ? (ios ? "ios" : "manual") : currentMode
       );
     }, ios ? 0 : 1_200);
-    // Independent of the mode detection above: the card is only allowed on screen once
-    // the visitor has had the gate to themselves for a moment.
-    const revealTimer = window.setTimeout(() => setRevealed(true), revealDelayMs);
+    let splashComplete = false;
+    let revealTimer: number | undefined;
+
+    const clearRevealTimer = () => {
+      if (revealTimer !== undefined) {
+        window.clearTimeout(revealTimer);
+        revealTimer = undefined;
+      }
+    };
+    const scheduleReveal = () => {
+      clearRevealTimer();
+      if (!splashComplete || !smallScreen.matches) return;
+      revealTimer = window.setTimeout(() => {
+        revealTimer = undefined;
+        if (smallScreen.matches) setRevealed(true);
+      }, revealDelayMs);
+    };
+    const handleSplashComplete = () => {
+      splashComplete = true;
+      scheduleReveal();
+    };
+    const handleScreenChange = (event: MediaQueryListEvent) => {
+      if (!event.matches) {
+        clearRevealTimer();
+        setRevealed(false);
+        return;
+      }
+      scheduleReveal();
+    };
 
     const handleInstallAvailable = (event: Event) => {
       event.preventDefault();
@@ -118,14 +147,18 @@ export function LoginPwaInstallPrompt() {
 
     window.addEventListener("beforeinstallprompt", handleInstallAvailable);
     window.addEventListener("appinstalled", handleInstalled);
+    window.addEventListener(gateSplashCompleteEvent, handleSplashComplete);
     standaloneQuery.addEventListener("change", handleDisplayModeChange);
+    smallScreen.addEventListener("change", handleScreenChange);
 
     return () => {
       window.clearTimeout(fallbackTimer);
-      window.clearTimeout(revealTimer);
+      clearRevealTimer();
       window.removeEventListener("beforeinstallprompt", handleInstallAvailable);
       window.removeEventListener("appinstalled", handleInstalled);
+      window.removeEventListener(gateSplashCompleteEvent, handleSplashComplete);
       standaloneQuery.removeEventListener("change", handleDisplayModeChange);
+      smallScreen.removeEventListener("change", handleScreenChange);
     };
   }, []);
 

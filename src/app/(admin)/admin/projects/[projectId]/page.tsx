@@ -10,6 +10,8 @@ import {
 import { InternalNotesForm } from "@/features/portal/admin/InternalNotesForm";
 import { ProjectDetailsForm } from "@/features/portal/admin/ProjectDetailsForm";
 import { ProjectInvitationForm } from "@/features/portal/admin/ProjectInvitationForm";
+import { ProjectWorkspaceTabs } from "@/features/portal/admin/ProjectWorkspaceTabs";
+import { resolveAdminProjectTab } from "@/features/portal/admin/project-tabs";
 import { requireSystemizeOwner } from "@/features/portal/auth/session";
 import {
   canReissueInvitation,
@@ -19,6 +21,7 @@ import {
 } from "@/features/portal/invitations/lifecycle";
 import { createInvitationTokenPair } from "@/features/portal/invitations/tokens";
 import { AdminDocumentPanel } from "@/features/portal/documents/AdminDocumentPanel";
+import { AdminSystemPlanPanel } from "@/features/portal/documents/AdminSystemPlanPanel";
 import { projectStageLabels } from "@/features/portal/project-stage";
 import {
   completeProjectMeeting,
@@ -34,6 +37,7 @@ import {
 import { MeetingSlotForm } from "@/features/portal/workflow/MeetingSlotForm";
 import { PaymentRequestForm } from "@/features/portal/workflow/PaymentRequestForm";
 import { ProjectHistory } from "@/features/portal/workflow/ProjectHistory";
+import { derivePaymentStep } from "@/features/portal/workflow/stepper";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import {
   getProjectWorkflow,
@@ -46,7 +50,7 @@ import { getProjectInternalNotes } from "@/server/repositories/portal.repository
 
 type AdminProjectPageProps = {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ notice?: string }>;
+  searchParams: Promise<{ notice?: string; tab?: string }>;
 };
 
 /** Outcome messages, with the tone the operator should read them in. */
@@ -116,6 +120,7 @@ export default async function AdminProjectPage({
 }: AdminProjectPageProps) {
   await requireSystemizeOwner();
   const [{ projectId }, query] = await Promise.all([params, searchParams]);
+  const activeTab = resolveAdminProjectTab(query.tab);
   const supabase = await createServerSupabaseClient();
   const { data: project, error } = await supabase
     .from("projects")
@@ -174,12 +179,26 @@ export default async function AdminProjectPage({
   const completedMeeting = workflow.meetingSlots.find(
     (slot) => slot.status === "completed"
   );
-  const pendingPayment = workflow.payments.find(
-    (payment) => payment.status === "pending"
-  );
+  const paymentStep = derivePaymentStep(workflow.payments);
   const introductoryDocument =
     documents.find((document) => document.kind === "introductory_summary") ??
     null;
+  const systemPlanDocument =
+    documents.find((document) => document.kind === "discovery_plan") ?? null;
+  const discoveryPaid = workflow.payments.some(
+    (payment) => payment.status === "paid"
+  );
+  const discoveryContext = JSON.stringify(
+    {
+      intake: answers,
+      introductorySummary:
+        introductoryDocument?.latestPublished?.content ??
+        introductoryDocument?.latestDraft?.content ??
+        null,
+    },
+    null,
+    2
+  ).slice(0, 40_000);
   const notice = query.notice ? noticeCopy[query.notice] : undefined;
   /*
    * Counts only, and only for the owner. It answers the question that used to have no
@@ -187,6 +206,18 @@ export default async function AdminProjectPage({
    * putting anyone's device endpoints on this screen.
    */
   const pushReach = pushReadiness?.[0] ?? { members: 0, members_with_push: 0 };
+  const systemPlanDrafted = Boolean(
+    systemPlanDocument?.latestDraft ?? systemPlanDocument?.latestPublished
+  );
+  const systemPlanPublished = Boolean(systemPlanDocument?.latestPublished);
+  const developmentStarted = [
+    "initial_payment_pending",
+    "delivery",
+    "client_review",
+    "rollout",
+    "support",
+    "completed",
+  ].includes(project.stage);
 
   /*
    * The stepper is derived here rather than inline in the markup, so the four states are
@@ -226,8 +257,43 @@ export default async function AdminProjectPage({
     },
     {
       title: "תשלום",
-      state: pendingPayment ? "current" : "upcoming",
-      detail: pendingPayment ? "ממתין ללקוח" : "טרם פורסם",
+      state: paymentStep.state,
+      detail: paymentStep.detail,
+    },
+    {
+      title: "אפיון מלא",
+      state: systemPlanDrafted ? "complete" : discoveryPaid ? "current" : "upcoming",
+      detail: systemPlanDrafted
+        ? "תוכנית נוצרה"
+        : discoveryPaid
+          ? "מוכן לעבודה"
+          : "ייפתח לאחר תשלום",
+    },
+    {
+      title: "חלופות והצעה",
+      state: systemPlanPublished
+        ? "complete"
+        : systemPlanDocument?.latestDraft
+          ? "current"
+          : "upcoming",
+      detail: systemPlanPublished
+        ? "פורסם ללקוח"
+        : systemPlanDocument?.latestDraft
+          ? "טיוטה בבדיקה"
+          : "טרם נוצר",
+    },
+    {
+      title: "אישור והתקשרות",
+      state: developmentStarted
+        ? "complete"
+        : systemPlanPublished
+          ? "current"
+          : "upcoming",
+      detail: developmentStarted
+        ? "הפיתוח אושר"
+        : systemPlanPublished
+          ? "ממתין להחלטה"
+          : "לאחר פרסום ההצעה",
     },
   ] as const;
 
@@ -258,19 +324,54 @@ export default async function AdminProjectPage({
         </div>
       </div>
 
-      <ol className="admin-stepper" aria-label="מצב התהליך">
-        {steps.map((step, index) => (
-          <li key={step.title} data-state={step.state}>
-            <span className="admin-stepper-index">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <strong>{step.title}</strong>
-            <small>{step.detail}</small>
-          </li>
-        ))}
-      </ol>
+      <ProjectWorkspaceTabs projectId={project.id} activeTab={activeTab} />
+
+      {activeTab === "overview" && (
+        <>
+          <ol className="admin-stepper" aria-label="מצב התהליך">
+            {steps.map((step, index) => (
+              <li key={step.title} data-state={step.state}>
+                <span className="admin-stepper-index">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <strong>{step.title}</strong>
+                <small>{step.detail}</small>
+              </li>
+            ))}
+          </ol>
+          <section className="admin-project-overview" aria-labelledby="project-overview-title">
+            <div>
+              <p className="admin-eyebrow">הפעולה הבאה</p>
+              <h2 id="project-overview-title">
+                {discoveryPaid && !systemPlanDrafted
+                  ? "בניית תוכנית המערכת והצעת הפיתוח"
+                  : systemPlanDocument?.latestDraft
+                    ? "בדיקת טיוטת תוכנית המערכת"
+                    : systemPlanPublished
+                      ? "ההצעה פורסמה וממתינה להחלטת הלקוח"
+                      : "המשך התהליך לפי התחנה הפעילה"}
+              </h2>
+              <p>
+                {discoveryPaid && !systemPlanDrafted
+                  ? "ארבעת שלבי ההיכרות הושלמו. אזור התכנון המלא פתוח כעת."
+                  : "כל אזור בפרויקט מרוכז בלשונית משלו כדי לשמור על סביבת עבודה נקייה."}
+              </p>
+            </div>
+            <div className="admin-project-overview-links">
+              <Link href={`/admin/projects/${project.id}?tab=documents`} className="admin-button">
+                מעבר למסמכים
+              </Link>
+              <Link href={`/admin/projects/${project.id}?tab=discovery`} className="admin-button" data-variant="secondary">
+                חומרי האפיון
+              </Link>
+            </div>
+          </section>
+        </>
+      )}
 
       <div className="admin-workspace-grid">
+        {activeTab === "client" && (
+          <>
         <section className="admin-panel" aria-labelledby="project-details-title">
           <div className="admin-panel-head">
             <div>
@@ -425,6 +526,11 @@ export default async function AdminProjectPage({
           </details>
         </section>
 
+          </>
+        )}
+
+        {activeTab === "discovery" && (
+          <>
         {/*
           The private half of the post-call record. The published summary next to it
           proves the client was heard; this one holds the judgement that would end the
@@ -646,12 +752,31 @@ export default async function AdminProjectPage({
           )}
         </section>
 
+          </>
+        )}
+
+        {activeTab === "documents" && (
+          <>
         <AdminDocumentPanel
           projectId={project.id}
+          companyName={company?.name ?? "הלקוח"}
+          projectName={project.name}
           document={introductoryDocument}
           meetingCompleted={Boolean(completedMeeting)}
         />
 
+        <AdminSystemPlanPanel
+          projectId={project.id}
+          companyName={company?.name ?? "הלקוח"}
+          projectName={project.name}
+          document={systemPlanDocument}
+          unlocked={discoveryPaid || Boolean(systemPlanDocument)}
+          discoveryContext={discoveryContext}
+        />
+          </>
+        )}
+
+        {activeTab === "commercial" && (
         <section
           id="payment-request"
           className="admin-panel"
@@ -729,6 +854,9 @@ export default async function AdminProjectPage({
           )}
         </section>
 
+        )}
+
+        {activeTab === "activity" && (
         <div className="admin-panel">
           <ProjectHistory
             events={events}
@@ -736,6 +864,7 @@ export default async function AdminProjectPage({
             headingId="history-title"
           />
         </div>
+        )}
       </div>
     </main>
   );

@@ -1,5 +1,6 @@
 import { getPortalIdentity } from "@/features/portal/auth/session";
 import { renderIntroductorySummaryPdf } from "@/features/portal/documents/introductory-summary-pdf";
+import { renderSystemPlanPdf } from "@/features/portal/documents/system-plan-pdf";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { getDocumentVersion } from "@/server/repositories/document.repository";
 
@@ -24,8 +25,11 @@ export async function GET(request: Request, { params }: PdfRouteContext) {
     return Response.json({ error: "Document not found" }, { status: 404 });
   }
 
-  const pdf = await renderIntroductorySummaryPdf(version);
-  const filename = `systemize-summary-v${version.versionNumber}.pdf`;
+  const pdf =
+    version.kind === "introductory_summary"
+      ? await renderIntroductorySummaryPdf(version)
+      : await renderSystemPlanPdf(version);
+  const filename = `systemize-${version.kind === "introductory_summary" ? "summary" : "system-plan"}-v${version.versionNumber}.pdf`;
 
   return new Response(new Uint8Array(pdf), {
     status: 200,
